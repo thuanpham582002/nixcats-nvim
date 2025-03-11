@@ -82,17 +82,15 @@
     } categoryDefinitions packageDefinitions defaultPackageName;
   in
     forEachSystem (system: let
-      inherit (utils) baseBuilder;
-      nixCatsBuilder = baseBuilder luaPath {
+      nixCatsBuilder = utils.baseBuilder luaPath {
         inherit nixpkgs;
         inherit system dependencyOverlays extra_pkg_config;
       } categoryDefinitions packageDefinitions;
       defaultPackage = nixCatsBuilder defaultPackageName;
-      portablevim = nixCatsBuilder "portableVim";
     in {
       packages = utils.mkAllWithDefault defaultPackage;
-      app-images = {
-        portableVim = inputs.nix-appimage.bundlers.${system}.default portablevim;
+      app-images = let bundler = inputs.nix-appimage.bundlers.${system}.default; in {
+        portableVim = bundler (nixCatsBuilder "portableVim");
       };
     }
   ) // {
