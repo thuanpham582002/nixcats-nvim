@@ -6,7 +6,7 @@ return {
   {
     "mason.nvim",
     enabled = not catUtils.isNixCats,
-    dep_of = { "nvim-lspconfig" },
+    on_plugin = { "nvim-lspconfig" },
     load = function(name)
       require("birdee.utils").multi_packadd { name, "mason-lspconfig.nvim" }
       require('mason').setup()
@@ -90,7 +90,7 @@ return {
       settings = {
         nixd = {
           nixpkgs = {
-            expr = [[import (builtins.getFlake "]] .. nixCats.extra("nixdExtras.nixpkgs") .. [[") { }   ]],
+            expr = nixCats.extra("nixdExtras.nixpkgs") and ([[import (builtins.getFlake "]] .. nixCats.extra("nixdExtras.nixpkgs") .. [[") { }   ]]) or [[import <nixpkgs> {}]],
           },
           formatting = {
             command = { "nixfmt" }
