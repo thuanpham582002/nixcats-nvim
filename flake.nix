@@ -391,10 +391,8 @@
       viAlias = false;
       vimAlias = false;
       gem_path = ./overlays/ruby_provider;
-      unwrappedCfgPath = utils.mkLuaInline /*lua*/ ''
-        os.getenv("HOME") .. "/birdeevim"
-      '';
-      moduleNamespace = [ "birdeeMods" defaultPackageName ];
+      unwrappedCfgPath = utils.mkLuaInline /*lua*/ ''os.getenv("HOME") .. "/.birdeevim"'';
+      # moduleNamespace = [ defaultPackageName ];
       # nvimSRC = inputs.neovim-src;
       # neovim-unwrapped = pkgs.internalvim.nvim;
       # neovim-unwrapped = inputs.neovim-nightly-overlay.packages.${pkgs.system}.neovim;
@@ -622,12 +620,12 @@
     nixosModule = utils.mkNixosModules {
       inherit nixpkgs;
       inherit defaultPackageName dependencyOverlays luaPath categoryDefinitions packageDefinitions;
-      moduleNamespace = [ "birdeeMods" defaultPackageName ];
+      moduleNamespace = [ defaultPackageName ];
     };
     homeModule = utils.mkHomeModules {
       inherit nixpkgs;
       inherit defaultPackageName dependencyOverlays luaPath categoryDefinitions packageDefinitions;
-      moduleNamespace = [ "birdeeMods" defaultPackageName ];
+      moduleNamespace = [ defaultPackageName ];
     };
   in {
     overlays = utils.makeOverlaysWithMultiDefault luaPath {
