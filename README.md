@@ -2,9 +2,11 @@
 > THIS IS NOT A DISTRIBUTION! IT IS MINE.
 > If you have an issue using it, provide an actionable fix, or get your own XD
 
-see:
+see instead:
 
 [nixCats-nvim](https://github.com/BirdeeHub/nixCats-nvim)
+
+Which is also not a distribution, but rather the package manager this neovim config uses.
 
 You can run it with `nix shell github:BirdeeHub/birdeeSystems#nvim_for_u` and then typing `vi`, `vim`, `nvim`, or `nvim_for_u`.
 
@@ -16,6 +18,20 @@ You can run it with `nix shell github:BirdeeHub/birdeeSystems#nvim_for_u` and th
 > in the non-mentioned outputs,
 > completion keys are `<M-h>` = `<esc>`, `<M-j>` = `next`, `<M-k>` = `previous`, `<M-l>` = `accept`.
 > You have been warned.
+
+---
+
+> [!WARNING]
+
+I do not guarantee that everything in here works.
+
+This is not a distro, its the graveyard of plugins I might have never fully set up.
+
+If something is broken get your own config XD (sorry kotlin/java/sorta python)
+
+While I would not suggest using my config, I definitely have a lot of stuff in it and it works for what I need it for.
+
+[`lze`](https://github.com/BirdeeHub/lze) keeps it loading fast despite my plugin addiction!
 
 ---
 
