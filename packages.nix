@@ -44,7 +44,6 @@ inputs: let
     otter = true;
     bash = true;
     notes = true;
-    treesitter = true;
     neonixdev = true;
     java = true;
     web = true;
@@ -129,7 +128,6 @@ in {
       customPlugins = true;
       general = true;
       telescope = true;
-      treesitter = true;
       otter = true;
       nix = true;
       web = true;
@@ -182,7 +180,6 @@ in {
       general = true;
       neonixdev = true;
       telescope = true;
-      treesitter = true;
       vimagePreview = true;
       AI = true;
       lspDebugMode = false;

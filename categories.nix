@@ -202,7 +202,6 @@ in { pkgs, settings, categories, name, extra, mkNvimPlugin, ... }@packageDef: {
     neonixdev = [
       luvit-meta
     ];
-    treesitter = builtins.attrValues pkgs.vimPlugins.nvim-treesitter.grammarPlugins;
   };
 
   optionalPlugins = with pkgs.vimPlugins; {
@@ -257,10 +256,6 @@ in { pkgs, settings, categories, name, extra, mkNvimPlugin, ... }@packageDef: {
       pkgs.neovimPlugins.hlargs
       pkgs.neovimPlugins.visual-whitespace
     ];
-    treesitter = [
-      nvim-treesitter-textobjects
-      nvim-treesitter
-    ];
     telescope = [
       telescope-nvim
       telescope-fzf-native-nvim
@@ -288,6 +283,8 @@ in { pkgs, settings, categories, name, extra, mkNvimPlugin, ... }@packageDef: {
         lspkind-nvim
       ];
       core = [
+        nvim-treesitter-textobjects
+        nvim-treesitter.withAllGrammars
         vim-rhubarb
         vim-fugitive
         nvim-lspconfig
