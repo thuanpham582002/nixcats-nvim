@@ -392,7 +392,9 @@
       viAlias = false;
       vimAlias = false;
       gem_path = ./overlays/ruby_provider;
-      unwrappedCfgPath = utils.mkLuaInline /*lua*/ ''os.getenv("HOME") .. "/.birdeevim"'';
+      unwrappedCfgPath = utils.n2l.types.inline-unsafe.mk {
+        body = /*lua*/ ''(os.getenv("HOME") or "/home/birdee/") .. "/.birdeevim"'';
+      };
       # moduleNamespace = [ defaultPackageName ];
       # nvimSRC = inputs.neovim-src;
       # neovim-unwrapped = pkgs.internalvim.nvim;
