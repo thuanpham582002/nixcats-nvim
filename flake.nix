@@ -5,6 +5,7 @@
   # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake.html#examples
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    # nixpkgsLocked.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     nixCats.url = "github:BirdeeHub/nixCats-nvim";
     # nixCats.url = "git+file:/home/birdee/Projects/nixCats-nvim";
     # neovim-src = { url = "github:neovim/neovim/nightly"; flake = false; };

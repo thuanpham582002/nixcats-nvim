@@ -15,7 +15,7 @@ overlay
 inputs: let 
   overlaySet = {
 
-    locked = import ./locked.nix;
+    # locked = import ./locked.nix;
     # internalvim = import ./build;
     # lua-git2 = import ./lua-git2.nix;
 
