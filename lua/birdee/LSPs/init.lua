@@ -90,7 +90,8 @@ return {
       settings = {
         nixd = {
           nixpkgs = {
-            expr = nixCats.extra("nixdExtras.nixpkgs") and ([[import (builtins.getFlake "]] .. nixCats.extra("nixdExtras.nixpkgs") .. [[") {}]]) or [[import <nixpkgs> {}]],
+            -- ''import ${pkgs.path} {}''
+            expr = nixCats.extra("nixdExtras.nixpkgs") or "import <nixpkgs> {}",
           },
           formatting = {
             command = { "nixfmt" }

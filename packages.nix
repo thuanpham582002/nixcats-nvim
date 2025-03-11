@@ -62,7 +62,7 @@ inputs: let
       gradle-ls = pkgs.vscode-extensions.vscjava.vscode-gradle;
     };
     nixdExtras = {
-      nixpkgs = pkgs.path;
+      nixpkgs = "import ${pkgs.path} {}";
     };
     AIextras = {
       codeium_token_uuid = "notes d9124a28-89ad-4335-b84f-b0c20135b048";
