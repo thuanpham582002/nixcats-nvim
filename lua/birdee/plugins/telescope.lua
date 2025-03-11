@@ -63,9 +63,6 @@ return {
     -- event = "",
     -- ft = "",
     keys = {
-      { "<leader>sn", function()
-        require('telescope.builtin').find_files { cwd = vim.fn.expand('$HOME') .. "/birdeeSystems" }
-      end, mode = {"n"}, desc = '[S]earch [N]ix config files', },
       -- { "<leader>sM", '<cmd>Telescope notify<CR>', mode = {"n"}, desc = '[S]earch [M]essage', },
       { "<leader>sb", '<cmd>Telescope git_file_history<CR>', mode = {"n"}, desc = '[S]earch [B]ackup history', },
       { "<leader>sp",live_grep_git_root, mode = {"n"}, desc = '[S]earch git [P]roject root', },
