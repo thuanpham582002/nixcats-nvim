@@ -66,12 +66,20 @@
       allowUnfree = true;
     };
     dependencyOverlays = import ./overlays inputs;
-
     categoryDefinitions = import ./categories.nix inputs;
-
     packageDefinitions = import ./packages.nix inputs;
-
     defaultPackageName = "birdeevim";
+
+    module_args = {
+      inherit nixpkgs;
+      inherit defaultPackageName dependencyOverlays luaPath categoryDefinitions packageDefinitions;
+      moduleNamespace = [ defaultPackageName ];
+    };
+    nixosModule = utils.mkNixosModules module_args;
+    homeModule = utils.mkHomeModules module_args;
+    overlays = utils.makeOverlaysWithMultiDefault luaPath {
+      inherit nixpkgs dependencyOverlays extra_pkg_config;
+    } categoryDefinitions packageDefinitions defaultPackageName;
   in
     forEachSystem (system: let
       inherit (utils) baseBuilder;
@@ -87,23 +95,9 @@
         portableVim = inputs.nix-appimage.bundlers.${system}.default portablevim;
       };
     }
-  ) // (let
-    nixosModule = utils.mkNixosModules {
-      inherit nixpkgs;
-      inherit defaultPackageName dependencyOverlays luaPath categoryDefinitions packageDefinitions;
-      moduleNamespace = [ defaultPackageName ];
-    };
-    homeModule = utils.mkHomeModules {
-      inherit nixpkgs;
-      inherit defaultPackageName dependencyOverlays luaPath categoryDefinitions packageDefinitions;
-      moduleNamespace = [ defaultPackageName ];
-    };
-  in {
-    overlays = utils.makeOverlaysWithMultiDefault luaPath {
-      inherit nixpkgs dependencyOverlays extra_pkg_config;
-    } categoryDefinitions packageDefinitions defaultPackageName;
-    inherit nixosModule homeModule;
+  ) // {
+    inherit utils overlays nixosModule homeModule;
     nixosModules.default = nixosModule;
     homeModules.default = homeModule;
-  });
+  };
 }
