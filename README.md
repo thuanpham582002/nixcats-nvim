@@ -22,12 +22,12 @@ You can run it with `nix shell github:BirdeeHub/birdeeSystems#nvim_for_u` and th
 ---
 
 > [!WARNING]
-
-I do not guarantee that everything in here works.
+>
+> I absolutely do not guarantee that everything in here works.
 
 This is not a distro, its the graveyard of plugins I might have never fully set up.
 
-If something is broken get your own config XD (sorry kotlin/java/sorta python)
+If something is broken get your own config.
 
 While I would not suggest using my config, I definitely have a lot of stuff in it and it works for what I need it for.
 
