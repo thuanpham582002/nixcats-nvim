@@ -1,5 +1,5 @@
 local catUtils = require('nixCatsUtils')
-if (catUtils.isNixCats and nixCats('lspDebugMode')) then
+if catUtils.isNixCats and nixCats('lspDebugMode') then
   vim.lsp.set_log_level("debug")
 end
 return {
@@ -326,4 +326,4 @@ return {
 }
 
 -- NOTE: gets filetypes = {}, for server name in + register and puts it into the + register, overwriting server name.
--- :lua vim.fn.setreg([[+]],"filetypes = " .. vim.inspect(require('lspconfig')[vim.fn.getreg("+")].config_def.default_config.filetypes) .. ",")
+-- :lua vim.fn.setreg([[+]],"filetypes = " .. vim.inspect(require('lspconfig.configs.' .. vim.fn.getreg("+")).default_config.filetypes) .. ",")
