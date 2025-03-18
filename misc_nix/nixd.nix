@@ -1,7 +1,6 @@
 nixpkgs: type: path: let
   pkgs = import nixpkgs {};
   inherit (pkgs) lib;
-  targetFlake = with builtins; getFlake "path:${toString path}";
   allTargets = {
     nixos = [
       [ "outputs" "nixosConfigurations" ]
@@ -16,7 +15,8 @@ nixpkgs: type: path: let
       [ "outputs" "legacyPackages" "${pkgs.system}" "darwinConfigurations" ]
     ];
   };
-  mergeOpts = targetFlake: lib.flip lib.pipe (let
+  mergeOpts = path: lib.flip lib.pipe (let
+    targetFlake = with builtins; getFlake "path:${toString path}";
     getCfgs = lib.flip lib.pipe [
       (atp: lib.attrByPath atp {} targetFlake)
       builtins.attrValues
@@ -28,4 +28,4 @@ nixpkgs: type: path: let
     lib.mergeAttrsList
     (v: v.options)
   ]);
-in mergeOpts targetFlake type
+in mergeOpts path type
