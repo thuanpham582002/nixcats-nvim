@@ -10,7 +10,7 @@ inputs: let
     withPython3 = true;
     viAlias = false;
     vimAlias = false;
-    gem_path = ./overlays/ruby_provider;
+    gem_path = ./misc_nix/ruby_provider;
     unwrappedCfgPath = utils.n2l.types.inline-unsafe.mk {
       body = /*lua*/ ''(os.getenv("HOME") or "/home/birdee") .. "/.birdeevim"'';
     };
@@ -63,6 +63,10 @@ inputs: let
     };
     nixdExtras = {
       nixpkgs = "import ${pkgs.path} {}";
+      get_configs = utils.n2l.types.function-unsafe.mk {
+        args = [ "type" "path" ];
+        body = ''return [[import ${./misc_nix/nixd.nix} ${pkgs.path} "]] .. type .. [[" ]] .. (path or "./.")'';
+      };
     };
     AIextras = {
       codeium_token_uuid = "notes d9124a28-89ad-4335-b84f-b0c20135b048";

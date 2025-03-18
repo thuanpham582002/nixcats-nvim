@@ -2,6 +2,7 @@ local catUtils = require('nixCatsUtils')
 if catUtils.isNixCats and nixCats('lspDebugMode') then
   vim.lsp.set_log_level("debug")
 end
+local get_nixd_opts = nixCats.extra("nixdExtras.get_configs")
 return {
   {
     "mason.nvim",
@@ -97,13 +98,13 @@ return {
             command = { "nixfmt" }
           },
           options = {
-            -- (builtins.getFlake "<path_to_system_flake>").legacyPackages.<system>.nixosConfigurations."<user@host>".options
+            -- (builtins.getFlake "path:${builtins.toString <path_to_system_flake>}").legacyPackages.<system>.nixosConfigurations."<user@host>".options
             nixos = {
-              expr = nixCats.extra("nixdExtras.nixos_options")
+              expr = get_nixd_opts and get_nixd_opts("nixos", nixCats.extra("nixdExtras.flake-path"))
             },
-            -- (builtins.getFlake "<path_to_system_flake>").legacyPackages.<system>.homeConfigurations."<user@host>".options
+            -- (builtins.getFlake "path:${builtins.toString <path_to_system_flake>}").legacyPackages.<system>.homeConfigurations."<user@host>".options
             ["home-manager"] = {
-              expr = nixCats.extra("nixdExtras.home_manager_options")
+              expr = get_nixd_opts and get_nixd_opts("home-manager", nixCats.extra("nixdExtras.flake-path"))
             }
           },
           diagnostic = {

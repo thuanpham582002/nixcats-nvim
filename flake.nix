@@ -65,7 +65,7 @@
     extra_pkg_config = {
       allowUnfree = true;
     };
-    dependencyOverlays = import ./overlays inputs;
+    dependencyOverlays = import ./misc_nix/overlays inputs;
     categoryDefinitions = import ./categories.nix inputs;
     packageDefinitions = import ./packages.nix inputs;
     defaultPackageName = "birdeevim";
