@@ -104,7 +104,7 @@ return {
             },
             -- (builtins.getFlake "path:${builtins.toString <path_to_system_flake>}").legacyPackages.<system>.homeConfigurations."<user@host>".options
             ["home-manager"] = {
-              expr = get_nixd_opts and get_nixd_opts("home-manager", nixCats.extra("nixdExtras.flake-path")) -- <-  if nil will be lsp root dir
+              expr = get_nixd_opts and get_nixd_opts("home-manager", nixCats.extra("nixdExtras.flake-path")) -- <-  if flake-path is nil it will be lsp root dir
             }
           },
           diagnostic = {
