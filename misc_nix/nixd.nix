@@ -1,14 +1,14 @@
 nixpkgs: type: path: let
   recMergePickDeeper = with builtins; lhs: rhs: let
     pred = path: lh: rh: ! isAttrs lh || ! isAttrs rh;
-    picker = l: r: if isAttrs l then l else r;
+    pick = path: l: r: if isAttrs l then l else r;
     f = attrPath:
       zipAttrsWith (n: values:
         let here = attrPath ++ [n]; in
         if length values == 1 then
           head values
         else if pred here (elemAt values 1) (head values) then
-          picker (elemAt values 1) (head values)
+          pick here (elemAt values 1) (head values)
         else
           f here values
       );
