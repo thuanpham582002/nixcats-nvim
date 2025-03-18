@@ -26,5 +26,5 @@ in [
   (map getCfgs)
   (builtins.foldl' (a: v: a ++ v) [])
   lib.mergeAttrsList
-  (v: v.options)
+  (v: v.options or {})
 ])
