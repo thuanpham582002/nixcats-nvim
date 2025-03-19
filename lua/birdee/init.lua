@@ -1,6 +1,6 @@
 -- TODO: this in another file and require here.
 -- require('birdee.non_nix_download').setup({ your plugins })
-vim.loader.enable()
+
 -- vim.g.lze = {
 --   load = vim.cmd.packadd,
 --   verbose = true,
