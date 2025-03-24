@@ -18,9 +18,6 @@ function M.on_attach(_, bufnr)
 
   if nixCats('general.core') then
     local tele_builtin = require('birdee.utils').lazy_require_funcs('telescope.builtin')
-    -- NOTE: why are these functions that call the telescope builtin?
-    -- because otherwise they would load telescope eagerly when this is defined.
-    -- due to us using the on_require handler to make sure it is available.
     nmap('gr', tele_builtin.lsp_references, '[G]oto [R]eferences')
     nmap('gI', tele_builtin.lsp_implementations, '[G]oto [I]mplementation')
     nmap('<leader>ds', tele_builtin.lsp_document_symbols, '[D]ocument [S]ymbols')
