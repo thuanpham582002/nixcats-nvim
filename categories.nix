@@ -25,7 +25,7 @@ in { pkgs, settings, categories, name, extra, mkNvimPlugin, ... }@packageDef: {
   # :!nvim-python3
   extraPython3Packages = {
     python = (py:[
-      # NOTE: check disabled because they take SO LONG OMG
+      # NOTE: check disabled globally for nvim because they take SO LONG OMG
       py.debugpy
       py.pylsp-mypy
       py.pyls-isort
@@ -144,9 +144,9 @@ in { pkgs, settings, categories, name, extra, mkNvimPlugin, ... }@packageDef: {
     ];
     python = with python311Packages; [
       # jedi-language-server
-      (python-lsp-server.overrideAttrs { doCheck = false; })
-      (debugpy.overrideAttrs { doCheck = false; })
-      (pytest.overrideAttrs { doCheck = false; })
+      python-lsp-server
+      debugpy
+      pytest
       # pylint
       # python-lsp-ruff
       # pyls-flake8
