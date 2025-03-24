@@ -53,6 +53,8 @@ local function live_grep_git_root()
   end
 end
 
+local tele_builtin = require('birdee.utils').lazy_require_funcs('telescope.builtin')
+
 return {
   {
     "telescope.nvim",
@@ -80,15 +82,15 @@ return {
           prompt_title = 'Live Grep in Open Files',
         }
       end, mode = {"n"}, desc = '[S]earch [/] in Open Files', },
-      { "<leader><leader>s", function() return require('telescope.builtin').buffers() end, mode = {"n"}, desc = '[ ] Find existing buffers', },
-      { "<leader>s.", function() return require('telescope.builtin').oldfiles() end, mode = {"n"}, desc = '[S]earch Recent Files ("." for repeat)', },
-      { "<leader>sr", function() return require('telescope.builtin').resume() end, mode = {"n"}, desc = '[S]earch [R]esume', },
-      { "<leader>sd", function() return require('telescope.builtin').diagnostics() end, mode = {"n"}, desc = '[S]earch [D]iagnostics', },
-      { "<leader>sg", function() return require('telescope.builtin').live_grep() end, mode = {"n"}, desc = '[S]earch by [G]rep', },
-      { "<leader>sw", function() return require('telescope.builtin').grep_string() end, mode = {"n"}, desc = '[S]earch current [W]ord', },
-      { "<leader>sf", function() return require('telescope.builtin').find_files() end, mode = {"n"}, desc = '[S]earch [F]iles', },
-      { "<leader>sk", function() return require('telescope.builtin').keymaps() end, mode = {"n"}, desc = '[S]earch [K]eymaps', },
-      { "<leader>sh", function() return require('telescope.builtin').help_tags() end, mode = {"n"}, desc = '[S]earch [H]elp', },
+      { "<leader><leader>s", tele_builtin.buffers, mode = {"n"}, desc = '[ ] Find existing buffers', },
+      { "<leader>s.", tele_builtin.oldfiles, mode = {"n"}, desc = '[S]earch Recent Files ("." for repeat)', },
+      { "<leader>sr", tele_builtin.resume, mode = {"n"}, desc = '[S]earch [R]esume', },
+      { "<leader>sd", tele_builtin.diagnostics, mode = {"n"}, desc = '[S]earch [D]iagnostics', },
+      { "<leader>sg", tele_builtin.live_grep, mode = {"n"}, desc = '[S]earch by [G]rep', },
+      { "<leader>sw", tele_builtin.grep_string, mode = {"n"}, desc = '[S]earch current [W]ord', },
+      { "<leader>sf", tele_builtin.find_files, mode = {"n"}, desc = '[S]earch [F]iles', },
+      { "<leader>sk", tele_builtin.keymaps, mode = {"n"}, desc = '[S]earch [K]eymaps', },
+      { "<leader>sh", tele_builtin.help_tags, mode = {"n"}, desc = '[S]earch [H]elp', },
     },
     -- colorscheme = "",
     load = function (name)

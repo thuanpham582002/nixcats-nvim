@@ -106,8 +106,11 @@ M.load_w_after_plugin = require('lzextras').make_load_with_afters({ "plugin" }, 
 end)
 
 ---@type fun(moduleName: string): any
-function M.lazy_require(moduleName)
+function M.lazy_require_funcs(moduleName)
   return setmetatable({}, {
+    __call = function (_, ...)
+        return require(moduleName)(...)
+    end,
     __index = function(_, key)
       return function(...)
         local module = require(moduleName)
