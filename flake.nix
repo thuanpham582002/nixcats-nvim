@@ -1,7 +1,15 @@
 # Copyright (c) 2023 BirdeeHub
 # Licensed under the MIT license
 {
-  description = "A Lua-natic's neovim flake, with extra cats! nixCats!";
+  description = "my neovim config using nixCats";
+  nixConfig = {
+    extra-substituters = [
+      "https://nix-community.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+    ];
+  };
   # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake.html#examples
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
@@ -64,6 +72,7 @@
     forEachSystem = utils.eachSystem nixpkgs.lib.platforms.all;
     extra_pkg_config = {
       allowUnfree = true;
+      doCheck = false; # <- seriously, python stuff runs 10 years of tests its not worth it.
     };
     dependencyOverlays = import ./misc_nix/overlays inputs;
     categoryDefinitions = import ./categories.nix inputs;

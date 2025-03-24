@@ -26,13 +26,13 @@ in { pkgs, settings, categories, name, extra, mkNvimPlugin, ... }@packageDef: {
   extraPython3Packages = {
     python = (py:[
       # NOTE: check disabled because they take SO LONG OMG
-      (py.debugpy.overrideAttrs { doCheck = false; })
-      (py.pylsp-mypy.overrideAttrs { doCheck = false; })
-      (py.pyls-isort.overrideAttrs { doCheck = false; })
-      (py.python-lsp-server.overrideAttrs { doCheck = false; })
+      py.debugpy
+      py.pylsp-mypy
+      py.pyls-isort
+      py.python-lsp-server
       # py.python-lsp-black
-      (py.pytest.overrideAttrs { doCheck = false; })
-      (py.pylint.overrideAttrs { doCheck = false; })
+      py.pytest
+      py.pylint
       # python-lsp-ruff
       # pyls-flake8
       # pylsp-rope
