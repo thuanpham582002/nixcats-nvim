@@ -277,7 +277,7 @@ in { pkgs, settings, categories, name, extra, mkNvimPlugin, ... }@packageDef: {
         nvim-treesitter.withAllGrammars
         vim-rhubarb
         vim-fugitive
-        nvim-lspconfig
+        pkgs.neovimPlugins.nvim-lspconfig
         lualine-lsp-progress
         lualine-nvim
         gitsigns-nvim

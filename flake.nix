@@ -46,6 +46,10 @@
       url = "github:m-demare/hlargs.nvim";
       flake = false;
     };
+    "plugins-nvim-lspconfig" = {
+      url = "github:neovim/nvim-lspconfig";
+      flake = false;
+    };
     "plugins-nvim-luaref" = {
       url = "github:milisims/nvim-luaref";
       flake = false;
