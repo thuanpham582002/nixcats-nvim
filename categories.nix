@@ -3,9 +3,6 @@ inputs: let
 in { pkgs, settings, categories, name, extra, mkNvimPlugin, ... }@packageDef: {
 
   extraCats = {
-    notes = [
-      [ "telescope" ]
-    ];
     kotlin = [
       [ "java" ]
     ];
@@ -222,7 +219,6 @@ in { pkgs, settings, categories, name, extra, mkNvimPlugin, ... }@packageDef: {
     ];
     notes = [
       neorg
-      neorg-telescope
     ];
     otter = [
       otter-nvim

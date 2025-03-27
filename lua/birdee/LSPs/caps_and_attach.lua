@@ -14,24 +14,24 @@ function M.on_attach(_, bufnr)
   nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
   nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
-  nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
 
-  if nixCats('general.core') then
+  if nixCats('telescope') then
     local tele_builtin = require('birdee.utils').lazy_require_funcs('telescope.builtin')
     nmap('gr', tele_builtin.lsp_references, '[G]oto [R]eferences')
     nmap('gI', tele_builtin.lsp_implementations, '[G]oto [I]mplementation')
     nmap('<leader>ds', tele_builtin.lsp_document_symbols, '[D]ocument [S]ymbols')
     nmap('<leader>ws', tele_builtin.lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+    nmap('gy', vim.lsp.buf.type_definition, 'Type [D]efinition')
+    nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+    nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
   end
 
-  nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
 
   -- See `:help K` for why this keymap
   nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
   nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
 
   -- Lesser used LSP functionality
-  nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
   nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
   nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
   nmap('<leader>wl', function()

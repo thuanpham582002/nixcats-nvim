@@ -55,7 +55,6 @@ end
 
 return {
   { import = "birdee.plugins.snacks", },
-  { import = "birdee.plugins.telescope", },
   { import = "birdee.plugins.nestsitter", },
   { import = "birdee.plugins.completion", enabled = nixCats('general.cmp'), },
   { import = "birdee.plugins.grapple", },

@@ -40,7 +40,6 @@ inputs: let
     debug = true;
     customPlugins = true;
     general = true;
-    telescope = true;
     otter = true;
     bash = true;
     notes = true;
@@ -131,7 +130,6 @@ in {
       debug = true;
       customPlugins = true;
       general = true;
-      telescope = true;
       otter = true;
       nix = true;
       web = true;
@@ -183,7 +181,6 @@ in {
       other = true;
       general = true;
       neonixdev = true;
-      telescope = true;
       vimagePreview = true;
       AI = true;
       lspDebugMode = false;

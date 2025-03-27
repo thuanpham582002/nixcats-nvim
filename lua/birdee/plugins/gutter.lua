@@ -110,7 +110,7 @@ return {
           map('n', '<leader>gb', function()
             gs.blame_line { full = false }
           end, { desc = 'git blame line' })
-          map('n', '<leader>gd', gs.diffthis, { desc = 'git diff against index' })
+          -- map('n', '<leader>gd', gs.diffthis, { desc = 'git diff against index' })
           map('n', '<leader>gD', function()
             gs.diffthis '~'
           end, { desc = 'git diff against last commit' })
