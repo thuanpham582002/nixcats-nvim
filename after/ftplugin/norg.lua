@@ -1,5 +1,6 @@
-if vim.g.vscode ~= nil and nixCats('otter') then
-  vim.schedule(function ()
-    require('otter').activate(nil, true, true, nil)
-  end)
+if vim.g.vscode ~= nil or not nixCats('otter') then
+  return
 end
+vim.schedule(function ()
+  require('otter').activate(nil, true, true, nil)
+end)
