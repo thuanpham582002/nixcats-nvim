@@ -252,12 +252,6 @@ in { pkgs, settings, categories, name, extra, mkNvimPlugin, ... }@packageDef: {
       pkgs.neovimPlugins.hlargs
       pkgs.neovimPlugins.visual-whitespace
     ];
-    telescope = [
-      telescope-nvim
-      telescope-fzf-native-nvim
-      telescope-ui-select-nvim
-      pkgs.neovimPlugins.telescope-git-file-history
-    ];
     general = with pkgs.neovimPlugins; {
       markdown = [
         render-markdown-nvim

@@ -50,10 +50,6 @@
       url = "github:milisims/nvim-luaref";
       flake = false;
     };
-    "plugins-telescope-git-file-history" = {
-      url = "github:isak102/telescope-git-file-history.nvim";
-      flake = false;
-    };
     "plugins-visual-whitespace" = {
       url = "github:mcauley-penney/visual-whitespace.nvim";
       flake = false;
