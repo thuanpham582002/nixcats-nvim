@@ -80,9 +80,9 @@
     defaultPackageName = "birdeevim";
 
     module_args = {
-      inherit nixpkgs;
-      inherit defaultPackageName dependencyOverlays luaPath categoryDefinitions packageDefinitions;
       moduleNamespace = [ defaultPackageName ];
+      inherit nixpkgs defaultPackageName dependencyOverlays
+        luaPath categoryDefinitions packageDefinitions;
     };
     nixosModule = utils.mkNixosModules module_args;
     homeModule = utils.mkHomeModules module_args;
@@ -92,8 +92,7 @@
   in
     forEachSystem (system: let
       nixCatsBuilder = utils.baseBuilder luaPath {
-        inherit nixpkgs;
-        inherit system dependencyOverlays extra_pkg_config;
+        inherit nixpkgs system dependencyOverlays extra_pkg_config;
       } categoryDefinitions packageDefinitions;
       defaultPackage = nixCatsBuilder defaultPackageName;
     in {
