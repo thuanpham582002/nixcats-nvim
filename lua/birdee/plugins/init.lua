@@ -282,7 +282,7 @@ return {
         name,
         "vim-dadbod-ui",
       })
-      require("birdee.utils").load_w_after_plugin("vim-dadbod-completion")
+      require("birdee.utils").load_w_after("vim-dadbod-completion")
     end,
     after = function(_)
     end,

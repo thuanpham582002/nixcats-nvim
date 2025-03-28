@@ -2,43 +2,43 @@ return {
   {
     "cmp-buffer",
     on_plugin = { "nvim-cmp" },
-    load = require("birdee.utils").load_w_after_plugin,
+    load = require("birdee.utils").load_w_after,
   },
   {
     "cmp-cmdline",
     on_plugin = { "nvim-cmp" },
-    load = require("birdee.utils").load_w_after_plugin,
+    load = require("birdee.utils").load_w_after,
   },
   {
     "cmp-cmdline-history",
     on_plugin = { "nvim-cmp" },
-    load = require("birdee.utils").load_w_after_plugin,
+    load = require("birdee.utils").load_w_after,
   },
   {
     "cmp-nvim-lsp",
     on_plugin = { "nvim-cmp" },
     dep_of = { "nvim-lspconfig" },
-    load = require("birdee.utils").load_w_after_plugin,
+    load = require("birdee.utils").load_w_after,
   },
   {
     "cmp-nvim-lsp-signature-help",
     on_plugin = { "nvim-cmp" },
-    load = require("birdee.utils").load_w_after_plugin,
+    load = require("birdee.utils").load_w_after,
   },
   {
     "cmp-nvim-lua",
     on_plugin = { "nvim-cmp" },
-    load = require("birdee.utils").load_w_after_plugin,
+    load = require("birdee.utils").load_w_after,
   },
   {
     "cmp-path",
     on_plugin = { "nvim-cmp" },
-    load = require("birdee.utils").load_w_after_plugin,
+    load = require("birdee.utils").load_w_after,
   },
   {
     "cmp_luasnip",
     on_plugin = { "nvim-cmp" },
-    load = require("birdee.utils").load_w_after_plugin,
+    load = require("birdee.utils").load_w_after,
   },
   {
     "friendly-snippets",
@@ -47,7 +47,7 @@ return {
   {
     "lspkind.nvim",
     dep_of = { "nvim-cmp" },
-    load = require("birdee.utils").load_w_after_plugin,
+    load = require("birdee.utils").load_w_after,
   },
   {
     "clangd_extensions.nvim",

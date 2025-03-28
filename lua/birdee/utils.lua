@@ -96,7 +96,7 @@ end
 
 ---packadd + after/plugin
 ---@type fun(names: string[]|string)
-M.load_w_after_plugin = function(name)
+M.load_w_after = function(name)
   vim.cmd.packadd(name)
   vim.cmd.packadd(name .. "/after")
 end
