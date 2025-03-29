@@ -180,11 +180,11 @@ return {
     -- keys = "",
     -- colorscheme = "",
     load = function (name)
-      require("birdee.utils").multi_packadd({
+      require("lzextras").loaders.multi {
         name,
         "vim-rhubarb",
         "diffview.nvim",
-      })
+      }
     end,
   },
   {
@@ -278,11 +278,11 @@ return {
     cmd = { "DB", "DBUI", "DBUIAddConnection", "DBUIClose",
       "DBUIToggle", "DBUIFindBuffer", "DBUILastQueryInfo", "DBUIRenameBuffer", },
     load = function(name)
-      require("birdee.utils").multi_packadd({
+      require("lzextras").loaders.multi {
         name,
         "vim-dadbod-ui",
-      })
-      require("birdee.utils").load_w_after("vim-dadbod-completion")
+      }
+      require("lzextras").loaders.with_after("vim-dadbod-completion")
     end,
     after = function(_)
     end,

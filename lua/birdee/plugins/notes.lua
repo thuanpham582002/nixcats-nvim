@@ -8,11 +8,11 @@ return {
     -- keys = "",
     -- colorscheme = "",
     load = function (name)
-      require("birdee.utils").multi_packadd({
+      require("lzextras").loaders.multi {
         "norg-grammar",
         -- "neorg-telescope",
         name,
-      })
+      }
     end,
     after = function (_)
       require('neorg').setup {

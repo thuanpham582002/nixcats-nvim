@@ -32,11 +32,11 @@ return {
       { "<F7>", desc = "Debug: See last session result." },
     },
     load = function (name)
-      require("birdee.utils").multi_packadd({
+      require("lzextras").loaders.multi {
         name,
         "nvim-dap-ui",
         "nvim-dap-virtual-text",
-      })
+      }
     end,
     after = function (_)
       local dap = require 'dap'

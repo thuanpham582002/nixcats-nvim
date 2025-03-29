@@ -94,13 +94,13 @@ return {
     },
     -- colorscheme = "",
     load = function (name)
-      require("birdee.utils").multi_packadd({
+      require('lzextras').loaders.multi {
         name,
         "telescope-fzf-native.nvim",
         "vim-fugitive",
         "telescope-git-file-history",
         "telescope-ui-select.nvim",
-      })
+      }
     end,
     after = function (_)
       require('telescope').setup {

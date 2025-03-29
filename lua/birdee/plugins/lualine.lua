@@ -8,10 +8,10 @@ return {
     -- keys = "",
     -- colorscheme = "",
     load = function (name)
-      require("birdee.utils").multi_packadd({
+      require("lzextras").loaders.multi {
         name,
         "lualine-lsp-progress",
-      })
+      }
     end,
     after = function (_)
       local colorschemer = nixCats.extra('colorscheme') -- also schemes lualine

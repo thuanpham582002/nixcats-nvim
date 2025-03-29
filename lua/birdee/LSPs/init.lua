@@ -9,7 +9,7 @@ return {
     enabled = not catUtils.isNixCats,
     on_plugin = { "nvim-lspconfig" },
     load = function(name)
-      require("birdee.utils").multi_packadd { name, "mason-lspconfig.nvim" }
+      require('lzextras').loaders.multi { name, "mason-lspconfig.nvim" }
       require('mason').setup()
       require('mason-lspconfig').setup { automatic_installation = true, }
     end,

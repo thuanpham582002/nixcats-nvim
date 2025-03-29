@@ -9,10 +9,10 @@ return {
     -- keys = "",
     -- colorscheme = "",
     load = function (name)
-      require("birdee.utils").multi_packadd({
+      require("lzextras").loaders.multi {
         name,
         "nvim-treesitter-textobjects",
-      })
+      }
     end,
     after = function (_)
 

@@ -84,23 +84,6 @@ function M.authTerminal(api_client_secret)
   return session, ok
 end
 
----@param plugin_names string[]|string
-function M.multi_packadd(plugin_names)
-  local names = type(plugin_names) == 'string' and { plugin_names } or plugin_names or {}
-  ---@diagnostic disable-next-line: param-type-mismatch
-  for _, name in ipairs(names) do
-    ---@diagnostic disable-next-line: param-type-mismatch
-    vim.cmd.packadd(name)
-  end
-end
-
----packadd + after/plugin
----@type fun(names: string[]|string)
-M.load_w_after = function(name)
-  vim.cmd.packadd(name)
-  vim.cmd.packadd(name .. "/after")
-end
-
 ---@type fun(moduleName: string): any
 function M.lazy_require_funcs(moduleName)
   return setmetatable({}, {
