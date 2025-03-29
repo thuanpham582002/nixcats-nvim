@@ -1,6 +1,6 @@
 inputs: let
   inherit (inputs.nixCats) utils;
-in { pkgs, settings, categories, name, extra, mkNvimPlugin, ... }@packageDef: {
+in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
 
   extraCats = {
     kotlin = [
