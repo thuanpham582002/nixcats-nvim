@@ -281,7 +281,7 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
         lualine-lsp-progress
         lualine-nvim
         gitsigns-nvim
-        marks-nvim
+        # marks-nvim
         nvim-lint
         conform-nvim
         undotree
