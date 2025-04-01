@@ -19,6 +19,7 @@ return {
   {
     "snacks.nvim",
     for_cat = "general",
+    event = { 'DeferredUIEnter' },
     keys = {
       {'<c-\\>', function() Snacks.terminal() end, mode = {'n'}, desc = 'open snacks terminal' },
       {"<leader>_", function() Snacks.lazygit.open() end, mode = {"n"}, desc = 'LazyGit' },
@@ -74,7 +75,6 @@ return {
       { "<leader>ds", pickpick("lsp_symbols"), desc = "LSP Symbols" },
       { "<leader>ws", pickpick("lsp_workspace_symbols"), desc = "LSP Workspace Symbols" },
     },
-    event = { 'DeferredUIEnter' },
     after = function(_)
       -- NOTE: It is faster when you comment them out
       -- rather than disabling them.
