@@ -15,21 +15,6 @@ inputs: let
       body = /*lua*/ ''(os.getenv("HOME") or "/home/birdee") .. "/.birdeevim"'';
     };
     # moduleNamespace = [ defaultPackageName ];
-    # nvimSRC = inputs.neovim-src;
-    # neovim-unwrapped = pkgs.internalvim.nvim;
-    # neovim-unwrapped = inputs.neovim-nightly-overlay.packages.${pkgs.system}.neovim;
-    # neovim-unwrapped = pkgs.neovim-unwrapped.overrideAttrs (prev: {
-    #   preConfigure = pkgs.lib.optionalString pkgs.stdenv.isDarwin ''
-    #     substituteInPlace src/nvim/CMakeLists.txt --replace "    util" ""
-    #   '';
-    #   treesitter-parsers = {};
-    # });
-    # neovim-unwrapped = inputs.neovim-nightly-overlay.packages.${pkgs.system}.neovim.overrideAttrs (prev: {
-    #   preConfigure = pkgs.lib.optionalString pkgs.stdenv.isDarwin ''
-    #     substituteInPlace src/nvim/CMakeLists.txt --replace "    util" ""
-    #   '';
-    #   treesitter-parsers = {};
-    # });
   };
   birdeevim_categories = { pkgs, ... }@misc: {
     AI = true;

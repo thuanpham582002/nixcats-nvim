@@ -25,7 +25,7 @@ inputs: let
     (utils.sanitizedPluginOverlay inputs)
     # add any flake overlays here.
     inputs.neorg-overlay.overlays.default
-    inputs.neovim-nightly-overlay.overlays.default
+    # inputs.neovim-nightly-overlay.overlays.default
     (utils.fixSystemizedOverlay inputs.codeium.overlays
       (system: inputs.codeium.overlays.${system}.default)
     )
