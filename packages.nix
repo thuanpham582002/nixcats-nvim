@@ -5,12 +5,9 @@ inputs: let
     extraName = "birdeevim";
     configDirName = "birdeevim";
     wrapRc = true;
-    withNodeJs = true;
-    withRuby = true;
-    withPython3 = true;
-    viAlias = false;
-    vimAlias = false;
-    gem_path = ./misc_nix/ruby_provider;
+    hosts.node.enable = true;
+    hosts.ruby.enable = true;
+    hosts.python3.enable = true;
     unwrappedCfgPath = utils.n2l.types.inline-unsafe.mk {
       body = /*lua*/ ''(os.getenv("HOME") or "/home/birdee") .. "/.birdeevim"'';
     };

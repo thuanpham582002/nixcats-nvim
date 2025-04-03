@@ -20,7 +20,7 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
   # python.withPackages or lua.withPackages
   # vim.g.python3_host_prog
   # :!nvim-python3
-  extraPython3Packages = {
+  python3.libraries = {
     python = (py:[
       # NOTE: check disabled globally for nvim because they take SO LONG OMG
       py.debugpy
