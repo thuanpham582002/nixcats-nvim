@@ -580,11 +580,11 @@
     "plugins-visual-whitespace": {
       "flake": false,
       "locked": {
-        "lastModified": 1743627560,
-        "narHash": "sha256-P+JtQflODHda0B/ZSVCEvcuIwj5Z6D2S78ieNLlMWLc=",
+        "lastModified": 1743693405,
+        "narHash": "sha256-Nom2zCF0Bm73YXFVTRgIRG9S25LtCfJSMlZoJlAOyEg=",
         "owner": "mcauley-penney",
         "repo": "visual-whitespace.nvim",
-        "rev": "7336006c47ab3675bcac1bf5f2ae26c10c62805a",
+        "rev": "97bb1320f259be56a08b3b33ef335f5865ebf17e",
         "type": "github"
       },
       "original": {
@@ -682,11 +682,11 @@
         "xc": "xc"
       },
       "locked": {
-        "lastModified": 1742906618,
-        "narHash": "sha256-c3x7v5PeMJFADRfImMyEasvlC9WSjqHQxNDg1sgPBfQ=",
+        "lastModified": 1743690769,
+        "narHash": "sha256-3tNj78Tk29FLsJ2jZqjrzVbOiwxNBaKaIeSERNvidSM=",
         "owner": "a-h",
         "repo": "templ",
-        "rev": "f9ca69bfa9090edd5351e7f2bb9919aff6226c08",
+        "rev": "78e130a9d1852a6c0f970e2462676a71adeecf8d",
         "type": "github"
       },
       "original": {
