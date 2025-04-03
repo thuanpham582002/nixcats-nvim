@@ -8,6 +8,7 @@ inputs: let
     hosts.node.enable = true;
     hosts.ruby.enable = true;
     hosts.python3.enable = true;
+    hosts.perl.enable = false;
     unwrappedCfgPath = utils.n2l.types.inline-unsafe.mk {
       body = /*lua*/ ''(os.getenv("HOME") or "/home/birdee") .. "/.birdeevim"'';
     };
@@ -152,7 +153,7 @@ in {
   notesVim = { pkgs, ... }@args: {
     settings = birdeevim_settings args // {
       configDirName = "birdeevim";
-      withRuby = false;
+      hosts.ruby.enable = false;
       extraName = "notesVim";
       aliases = [ "note" ];
     };
