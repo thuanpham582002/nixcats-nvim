@@ -197,9 +197,10 @@ in {
       wrapRc = false;
       aliases = null;
       extraName = "minimalVim";
-      withNodeJs = false;
-      withRuby = false;
-      withPython3 = false;
+      hosts.node.enable = false;
+      hosts.ruby.enable = false;
+      hosts.perl.enable = false;
+      hosts.python3.enable = false;
     };
     categories = {};
     extra = {};
