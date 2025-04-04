@@ -1,6 +1,6 @@
 inputs: let
   inherit (inputs.nixCats) utils;
-  birdeevim_settings = { pkgs, ... }@misc: {
+  birdeevim_settings = { pkgs, name, ... }@misc: {
     # so that it finds my ai auths in ~/.cache/birdeevim
     extraName = "birdeevim";
     configDirName = "birdeevim";
@@ -13,6 +13,10 @@ inputs: let
       body = /*lua*/ ''(os.getenv("HOME") or "/home/birdee") .. "/.birdeevim"'';
     };
     # moduleNamespace = [ defaultPackageName ];
+    hosts.neovide.path = {
+      value = "${pkgs.neovide}/bin/neovide";
+      args = [ "--add-flags" "--neovim-bin ${placeholder "out"}/bin/${name}" ];
+    };
   };
   birdeevim_categories = { pkgs, ... }@misc: {
     AI = true;
