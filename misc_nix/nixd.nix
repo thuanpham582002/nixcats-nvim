@@ -38,7 +38,7 @@ nixpkgs: type: path: let
 in lib.pipe type [
   (type: allTargets.${type})
   (map getCfgs)
-  (builtins.foldl' (a: v: a ++ v) [])
+  builtins.concatLists
   (builtins.foldl' recMergePickDeeper {})
   (v: v.options or {})
 ]
