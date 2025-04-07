@@ -20,6 +20,7 @@ return {
     "snacks.nvim",
     for_cat = "general",
     event = { 'DeferredUIEnter' },
+    load = function()end,
     keys = {
       {'<c-\\>', function() Snacks.terminal() end, mode = {'n'}, desc = 'open snacks terminal' },
       {"<leader>_", function() Snacks.lazygit.open() end, mode = {"n"}, desc = 'LazyGit' },
