@@ -140,7 +140,7 @@ return {
               opts = {
                 cmp_name = 'codeium',
               },
-              score_offset = 50,
+              score_offset = 39,
             },
             cmp_cmdline = {
               name = 'cmp_cmdline',
