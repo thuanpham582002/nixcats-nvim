@@ -233,7 +233,9 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       lazydev-nvim
     ];
     AI = [
-      codeium-nvim
+      minuet-ai-nvim
+      codecompanion-nvim
+      # windsurf-nvim
     ];
     debug = [
       nvim-dap
@@ -252,25 +254,32 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       pkgs.neovimPlugins.hlargs
       pkgs.neovimPlugins.visual-whitespace
     ];
+    blink = with pkgs.vimPlugins; [
+      luasnip
+      cmp-cmdline
+      blink-cmp
+      blink-compat
+      colorful-menu-nvim
+    ];
+    nvim-cmp = [
+      # cmp stuff
+      nvim-cmp
+      luasnip
+      cmp_luasnip
+      cmp-buffer
+      cmp-path
+      cmp-nvim-lua
+      cmp-nvim-lsp
+      friendly-snippets
+      cmp-cmdline
+      cmp-nvim-lsp-signature-help
+      cmp-cmdline-history
+      lspkind-nvim
+    ];
     general = with pkgs.neovimPlugins; {
       markdown = [
         render-markdown-nvim
         markdown-preview-nvim
-      ];
-      cmp = [
-        # cmp stuff
-        nvim-cmp
-        luasnip
-        cmp_luasnip
-        cmp-buffer
-        cmp-path
-        cmp-nvim-lua
-        cmp-nvim-lsp
-        friendly-snippets
-        cmp-cmdline
-        cmp-nvim-lsp-signature-help
-        cmp-cmdline-history
-        lspkind-nvim
       ];
       core = [
         nvim-treesitter-textobjects

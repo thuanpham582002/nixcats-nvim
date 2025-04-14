@@ -48,11 +48,7 @@ return {
   {
     "lspkind.nvim",
     dep_of = { "nvim-cmp" },
-    load = load_w_after,
-  },
-  {
-    "clangd_extensions.nvim",
-    dep_of = { "nvim-lspconfig", "nvim-cmp" },
+    -- load = load_w_after,
   },
   {
     "luasnip",
@@ -68,7 +64,7 @@ return {
     on_require = { "cmp" },
     -- ft = "",
     -- keys = "",
-    dep_of = { "codeium.nvim" },
+    dep_of = { "codeium.nvim", "minuet-ai.nvim" },
     -- colorscheme = "",
     after = function (_)
       -- [[ Configure nvim-cmp ]]
@@ -116,6 +112,7 @@ return {
 
             menu = {
               codeium = '[AI]',
+              minuet = '[AI]',
               buffer = '[BUF]',
               nvim_lsp = '[LSP]',
               nvim_lsp_signature_help = '[LSP]',
@@ -132,7 +129,9 @@ return {
           end,
         },
         mapping = cmp.mapping.preset.insert(key_mappings),
-
+        -- performance = {
+        --     fetching_timeout = 2000,
+        -- },
         sources = cmp.config.sources {
           -- The insertion order influences the priority of the sources
           { name = 'nvim_lsp' --[[ , keyword_length = 3 ]] },
@@ -141,7 +140,8 @@ return {
           { name = 'nvim_lsp_signature_help' --[[ , keyword_length = 3  ]] },
           -- { name = 'cmp_tabnine' },
           { name = 'path' },
-          { name = 'codeium' },
+          { name = 'minuet' },
+          -- { name = 'codeium' },
           { name = 'buffer' },
         },
         enabled = function()
@@ -170,7 +170,8 @@ return {
           { name = 'nvim_lsp_signature_help' --[[ , keyword_length = 3  ]] },
           -- { name = 'cmp_tabnine' },
           { name = 'path' },
-          { name = 'codeium' },
+          { name = 'minuet' },
+          -- { name = 'codeium' },
           { name = 'buffer' },
         },
         {

@@ -26,9 +26,9 @@ inputs: let
     # add any flake overlays here.
     inputs.neorg-overlay.overlays.default
     # inputs.neovim-nightly-overlay.overlays.default
-    (utils.fixSystemizedOverlay inputs.codeium.overlays
-      (system: inputs.codeium.overlays.${system}.default)
-    )
+    # (utils.fixSystemizedOverlay inputs.windsurf.overlays
+    #   (system: inputs.windsurf.overlays.${system}.default)
+    # )
   ];
 in
 builtins.attrValues (builtins.mapAttrs (name: value: (value name inputs)) overlaySet) ++ extra

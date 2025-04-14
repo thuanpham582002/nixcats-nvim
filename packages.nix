@@ -30,6 +30,8 @@ inputs: let
     otter = true;
     bash = true;
     notes = true;
+    nvim-cmp = false;
+    blink = true;
     neonixdev = true;
     java = true;
     web = true;
@@ -54,19 +56,19 @@ inputs: let
         body = ''return [[import ${./misc_nix/nixd.nix} ${pkgs.path} "]] .. type .. [[" ]] .. (path or "./.")'';
       };
     };
-    AIextras = {
-      codeium_token_uuid = "notes d9124a28-89ad-4335-b84f-b0c20135b048";
-      # NOTE: codeium table gets deep extended into codeium settings.
-      codeium = {
-        tools = {
-          uname = "${pkgs.coreutils}/bin/uname";
-          uuidgen = "${pkgs.util-linux}/bin/uuidgen";
-          curl = "${pkgs.curl}/bin/curl";
-          gzip = "${pkgs.gzip}/bin/gzip";
-          language_server = "${inputs.codeium.packages.${pkgs.system}.codeium-lsp}/bin/codeium-lsp";
-        };
-      };
-    };
+    # AIextras = {
+    #   codeium_token_uuid = "notes d9124a28-89ad-4335-b84f-b0c20135b048";
+    #   # codeium table gets deep extended into codeium settings.
+    #   codeium = {
+    #     tools = {
+    #       uname = "${pkgs.coreutils}/bin/uname";
+    #       uuidgen = "${pkgs.util-linux}/bin/uuidgen";
+    #       curl = "${pkgs.curl}/bin/curl";
+    #       gzip = "${pkgs.gzip}/bin/gzip";
+    #       language_server = "${inputs.windsurf.packages.${pkgs.system}.codeium-lsp}/bin/codeium-lsp";
+    #     };
+    #   };
+    # };
   };
 in {
   birdeevim = args: {
@@ -112,6 +114,8 @@ in {
       # aliases = [ "vigo" ];
     };
     categories = {
+      nvim-cmp = false;
+      blink = true;
       theme = true;
       other = true;
       debug = true;
@@ -169,6 +173,8 @@ in {
       general = true;
       neonixdev = true;
       vimagePreview = true;
+      nvim-cmp = false;
+      blink = true;
       AI = true;
       lspDebugMode = false;
       theme = true;

@@ -3,6 +3,12 @@ if catUtils.isNixCats and nixCats('lspDebugMode') then
   vim.lsp.set_log_level("debug")
 end
 local get_nixd_opts = nixCats.extra("nixdExtras.get_configs")
+require('lze').h.lsp.set_ft_fallback(function(name)
+  error(name .. " not provided filetype")
+  -- NOTE: gets filetypes = {}, for server name in + register and puts it into the + register, overwriting server name.
+  -- :lua vim.fn.setreg([[+]],"filetypes = " .. vim.inspect(require('lspconfig.configs.' .. vim.fn.getreg("+")).default_config.filetypes) .. ",")
+  return dofile(nixCats.pawsible({ "allPlugins", "opt", "nvim-lspconfig" }) .. "/lsp/" .. name .. ".lua").filetypes or {}
+end)
 return {
   {
     "mason.nvim",
@@ -19,19 +25,30 @@ return {
     for_cat = "general.core",
     on_require = { "lspconfig" },
     lsp = function(plugin)
-      require('lspconfig')[plugin.name].setup(vim.tbl_extend("force",{
-        capabilities = require('birdee.LSPs.caps_and_attach').get_capabilities(plugin.name),
-        on_attach = require('birdee.LSPs.caps_and_attach').on_attach,
-      }, plugin.lsp or {}))
+      vim.lsp.config(plugin.name, plugin.lsp or {})
+      vim.lsp.enable(plugin.name)
     end,
-    -- before = function(plugin)
-    --   vim.api.nvim_create_autocmd('LspAttach', {
-    --     group = vim.api.nvim_create_augroup('nixCats-lsp-attach', { clear = true }),
-    --     callback = function(event)
-    --       require('birdee.LSPs.caps_and_attach').on_attach(vim.lsp.get_client_by_id(event.data.client_id), event.buf)
-    --     end,
-    --   })
-    -- end,
+    before = function(plugin)
+      if nixCats('nvim-cmp') then
+        local capabilities = vim.tbl_deep_extend('force', vim.lsp.protocol.make_client_capabilities(), require('cmp_nvim_lsp').default_capabilities())
+        capabilities.textDocument.completion.completionItem.snippetSupport = true
+        vim.lsp.config('*', {
+          capabilities = capabilities,
+        })
+      end
+      if nixCats('blink') then
+        local capabilities = {}
+        vim.lsp.config('*', {
+          capabilities = require('blink.cmp').get_lsp_capabilities(capabilities),
+        })
+      end
+      vim.api.nvim_create_autocmd('LspAttach', {
+        group = vim.api.nvim_create_augroup('nixCats-lsp-attach', { clear = true }),
+        callback = function(event)
+          require('birdee.LSPs.on_attach')(vim.lsp.get_client_by_id(event.data.client_id), event.buf)
+        end,
+      })
+    end,
   },
   {
     "lazydev.nvim",
@@ -46,6 +63,11 @@ return {
         },
       })
     end,
+  },
+  {
+    "clangd_extensions.nvim",
+    for_cat = 'C',
+    dep_of = { "nvim-lspconfig", "blink.cmp", "nvim-cmp" },
   },
   {
     "lua_ls",
@@ -83,7 +105,7 @@ return {
     enabled = catUtils.isNixCats and (nixCats('nix') or nixCats('neonixdev')),
     after = function(_)
       vim.api.nvim_create_user_command("StartNilLSP", function()
-        require('lspconfig').nil_ls.setup { capabilities = require('birdee.LSPs.caps_and_attach').get_capabilities('nil_ls') }
+        vim.lsp.enable("nil_ls")
       end, { desc = 'Run nil-ls (when you really need docs for the builtins and nixd refuse)' })
     end,
     lsp = {
@@ -242,6 +264,7 @@ return {
     "tailwindcss",
     for_cat = "web.tailwindcss",
     lsp = {
+      filetypes = { "aspnetcorerazor", "astro", "astro-markdown", "blade", "clojure", "django-html", "htmldjango", "edge", "eelixir", "elixir", "ejs", "erb", "eruby", "gohtml", "gohtmltmpl", "haml", "handlebars", "hbs", "html", "htmlangular", "html-eex", "heex", "jade", "leaf", "liquid", "markdown", "mdx", "mustache", "njk", "nunjucks", "php", "razor", "slim", "twig", "css", "less", "postcss", "sass", "scss", "stylus", "sugarss", "javascript", "javascriptreact", "reason", "rescript", "typescript", "typescriptreact", "vue", "svelte", "templ" },
     },
   },
   {
@@ -264,10 +287,12 @@ return {
     lsp = {
       filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
       -- unneded thanks to clangd_extensions-nvim I think
-      -- clangd_config = {
-      --   init_options = {
-      --     compilationDatabasePath="./build",
-      --   },
+      -- settings = {
+      --   clangd_config = {
+      --     init_options = {
+      --       compilationDatabasePath="./build",
+      --     },
+      --   }
       -- }
     },
   },
@@ -282,6 +307,7 @@ return {
     "htmx",
     for_cat = "web.HTMX",
     lsp = {
+      filetypes = { "aspnetcorerazor", "astro", "astro-markdown", "blade", "clojure", "django-html", "htmldjango", "edge", "eelixir", "elixir", "ejs", "erb", "eruby", "gohtml", "gohtmltmpl", "haml", "handlebars", "hbs", "html", "htmlangular", "html-eex", "heex", "jade", "leaf", "liquid", "markdown", "mdx", "mustache", "njk", "nunjucks", "php", "razor", "slim", "twig", "javascript", "javascriptreact", "reason", "rescript", "typescript", "typescriptreact", "vue", "svelte", "templ" },
     },
   },
   {
@@ -295,6 +321,7 @@ return {
     "eslint",
     for_cat = "web.HTML",
     lsp = {
+      filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx", "vue", "svelte", "astro" },
     },
   },
   {
@@ -325,6 +352,3 @@ return {
     },
   },
 }
-
--- NOTE: gets filetypes = {}, for server name in + register and puts it into the + register, overwriting server name.
--- :lua vim.fn.setreg([[+]],"filetypes = " .. vim.inspect(require('lspconfig.configs.' .. vim.fn.getreg("+")).default_config.filetypes) .. ",")

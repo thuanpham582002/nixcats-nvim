@@ -56,7 +56,8 @@ end
 return {
   { import = "birdee.plugins.snacks", },
   { import = "birdee.plugins.nestsitter", },
-  { import = "birdee.plugins.completion", enabled = nixCats('general.cmp'), },
+  { import = "birdee.plugins.nvim-cmp", enabled = nixCats('nvim-cmp') or false, },
+  { import = "birdee.plugins.blink", enabled = nixCats('blink') or false, },
   { import = "birdee.plugins.grapple", },
   { import = "birdee.plugins.lualine", },
   { import = "birdee.plugins.gutter", },

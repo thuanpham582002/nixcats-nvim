@@ -14,7 +14,7 @@ require('lze').register_handlers {
 require('lze').load {
   { import = "birdee.plugins" },
   { import = "birdee.LSPs" },
-  { import = "birdee.debug", enabled = nixCats('debug') },
+  { import = "birdee.debug", enabled = nixCats('debug') or false },
   { import = "birdee.format" },
   { import = "birdee.lint" },
 }
