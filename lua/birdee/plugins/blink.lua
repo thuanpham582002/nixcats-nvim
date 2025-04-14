@@ -56,17 +56,13 @@ return {
             return {}
           end,
           keymap = {
-            preset = nixCats('tabCompletionKeys') and 'cmdline' or 'inherit'
+            preset = nixCats('tabCompletionKeys') and 'cmdline' or 'inherit',
+            ['<Tab>'] = { 'select_next', 'fallback_to_mappings' },
+            ['<S-Tab>'] = {'select_prev','fallback_to_mappings' },
           },
         },
         term = {
-          enabled = true,
-          keymap = {
-            preset = 'inherit',
-            ['<Tab>'] = { 'select_next', 'fallback_to_mappings' },
-            ['<S-Tab>'] = {'select_prev','fallback_to_mappings' },
-            ['<CR>'] = { 'accept' },
-          },
+          enabled = false,
         },
         fuzzy = {
           sorts = {
