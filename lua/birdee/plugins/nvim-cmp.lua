@@ -51,10 +51,6 @@ return {
     -- load = load_w_after,
   },
   {
-    "clangd_extensions.nvim",
-    dep_of = { "nvim-lspconfig", "nvim-cmp" },
-  },
-  {
     "luasnip",
     dep_of = { "nvim-cmp" },
     after = function (_)

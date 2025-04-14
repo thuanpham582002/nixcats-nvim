@@ -59,6 +59,11 @@ return {
     end,
   },
   {
+    "clangd_extensions.nvim",
+    for_cat = 'C',
+    dep_of = { "nvim-lspconfig", "blink.cmp", "nvim-cmp" },
+  },
+  {
     "lua_ls",
     enabled = nixCats('lua') or nixCats('neonixdev'),
     lsp = {
