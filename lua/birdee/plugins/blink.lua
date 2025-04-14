@@ -19,8 +19,6 @@ return {
           ['<M-c>'] = { 'show', 'show_documentation', 'hide_documentation' },
           ['<M-h>'] = { 'hide' },
           ['<M-l>'] = { 'select_and_accept' },
-          ['<Up>'] = { 'select_prev', 'fallback' },
-          ['<Down>'] = { 'select_next', 'fallback' },
           ['<M-k>'] = { 'select_prev', 'fallback_to_mappings' },
           ['<M-j>'] = { 'select_next', 'fallback_to_mappings' },
           ['<C-p>'] = { 'scroll_documentation_up', 'fallback' },
