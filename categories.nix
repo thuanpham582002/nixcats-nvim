@@ -111,7 +111,7 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       ];
     };
     rust = [
-      (extra.rust.toolchain or inputs.fenix.packages.${system}.latest.toolchain)
+      (extra.rust.toolchain or inputs.fenix.packages.${system}.stable.toolchain)
       rustup
       llvmPackages.bintools
       lldb
