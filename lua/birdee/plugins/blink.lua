@@ -1,4 +1,14 @@
+local load_w_after = require("lzextras").loaders.with_after
 return {
+  {
+    "cmp-cmdline",
+    on_plugin = { "blink.cmp" },
+    load = load_w_after,
+  },
+  {
+    "blink.compat",
+    dep_of = { "cmp-cmdline" },
+  },
   {
     "luasnip",
     dep_of = { "blink.cmp" },
@@ -34,6 +44,14 @@ return {
               auto_show = true,
             },
           },
+          sources = function()
+            local type = vim.fn.getcmdtype()
+            -- Search forward and backward
+            if type == '/' or type == '?' then return { 'buffer' } end
+            -- Commands
+            if type == ':' or type == '@' then return { 'cmdline', 'cmp_cmdline' } end
+            return {}
+          end,
           keymap = {
             preset = nixCats('tabCompletionKeys') and 'cmdline' or 'inherit'
           },
@@ -95,6 +113,13 @@ return {
               -- since minuet.config.request_timeout is in seconds
               timeout_ms = 3000,
               score_offset = 50, -- Gives minuet higher priority among suggestions
+            },
+            cmp_cmdline = {
+              name = 'cmp_cmdline',
+              module = 'blink.compat.source',
+              opts = {
+                cmp_name = 'cmdlne',
+              },
             },
           },
         },

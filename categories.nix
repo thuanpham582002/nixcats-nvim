@@ -256,7 +256,9 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
     ];
     blink = with pkgs.vimPlugins; [
       luasnip
+      cmp-cmdline
       blink-cmp
+      blink-compat
     ];
     nvim-cmp = [
       # cmp stuff
