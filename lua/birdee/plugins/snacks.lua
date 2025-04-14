@@ -39,7 +39,6 @@ return {
       { "<leader>fp", pickpick("projects"), desc = "Projects" },
       { "<leader>fr", pickpick("recent"), desc = "Recent" },
       -- git
-      { "<leader>gl", pickpick("git_log"), desc = "Git Log" },
       { "<leader>gL", pickpick("git_log_line"), desc = "Git Log Line" },
       { "<leader>gd", pickpick("git_diff"), desc = "Git Diff (Hunks)" },
       -- Grep
