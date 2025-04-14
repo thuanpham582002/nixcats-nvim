@@ -58,7 +58,7 @@ inputs: let
     };
     # AIextras = {
     #   codeium_token_uuid = "notes d9124a28-89ad-4335-b84f-b0c20135b048";
-    #   # NOTE: codeium table gets deep extended into codeium settings.
+    #   # codeium table gets deep extended into codeium settings.
     #   codeium = {
     #     tools = {
     #       uname = "${pkgs.coreutils}/bin/uname";
