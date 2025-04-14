@@ -36,12 +36,6 @@ return {
           capabilities = capabilities,
         })
       end
-      if nixCats('blink') then
-        local capabilities = {}
-        vim.lsp.config('*', {
-          capabilities = require('blink.cmp').get_lsp_capabilities(capabilities),
-        })
-      end
       vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('nixCats-lsp-attach', { clear = true }),
         callback = function(event)
