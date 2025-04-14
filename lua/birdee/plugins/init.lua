@@ -56,7 +56,8 @@ end
 return {
   { import = "birdee.plugins.snacks", },
   { import = "birdee.plugins.nestsitter", },
-  { import = "birdee.plugins.completion", enabled = nixCats('general.cmp'), },
+  { import = "birdee.plugins.nvim-cmp", enabled = nixCats('nvim-cmp') or false, },
+  { import = "birdee.plugins.blink", enabled = nixCats('blink') or false, },
   { import = "birdee.plugins.grapple", },
   { import = "birdee.plugins.lualine", },
   { import = "birdee.plugins.gutter", },
@@ -65,6 +66,20 @@ return {
   { import = "birdee.plugins.notes", },
   { import = "birdee.plugins.which-key", },
   { import = "birdee.plugins.AI", },
+  {
+    "lazydev.nvim",
+    for_cat = "neonixdev",
+    cmd = { "LazyDev" },
+    ft = "lua",
+    after = function(_)
+      require('lazydev').setup({
+        library = {
+          { words = { "uv", "vim%.uv", "vim%.loop" }, path = (nixCats.pawsible({"allPlugins", "start", "luvit-meta"}) or "luvit-meta") .. "/library" },
+          { words = { "nixCats" }, path = (nixCats.nixCatsPath or "") .. '/lua' },
+        },
+      })
+    end,
+  },
   {
     "markdown-preview.nvim",
     for_cat = "general.markdown",

@@ -185,6 +185,7 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       plenary-nvim
       mini-nvim
       pkgs.neovimPlugins.snacks-nvim
+      pkgs.neovimPlugins.nvim-lspconfig
     ];
     other = [
       nvim-spectre
@@ -233,7 +234,9 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       lazydev-nvim
     ];
     AI = [
-      codeium-nvim
+      minuet-ai-nvim
+      codecompanion-nvim
+      # codeium-nvim
     ];
     debug = [
       nvim-dap
@@ -252,32 +255,34 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       pkgs.neovimPlugins.hlargs
       pkgs.neovimPlugins.visual-whitespace
     ];
+    blink = with pkgs.vimPlugins; [
+      blink-cmp
+    ];
+    nvim-cmp = [
+      # cmp stuff
+      nvim-cmp
+      luasnip
+      cmp_luasnip
+      cmp-buffer
+      cmp-path
+      cmp-nvim-lua
+      cmp-nvim-lsp
+      friendly-snippets
+      cmp-cmdline
+      cmp-nvim-lsp-signature-help
+      cmp-cmdline-history
+      lspkind-nvim
+    ];
     general = with pkgs.neovimPlugins; {
       markdown = [
         render-markdown-nvim
         markdown-preview-nvim
-      ];
-      cmp = [
-        # cmp stuff
-        nvim-cmp
-        luasnip
-        cmp_luasnip
-        cmp-buffer
-        cmp-path
-        cmp-nvim-lua
-        cmp-nvim-lsp
-        friendly-snippets
-        cmp-cmdline
-        cmp-nvim-lsp-signature-help
-        cmp-cmdline-history
-        lspkind-nvim
       ];
       core = [
         nvim-treesitter-textobjects
         nvim-treesitter.withAllGrammars
         vim-rhubarb
         vim-fugitive
-        pkgs.neovimPlugins.nvim-lspconfig
         lualine-lsp-progress
         lualine-nvim
         gitsigns-nvim

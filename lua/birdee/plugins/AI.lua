@@ -1,7 +1,79 @@
 local catUtils = require('nixCatsUtils')
 return {
   {
+    "codecompanion.nvim",
+    cmd = {
+      "CodeCompanion",
+      "CodeCompanionCmd",
+      "CodeCompanionChat",
+      "CodeCompanionAction",
+    },
+    after = function()
+      require("codecompanion").setup()
+    end,
+  },
+  {
+    "minuet-ai.nvim",
+    event = "InsertEnter",
+    for_cat = { cat = 'AI', default = false },
+    cmd = { "Minuet" },
+    after = function()
+      require('minuet').setup {
+        provider = 'gemini',
+        cmp = {
+          enable_auto_complete = true,
+        },
+        blink = {
+          enable_auto_complete = true,
+        },
+        n_completions = 1, -- recommend for local model for resource saving
+        -- I recommend beginning with a small context window size and incrementally
+        -- expanding it, depending on your local computing power. A context window
+        -- of 512, serves as an good starting point to estimate your computing
+        -- power. Once you have a reliable estimate of your local computing power,
+        -- you should adjust the context window to a larger value.
+        context_window = 512,
+        -- request_timeout = 5,
+        -- notify = "debug",
+        provider_options = {
+          gemini = {
+            model = 'gemini-2.0-flash',
+            api_key = 'GEMINI_API_KEY',
+            optional = {
+              generationConfig = {
+                maxOutputTokens = 256,
+              },
+              safetySettings = {
+                {
+                  -- HARM_CATEGORY_HATE_SPEECH,
+                  -- HARM_CATEGORY_HARASSMENT
+                  -- HARM_CATEGORY_SEXUALLY_EXPLICIT
+                  category = 'HARM_CATEGORY_DANGEROUS_CONTENT',
+                  -- BLOCK_NONE
+                  threshold = 'BLOCK_ONLY_HIGH',
+                },
+              },
+            },
+          },
+          openai_fim_compatible = {
+            api_key = 'TERM',
+            name = 'Ollama',
+            stream = true,
+            end_point = 'http://localhost:11434/v1/completions',
+            model = 'qwen2.5-coder:7b',
+            optional = {
+              max_tokens = nil,
+              top_p = nil,
+              stop = nil,
+            },
+          },
+        },
+      }
+    end,
+  },
+  {
     "codeium.nvim",
+    enabled = false,
     for_cat = { cat = 'AI', default = false },
     cmd = { "Codeium" },
     event = "InsertEnter",

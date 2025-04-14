@@ -1,6 +1,6 @@
 local M ={}
 function M.setupJDTLS()
-  if vim.g.vscode ~= nil or not nixCats('otter') or not require('nixCatsUtils').isNixCats then
+  if vim.g.vscode ~= nil or not require('nixCatsUtils').isNixCats then
     return
   end
   vim.cmd([[packadd nvim-jdtls]])
@@ -99,8 +99,6 @@ function M.setupJDTLS()
       "-data",
       workspace_dir,
     },
-
-    capabilities = require('birdee.LSPs.caps_and_attach').get_capabilities(),
 
     -- 💀
     -- This is the default if not provided, you can remove it. Or adjust as needed.

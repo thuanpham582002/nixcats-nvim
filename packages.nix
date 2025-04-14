@@ -30,6 +30,7 @@ inputs: let
     otter = true;
     bash = true;
     notes = true;
+    blink = true;
     neonixdev = true;
     java = true;
     web = true;
@@ -112,6 +113,7 @@ in {
       # aliases = [ "vigo" ];
     };
     categories = {
+      nvim-cmp = true;
       theme = true;
       other = true;
       debug = true;
@@ -169,6 +171,7 @@ in {
       general = true;
       neonixdev = true;
       vimagePreview = true;
+      nvim-cmp = true;
       AI = true;
       lspDebugMode = false;
       theme = true;
