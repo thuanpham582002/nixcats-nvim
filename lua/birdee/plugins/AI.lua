@@ -67,7 +67,6 @@ return {
     "minuet-ai.nvim",
     event = "InsertEnter",
     for_cat = { cat = 'AI.minuet', default = false },
-    on_plugin = "blink.cmp",
     cmd = { "Minuet" },
     after = function()
       require('minuet').setup {
