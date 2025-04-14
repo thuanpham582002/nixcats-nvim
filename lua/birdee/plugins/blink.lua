@@ -89,7 +89,7 @@ return {
           menu = {
             draw = {
               columns = {
-                { "label", "label_description", gap = 1 }, { "kind", "source_id" }
+                { "label", "label_description", gap = 1 }, { "kind" }
               },
               treesitter = { 'lsp' },
               components = {
