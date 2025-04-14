@@ -132,7 +132,7 @@ return {
               name = 'cmp_cmdline',
               module = 'blink.compat.source',
               opts = {
-                cmp_name = 'cmdlne',
+                cmp_name = 'cmdline',
               },
             },
           },
