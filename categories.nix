@@ -194,7 +194,7 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       luvit-meta
     ];
     rust = [
-      rustaceanvim
+      inputs.rustaceanvim.packages.${system}.default
     ];
     neonixdev = [
       luvit-meta
