@@ -99,7 +99,7 @@ return {
     enabled = catUtils.isNixCats and (nixCats('nix') or nixCats('neonixdev')),
     after = function(_)
       vim.api.nvim_create_user_command("StartNilLSP", function()
-        vim.lsp.enable("nil_ls")
+        vim.lsp.start(vim.lsp.config.nil_ls)
       end, { desc = 'Run nil-ls (when you really need docs for the builtins and nixd refuse)' })
     end,
     lsp = {
