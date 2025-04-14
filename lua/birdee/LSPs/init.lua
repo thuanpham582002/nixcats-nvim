@@ -198,12 +198,9 @@ local servers = {
   },
 }
 local function enable_with_defaults(name, config)
-  vim.lsp.config[name] = vim.tbl_extend("force", vim.lsp.config[name] or {}, config or {})
+  vim.lsp.config(name, config)
   vim.lsp.enable(name)
 end
 for name, config in pairs(servers) do
   enable_with_defaults(name, config)
 end
-
--- NOTE: gets filetypes = {}, for server name in + register and puts it into the + register, overwriting server name.
--- :lua vim.fn.setreg([[+]],"filetypes = " .. vim.inspect(require('lspconfig.configs.' .. vim.fn.getreg("+")).default_config.filetypes) .. ",")

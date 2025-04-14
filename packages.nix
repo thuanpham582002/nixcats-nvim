@@ -30,7 +30,8 @@ inputs: let
     otter = true;
     bash = true;
     notes = true;
-    blink = true;
+    blink = false;
+    nvim-cmp = true;
     neonixdev = true;
     java = true;
     web = true;
