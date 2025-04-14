@@ -62,7 +62,12 @@ return {
         },
         term = {
           enabled = true,
-          keymap = { preset = 'inherit' },
+          keymap = {
+            preset = 'inherit',
+            ['<Tab>'] = { 'select_next', 'fallback_to_mappings' },
+            ['<S-Tab>'] = {'select_prev','fallback_to_mappings' },
+            ['<CR>'] = { 'accept' },
+          },
         },
         fuzzy = {
           sorts = {
