@@ -38,10 +38,10 @@
       # url = "git+file:/home/birdee/Projects/lzextras";
       flake = false;
     };
-    # windsurf = {
-    #   url = "github:Exafunction/windsurf.nvim";
-    #   # inputs.nixpkgs.follows = "nixpkgsNV";
-    # };
+    windsurf = {
+      url = "github:Exafunction/windsurf.nvim";
+      # inputs.nixpkgs.follows = "nixpkgsNV";
+    };
     "plugins-hlargs" = {
       url = "github:m-demare/hlargs.nvim";
       flake = false;

@@ -126,7 +126,7 @@ return {
             snippets = {
               score_offset = 40,
             },
-            minuet = {
+            minuet = nixCats('AI.minuet') and {
               name = 'minuet',
               module = 'minuet.blink',
               async = true,
@@ -134,6 +134,13 @@ return {
               -- since minuet.config.request_timeout is in seconds
               timeout_ms = 3000,
               score_offset = 50, -- Gives minuet higher priority among suggestions
+            } or {
+              name = 'minuet',
+              module = 'blink.compat.source',
+              opts = {
+                cmp_name = 'codeium',
+              },
+              score_offset = 50,
             },
             cmp_cmdline = {
               name = 'cmp_cmdline',

@@ -232,11 +232,16 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
     neonixdev = [
       lazydev-nvim
     ];
-    AI = [
-      minuet-ai-nvim
-      codecompanion-nvim
-      # windsurf-nvim
-    ];
+    AI = {
+      minuet = [
+        minuet-ai-nvim
+        codecompanion-nvim
+      ];
+      windsurf = [
+        windsurf-nvim
+        codecompanion-nvim
+      ];
+    };
     debug = [
       nvim-dap
       nvim-dap-ui

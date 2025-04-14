@@ -19,7 +19,7 @@ inputs: let
     };
   };
   birdeevim_categories = { pkgs, ... }@misc: {
-    AI = true;
+    AI.windsurf = true;
     vimagePreview = true;
     lspDebugMode = false;
     other = true;
@@ -56,19 +56,19 @@ inputs: let
         body = ''return [[import ${./misc_nix/nixd.nix} ${pkgs.path} "]] .. type .. [[" ]] .. (path or "./.")'';
       };
     };
-    # AIextras = {
-    #   codeium_token_uuid = "notes d9124a28-89ad-4335-b84f-b0c20135b048";
-    #   # codeium table gets deep extended into codeium settings.
-    #   codeium = {
-    #     tools = {
-    #       uname = "${pkgs.coreutils}/bin/uname";
-    #       uuidgen = "${pkgs.util-linux}/bin/uuidgen";
-    #       curl = "${pkgs.curl}/bin/curl";
-    #       gzip = "${pkgs.gzip}/bin/gzip";
-    #       language_server = "${inputs.windsurf.packages.${pkgs.system}.codeium-lsp}/bin/codeium-lsp";
-    #     };
-    #   };
-    # };
+    AIextras = {
+      codeium_token_uuid = "notes d9124a28-89ad-4335-b84f-b0c20135b048";
+      # codeium table gets deep extended into codeium settings.
+      codeium = {
+        tools = {
+          uname = "${pkgs.coreutils}/bin/uname";
+          uuidgen = "${pkgs.util-linux}/bin/uuidgen";
+          curl = "${pkgs.curl}/bin/curl";
+          gzip = "${pkgs.gzip}/bin/gzip";
+          language_server = "${inputs.windsurf.packages.${pkgs.system}.codeium-lsp}/bin/codeium-lsp";
+        };
+      };
+    };
   };
 in {
   birdeevim = args: {
@@ -175,7 +175,7 @@ in {
       vimagePreview = true;
       nvim-cmp = false;
       blink = true;
-      AI = true;
+      AI.windsurf = true;
       lspDebugMode = false;
       theme = true;
     };
