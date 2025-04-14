@@ -90,12 +90,15 @@ return {
               treesitter = { 'lsp' },
               components = {
                 srckind = {
+                  ellipsis = false,
+                  width = { fill = true },
                   text = function (ctx)
                     if ctx.item.source_id == 'minuet' then
                       return "AI"
                     end
                     return ctx.kind
                   end,
+                  highlight = function(ctx) return ctx.kind_hl end,
                 },
                 label = {
                   text = function(ctx)
