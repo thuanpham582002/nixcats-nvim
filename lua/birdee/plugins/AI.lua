@@ -8,17 +8,19 @@ return {
       "CodeCompanionChat",
       "CodeCompanionAction",
     },
+    keys = {
+    },
     after = function()
       require("codecompanion").setup({
         strategies = {
           chat = {
-            adapter = "llama3",
+            adapter = "ollama",
           },
           inline = {
             adapter = "qwen7",
           },
           cmd = {
-            adapter = "llama3",
+            adapter = "ollama",
           }
         },
         adapters = {
