@@ -34,8 +34,8 @@
       flake = false;
     };
     plugins-lzextras = {
-      # url = "github:BirdeeHub/lzextras";
-      url = "git+file:/home/birdee/Projects/lzextras";
+      url = "github:BirdeeHub/lzextras";
+      # url = "git+file:/home/birdee/Projects/lzextras";
       flake = false;
     };
     windsurf = {
