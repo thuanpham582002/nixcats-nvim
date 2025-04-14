@@ -85,10 +85,18 @@ return {
           menu = {
             draw = {
               columns = {
-                { "label", "label_description", gap = 1 }, { "kind" }
+                { "label", "label_description", gap = 1 }, { "srckind" }
               },
               treesitter = { 'lsp' },
               components = {
+                srckind = {
+                  text = function (ctx)
+                    if ctx.item.source_id == 'minuet' then
+                      return "AI"
+                    end
+                    return ctx.kind
+                  end,
+                },
                 label = {
                   text = function(ctx)
                     return require("colorful-menu").blink_components_text(ctx)
