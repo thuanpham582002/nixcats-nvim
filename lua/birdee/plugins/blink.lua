@@ -17,6 +17,10 @@ return {
     end,
   },
   {
+    "colorful-menu.nvim",
+    on_plugin = { "blink.cmp" },
+  },
+  {
     "blink.cmp",
     event = "DeferredUIEnter",
     on_require = "blink",
@@ -84,6 +88,16 @@ return {
                 { "label", "label_description", gap = 1 }, { "kind" }
               },
               treesitter = { 'lsp' },
+              components = {
+                label = {
+                  text = function(ctx)
+                    return require("colorful-menu").blink_components_text(ctx)
+                  end,
+                  highlight = function(ctx)
+                    return require("colorful-menu").blink_components_highlight(ctx)
+                  end,
+                },
+              },
             },
           },
           documentation = {

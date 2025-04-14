@@ -259,6 +259,7 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       cmp-cmdline
       blink-cmp
       blink-compat
+      colorful-menu-nvim
     ];
     nvim-cmp = [
       # cmp stuff
