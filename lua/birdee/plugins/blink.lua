@@ -85,7 +85,7 @@ return {
           menu = {
             draw = {
               columns = {
-                { "label", "label_description", gap = 1 }, { "kind" }
+                { "label", "label_description", gap = 1 }, { "kind", "source_id" }
               },
               treesitter = { 'lsp' },
               components = {
@@ -131,6 +131,7 @@ return {
             cmp_cmdline = {
               name = 'cmp_cmdline',
               module = 'blink.compat.source',
+              score_offset = -100,
               opts = {
                 cmp_name = 'cmdline',
               },
