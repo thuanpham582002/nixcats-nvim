@@ -113,6 +113,9 @@ return {
         },
         sources = {
           default = { 'lsp', 'path', 'snippets', 'buffer', 'minuet' },
+          per_filetype = {
+            codecompanion = { "codecompanion" },
+          },
           providers = {
             path = {
               score_offset = 50,
