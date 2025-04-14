@@ -34,12 +34,12 @@
       flake = false;
     };
     plugins-lzextras = {
-      url = "github:BirdeeHub/lzextras";
-      # url = "git+file:/home/birdee/Projects/lzextras";
+      # url = "github:BirdeeHub/lzextras";
+      url = "git+file:/home/birdee/Projects/lzextras";
       flake = false;
     };
-    codeium = {
-      url = "github:Exafunction/codeium.nvim";
+    windsurf = {
+      url = "github:Exafunction/windsurf.nvim";
       # inputs.nixpkgs.follows = "nixpkgsNV";
     };
     "plugins-hlargs" = {

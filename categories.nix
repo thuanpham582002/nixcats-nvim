@@ -185,7 +185,6 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       plenary-nvim
       mini-nvim
       pkgs.neovimPlugins.snacks-nvim
-      pkgs.neovimPlugins.nvim-lspconfig
     ];
     other = [
       nvim-spectre
@@ -236,7 +235,7 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
     AI = [
       minuet-ai-nvim
       codecompanion-nvim
-      # codeium-nvim
+      # windsurf-nvim
     ];
     debug = [
       nvim-dap
@@ -256,6 +255,7 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       pkgs.neovimPlugins.visual-whitespace
     ];
     blink = with pkgs.vimPlugins; [
+      luasnip
       blink-cmp
     ];
     nvim-cmp = [
@@ -283,6 +283,7 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
         nvim-treesitter.withAllGrammars
         vim-rhubarb
         vim-fugitive
+        pkgs.neovimPlugins.nvim-lspconfig
         lualine-lsp-progress
         lualine-nvim
         gitsigns-nvim
