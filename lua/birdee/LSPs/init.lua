@@ -23,7 +23,6 @@ return {
   {
     "nvim-lspconfig",
     for_cat = "general.core",
-    on_require = { "lspconfig" },
     lsp = function(plugin)
       vim.lsp.config(plugin.name, plugin.lsp or {})
       vim.lsp.enable(plugin.name)
