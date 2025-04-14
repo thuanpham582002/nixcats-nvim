@@ -12,16 +12,32 @@ return {
       require("codecompanion").setup({
         strategies = {
           chat = {
-            adapter = "ollama",
+            adapter = "llama3",
           },
           inline = {
-            adapter = "ollama",
+            adapter = "qwen7",
           },
           cmd = {
-            adapter = "ollama",
+            adapter = "llama3",
           }
         },
         adapters = {
+          qwen7 = function()
+            return require("codecompanion.adapters").extend("ollama", {
+              name = "qwen7", -- Give this adapter a different name to differentiate it from the default ollama adapter
+              schema = {
+                model = {
+                  default = "qwen2.5-coder:7b",
+                },
+                num_ctx = {
+                  default = 16384,
+                },
+                num_predict = {
+                  default = -1,
+                },
+              },
+            })
+          end,
           llama3 = function()
             return require("codecompanion.adapters").extend("ollama", {
               name = "llama3", -- Give this adapter a different name to differentiate it from the default ollama adapter
@@ -85,7 +101,7 @@ return {
             name = 'Ollama',
             stream = true,
             end_point = 'http://localhost:11434/v1/completions',
-            model = 'qwen2.5-coder:14b',
+            model = 'qwen2.5-coder:7b',
             optional = {
               max_tokens = nil,
               top_p = nil,
