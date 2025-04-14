@@ -112,7 +112,7 @@ return {
           preset = 'luasnip',
         },
         sources = {
-          default = { 'lsp', 'path', 'snippets', 'buffer', 'minuet' },
+          default = { 'lsp', 'path', 'snippets', 'buffer', 'minuet', 'omni' },
           per_filetype = {
             codecompanion = { "codecompanion" },
           },
