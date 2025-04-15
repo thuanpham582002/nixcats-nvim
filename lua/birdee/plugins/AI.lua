@@ -73,7 +73,7 @@ return {
       require('minuet').setup {
         provider = 'openai_fim_compatible',
         cmp = {
-          enable_auto_complete = nixCats('nvim-cmp') or false,
+          enable_auto_complete = false,
         },
         blink = {
           enable_auto_complete = nixCats('blink') or false,

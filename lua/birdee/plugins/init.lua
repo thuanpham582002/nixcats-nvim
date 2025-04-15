@@ -62,7 +62,6 @@ return {
   { import = "birdee.plugins.gutter", },
   { import = "birdee.plugins.clipboard", },
   { import = "birdee.plugins.image", },
-  { import = "birdee.plugins.notes", },
   { import = "birdee.plugins.which-key", },
   { import = "birdee.plugins.AI", },
   {

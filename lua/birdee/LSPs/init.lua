@@ -50,7 +50,7 @@ return {
   {
     "clangd_extensions.nvim",
     for_cat = 'C',
-    dep_of = { "nvim-lspconfig", "blink.cmp", "nvim-cmp" },
+    dep_of = { "nvim-lspconfig", "blink.cmp", },
   },
   {
     "lua_ls",

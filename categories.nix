@@ -151,8 +151,6 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       # yapf
       # autopep8
     ];
-    notes = [
-    ];
     C = [
       clang-tools
       valgrind
@@ -216,9 +214,6 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
     ];
     python = [
       nvim-dap-python
-    ];
-    notes = [
-      neorg
     ];
     otter = [
       otter-nvim

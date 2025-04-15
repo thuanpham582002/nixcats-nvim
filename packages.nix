@@ -29,7 +29,6 @@ inputs: let
     general = true;
     otter = true;
     bash = true;
-    notes = true;
     neonixdev = true;
     java = true;
     web = true;
@@ -55,7 +54,7 @@ inputs: let
       };
     };
     AIextras = {
-      gemini_uuid = "bcd197b5-ba11-4c86-8969-b2bd01506654";
+      gemini_uuid = "notes bcd197b5-ba11-4c86-8969-b2bd01506654";
       codeium_token_uuid = "notes d9124a28-89ad-4335-b84f-b0c20135b048";
       # codeium table gets deep extended into codeium settings.
       codeium = {
@@ -87,7 +86,6 @@ in {
     };
     categories = birdeevim_categories args // {
       test = true;
-      notes = true;
       lspDebugMode = true;
     };
     extra = birdeevim_extra args // {
@@ -100,7 +98,6 @@ in {
     };
     categories = birdeevim_categories args // {
       test = true;
-      # notes = true;
       lspDebugMode = true;
     };
     extra = birdeevim_extra args // {
@@ -155,30 +152,6 @@ in {
       AIextras = null;
     };
   };
-  notesVim = { pkgs, ... }@args: {
-    settings = birdeevim_settings args // {
-      configDirName = "birdeevim";
-      hosts.ruby.enable = false;
-      extraName = "notesVim";
-      aliases = [ "note" ];
-    };
-    categories = {
-      notes = true;
-      otter = true;
-      customPlugins = true;
-      other = true;
-      general = true;
-      neonixdev = true;
-      vimagePreview = true;
-      AI.windsurf = true;
-      lspDebugMode = false;
-      theme = true;
-    };
-    extra = birdeevim_extra args // {
-      colorscheme = "tokyonight";
-      javaExtras = null;
-    };
-  };
   portableVim = { pkgs, ... }@args: {
     settings = birdeevim_settings args // {
       extraName = "portableVim";
@@ -186,7 +159,6 @@ in {
     };
     categories = birdeevim_categories args // {
       portableExtras = true;
-      notes = true;
       AI = false;
     };
     extra = birdeevim_extra args // {
