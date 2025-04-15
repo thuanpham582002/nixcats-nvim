@@ -6,6 +6,9 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
     kotlin = [
       [ "java" ]
     ];
+    AI = [
+      [ "AI" "default" ]
+    ];
   };
 
   environmentVariables = {
@@ -225,13 +228,14 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       lazydev-nvim
     ];
     AI = {
+      default = [
+        codecompanion-nvim
+      ];
       minuet = [
         minuet-ai-nvim
-        codecompanion-nvim
       ];
       windsurf = [
         windsurf-nvim
-        codecompanion-nvim
       ];
     };
     debug = [
