@@ -163,21 +163,6 @@ return {
     end,
   },
   {
-    "vim-cmake",
-    for_cat = "C",
-    ft = { "cmake" },
-    cmd = {
-      "CMakeGenerate", "CMakeClean", "CMakeBuild", "CMakeInstall",
-      "CMakeRun", "CMakeTest", "CMakeSwitch", "CMakeOpen", "CMakeClose",
-      "CMakeToggle", "CMakeCloseOverlay", "CMakeStop",
-    },
-    after = function(_)
-      vim.api.nvim_create_user_command('BirdeeCMake', [[:CMake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .<CR>]],
-        { desc = 'Run CMake with compile_commands.json' })
-      vim.cmd [[let g:cmake_link_compile_commands = 1]]
-    end,
-  },
-  {
     "todo-comments.nvim",
     for_cat = "other",
     event = "DeferredUIEnter",

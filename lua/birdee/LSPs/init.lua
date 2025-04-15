@@ -2,7 +2,6 @@ local catUtils = require('nixCatsUtils')
 if catUtils.isNixCats and nixCats('lspDebugMode') then
   vim.lsp.set_log_level("debug")
 end
-local get_nixd_opts = nixCats.extra("nixdExtras.get_configs")
 require('lze').h.lsp.set_ft_fallback(function(name)
   error(name .. " not provided filetype")
   -- NOTE: gets filetypes = {}, for server name in + register and puts it into the + register, overwriting server name.
@@ -33,101 +32,55 @@ return {
       })
     end,
   },
+  { import = "birdee.LSPs.web", },
+  { import = "birdee.LSPs.nixlua", },
   {
-    "lazydev.nvim",
-    for_cat = "neonixdev",
-    cmd = { "LazyDev" },
-    ft = "lua",
+    "clangd_extensions.nvim",
+    for_cat = 'C',
+    dep_of = { "nvim-lspconfig", "blink.cmp", },
+  },
+  {
+    "cmake",
+    for_cat = "C",
+    lsp = {
+      filetypes = { "cmake" },
+    },
+  },
+  {
+    "clangd",
+    for_cat = "C",
+    lsp = {
+      filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
+      -- unneded thanks to clangd_extensions-nvim I think
+      -- settings = {
+      --   clangd_config = {
+      --     init_options = {
+      --       compilationDatabasePath="./build",
+      --     },
+      --   }
+      -- }
+    },
+  },
+  {
+    "vim-cmake",
+    for_cat = "C",
+    ft = { "cmake" },
+    cmd = {
+      "CMakeGenerate", "CMakeClean", "CMakeBuild", "CMakeInstall",
+      "CMakeRun", "CMakeTest", "CMakeSwitch", "CMakeOpen", "CMakeClose",
+      "CMakeToggle", "CMakeCloseOverlay", "CMakeStop",
+    },
     after = function(_)
-      require('lazydev').setup({
-        library = {
-          { words = { "uv", "vim%.uv", "vim%.loop" }, path = (nixCats.pawsible({"allPlugins", "start", "luvit-meta"}) or "luvit-meta") .. "/library" },
-          { words = { "nixCats" }, path = (nixCats.nixCatsPath or "") .. '/lua' },
-        },
-      })
+      vim.api.nvim_create_user_command('BirdeeCMake', [[:CMake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .<CR>]],
+        { desc = 'Run CMake with compile_commands.json' })
+      vim.cmd [[let g:cmake_link_compile_commands = 1]]
     end,
   },
   {
-    "lua_ls",
-    enabled = nixCats('lua') or nixCats('neonixdev'),
+    "gopls",
+    for_cat = "go",
     lsp = {
-      filetypes = { 'lua' },
-      settings = {
-        Lua = {
-          runtime = { version = 'LuaJIT' },
-          formatters = {
-            ignoreComments = true,
-          },
-          signatureHelp = { enabled = true },
-          diagnostics = {
-            globals = { "nixCats", "vim", "make_test" },
-            disable = { 'missing-fields' },
-          },
-          workspace = {
-            checkThirdParty = false,
-            library = {
-              -- '${3rd}/luv/library',
-              -- unpack(vim.api.nvim_get_runtime_file('', true)),
-            },
-          },
-          completion = {
-            callSnippet = 'Replace',
-          },
-          telemetry = { enabled = false },
-        },
-      },
-    },
-  },
-  {
-    "nixd",
-    enabled = catUtils.isNixCats and (nixCats('nix') or nixCats('neonixdev')),
-    after = function(_)
-      vim.api.nvim_create_user_command("StartNilLSP", function()
-        vim.lsp.start(vim.lsp.config.nil_ls)
-      end, { desc = 'Run nil-ls (when you really need docs for the builtins and nixd refuse)' })
-    end,
-    lsp = {
-      filetypes = { 'nix' },
-      settings = {
-        nixd = {
-          nixpkgs = {
-            -- ''import ${pkgs.path} {}''
-            expr = nixCats.extra("nixdExtras.nixpkgs") or "import <nixpkgs> {}",
-          },
-          formatting = {
-            command = { "nixfmt" }
-          },
-          options = {
-            -- (builtins.getFlake "path:${builtins.toString <path_to_system_flake>}").legacyPackages.<system>.nixosConfigurations."<user@host>".options
-            nixos = {
-              expr = get_nixd_opts and get_nixd_opts("nixos", nixCats.extra("nixdExtras.flake-path"))
-            },
-            -- (builtins.getFlake "path:${builtins.toString <path_to_system_flake>}").legacyPackages.<system>.homeConfigurations."<user@host>".options
-            ["home-manager"] = {
-              expr = get_nixd_opts and get_nixd_opts("home-manager", nixCats.extra("nixdExtras.flake-path")) -- <-  if flake-path is nil it will be lsp root dir
-            }
-          },
-          diagnostic = {
-            suppress = {
-              "sema-escaping-with"
-            }
-          }
-        }
-      },
-    },
-  },
-  {
-    "rnix",
-    enabled = not catUtils.isNixCats,
-    lsp = {
-      filetypes = { "nix" },
-    },
-  },
-  {
-    "nil_ls",
-    enabled = not catUtils.isNixCats,
-    lsp = {
-      filetypes = { "nix" },
+      filetypes = { "go", "gomod", "gowork", "gotmpl", "templ", },
     },
   },
   {
@@ -136,24 +89,6 @@ return {
     lsp = {
       filetypes = { "elixir", "eelixir", "heex", "surface" },
       cmd = { "elixir-ls" },
-    }
-  },
-  {
-    "kotlin_language_server",
-    for_cat = 'kotlin',
-    lsp = {
-      filetypes = { 'kotlin' },
-      -- root_pattern = {"settings.gradle", "settings.gradle.kts", 'gradlew', 'mvnw'},
-      settings = {
-        kotlin = {
-          formatters = {
-            ignoreComments = true,
-          },
-          signatureHelp = { enabled = true },
-          workspace = { checkThirdParty = true },
-          telemetry = { enabled = false },
-        },
-      },
     }
   },
   {
@@ -177,13 +112,6 @@ return {
     for_cat = "bash",
     lsp = {
       filetypes = { "bash", "sh" },
-    },
-  },
-  {
-    "gopls",
-    for_cat = "go",
-    lsp = {
-      filetypes = { "go", "gomod", "gowork", "gotmpl", "templ", },
     },
   },
   -- {"pyright", lsp = {}, },
@@ -216,14 +144,14 @@ return {
   },
   {
     "marksman",
-    for_cat = "general.markdown",
+    for_cat = "markdown",
     lsp = {
       filetypes = { "markdown", "markdown.mdx" },
     },
   },
   {
     "harper_ls",
-    for_cat = "general.markdown",
+    for_cat = "markdown",
     lsp = {
       filetypes = { "markdown", "norg" },
       settings = {
@@ -232,106 +160,21 @@ return {
     },
   },
   {
-    "templ",
-    for_cat = "web.templ",
+    "kotlin_language_server",
+    for_cat = 'kotlin',
     lsp = {
-      filetypes = { "templ" },
-    },
-  },
-  {
-    "tailwindcss",
-    for_cat = "web.tailwindcss",
-    lsp = {
-      filetypes = { "aspnetcorerazor", "astro", "astro-markdown", "blade", "clojure", "django-html", "htmldjango", "edge", "eelixir", "elixir", "ejs", "erb", "eruby", "gohtml", "gohtmltmpl", "haml", "handlebars", "hbs", "html", "htmlangular", "html-eex", "heex", "jade", "leaf", "liquid", "markdown", "mdx", "mustache", "njk", "nunjucks", "php", "razor", "slim", "twig", "css", "less", "postcss", "sass", "scss", "stylus", "sugarss", "javascript", "javascriptreact", "reason", "rescript", "typescript", "typescriptreact", "vue", "svelte", "templ" },
-    },
-  },
-  {
-    "ts_ls",
-    for_cat = "web.JS",
-    lsp = {
-      filetypes = {
-        "javascript",
-        "javascriptreact",
-        "javascript.jsx",
-        "typescript",
-        "typescriptreact",
-        "typescript.tsx",
-      },
-    },
-  },
-  {
-    "htmx",
-    for_cat = "web.HTMX",
-    lsp = {
-      filetypes = { "aspnetcorerazor", "astro", "astro-markdown", "blade", "clojure", "django-html", "htmldjango", "edge", "eelixir", "elixir", "ejs", "erb", "eruby", "gohtml", "gohtmltmpl", "haml", "handlebars", "hbs", "html", "htmlangular", "html-eex", "heex", "jade", "leaf", "liquid", "markdown", "mdx", "mustache", "njk", "nunjucks", "php", "razor", "slim", "twig", "javascript", "javascriptreact", "reason", "rescript", "typescript", "typescriptreact", "vue", "svelte", "templ" },
-    },
-  },
-  {
-    "cssls",
-    for_cat = "web.HTML",
-    lsp = {
-      filetypes = { "css", "scss", "less" },
-    },
-  },
-  {
-    "eslint",
-    for_cat = "web.HTML",
-    lsp = {
-      filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx", "vue", "svelte", "astro" },
-    },
-  },
-  {
-    "jsonls",
-    for_cat = "web.HTML",
-    lsp = {
-      filetypes = { "json", "jsonc" },
-    },
-  },
-  {
-    "html",
-    for_cat = "web.HTML",
-    lsp = {
-      filetypes = { 'html', 'twig', 'hbs', 'templ' },
+      filetypes = { 'kotlin' },
+      -- root_pattern = {"settings.gradle", "settings.gradle.kts", 'gradlew', 'mvnw'},
       settings = {
-        html = {
-          format = {
-            templating = true,
-            wrapLineLength = 120,
-            wrapAttributes = 'auto',
+        kotlin = {
+          formatters = {
+            ignoreComments = true,
           },
-          hover = {
-            documentation = true,
-            references = true,
-          },
+          signatureHelp = { enabled = true },
+          workspace = { checkThirdParty = true },
+          telemetry = { enabled = false },
         },
       },
-    },
-  },
-  {
-    "clangd_extensions.nvim",
-    for_cat = 'C',
-    dep_of = { "nvim-lspconfig", "blink.cmp", },
-  },
-  {
-    "cmake",
-    for_cat = "C",
-    lsp = {
-      filetypes = { "cmake" },
-    },
-  },
-  {
-    "clangd",
-    for_cat = "C",
-    lsp = {
-      filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
-      -- unneded thanks to clangd_extensions-nvim I think
-      -- settings = {
-      --   clangd_config = {
-      --     init_options = {
-      --       compilationDatabasePath="./build",
-      --     },
-      --   }
-      -- }
-    },
+    }
   },
 }
