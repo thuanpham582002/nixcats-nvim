@@ -1,3 +1,31 @@
+--NOTE: the category nvim-cmp was:
+--[[
+  nvim-cmp = [
+    nvim-cmp
+    luasnip
+    cmp_luasnip
+    cmp-buffer
+    cmp-path
+    cmp-nvim-lua
+    cmp-nvim-lsp
+    friendly-snippets
+    cmp-cmdline
+    cmp-nvim-lsp-signature-help
+    cmp-cmdline-history
+    lspkind-nvim
+  ];
+]]
+-- NOTE: in before of lsps I had the following
+--[[
+  if nixCats('nvim-cmp') then
+    local capabilities = vim.tbl_deep_extend('force', vim.lsp.protocol.make_client_capabilities(), require('cmp_nvim_lsp').default_capabilities())
+    capabilities.textDocument.completion.completionItem.snippetSupport = true
+    vim.lsp.config('*', {
+      capabilities = capabilities,
+    })
+  end
+]]
+
 local load_w_after = require("lzextras").loaders.with_after
 return {
   {

@@ -1,14 +1,25 @@
--- Telescope is a fuzzy finder that comes with a lot of different things that
--- it can fuzzy find! It's more than just a "file finder", it can search
--- many different aspects of Neovim, your workspace, LSP, and more!
---
--- The easiest way to use telescope, is to start by doing something like:
---  :Telescope help_tags
---
--- After running this command, a window will open up and you're able to
--- type in the prompt window. You'll see a list of help_tags options and
--- a corresponding preview of the help.
---
+-- NOTE: I also had the following in my on_attach
+--[[
+  function on_attach(bufnr)
+    -- we create a function that lets us more easily define mappings specific
+    -- for LSP related items. It sets the mode, buffer and description for us each time.
+
+    local map = function(keys, func, desc, mode)
+      if desc then desc = 'LSP: ' .. desc end
+      vim.keymap.set(mode or 'n', keys, func, { buffer = bufnr, desc = desc })
+    end
+    if nixCats('telescope') then
+      local tele_builtin = require('birdee.utils').lazy_require_funcs('telescope.builtin')
+      map('gr', tele_builtin.lsp_references, '[G]oto [R]eferences')
+      map('gI', tele_builtin.lsp_implementations, '[G]oto [I]mplementation')
+      map('<leader>ds', tele_builtin.lsp_document_symbols, '[D]ocument [S]ymbols')
+      map('<leader>ws', tele_builtin.lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+      map('gy', vim.lsp.buf.type_definition, 'Type [D]efinition')
+      map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+      map('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
+    end
+]]
+
 -- Two important keymaps to use while in telescope are:
 --  - Insert mode: <c-/>
 --  - Normal mode: ?

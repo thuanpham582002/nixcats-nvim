@@ -28,13 +28,6 @@ return {
       vim.lsp.enable(plugin.name)
     end,
     before = function(_)
-      if nixCats('nvim-cmp') then
-        local capabilities = vim.tbl_deep_extend('force', vim.lsp.protocol.make_client_capabilities(), require('cmp_nvim_lsp').default_capabilities())
-        capabilities.textDocument.completion.completionItem.snippetSupport = true
-        vim.lsp.config('*', {
-          capabilities = capabilities,
-        })
-      end
       vim.lsp.config('*', {
         on_attach = require('birdee.LSPs.on_attach'),
       })

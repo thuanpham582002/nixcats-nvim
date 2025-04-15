@@ -8,38 +8,22 @@ return function (_, bufnr)
   -- we create a function that lets us more easily define mappings specific
   -- for LSP related items. It sets the mode, buffer and description for us each time.
 
-  local nmap = function(keys, func, desc)
-    if desc then
-      desc = 'LSP: ' .. desc
-    end
-
-    vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
+  local map = function(keys, func, desc, mode)
+    if desc then desc = 'LSP: ' .. desc end
+    vim.keymap.set(mode or 'n', keys, func, { buffer = bufnr, desc = desc })
   end
 
-  nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
-  nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
-
-
-  if nixCats('telescope') then
-    local tele_builtin = require('birdee.utils').lazy_require_funcs('telescope.builtin')
-    nmap('gr', tele_builtin.lsp_references, '[G]oto [R]eferences')
-    nmap('gI', tele_builtin.lsp_implementations, '[G]oto [I]mplementation')
-    nmap('<leader>ds', tele_builtin.lsp_document_symbols, '[D]ocument [S]ymbols')
-    nmap('<leader>ws', tele_builtin.lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
-    nmap('gy', vim.lsp.buf.type_definition, 'Type [D]efinition')
-    nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
-    nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
-  end
-
+  map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
+  map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
   -- See `:help K` for why this keymap
-  nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
-  nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
+  map('K', vim.lsp.buf.hover, 'Hover Documentation')
+  map('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
 
   -- Lesser used LSP functionality
-  nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
-  nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
-  nmap('<leader>wl', function()
+  map('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
+  map('<leader>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
+  map('<leader>wl', function()
     print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
   end, '[W]orkspace [L]ist Folders')
 

@@ -259,32 +259,17 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       pkgs.neovimPlugins.hlargs
       pkgs.neovimPlugins.visual-whitespace
     ];
-    blink = with pkgs.vimPlugins; [
-      luasnip
-      cmp-cmdline
-      blink-cmp
-      blink-compat
-      colorful-menu-nvim
-    ];
-    nvim-cmp = [
-      # cmp stuff
-      nvim-cmp
-      luasnip
-      cmp_luasnip
-      cmp-buffer
-      cmp-path
-      cmp-nvim-lua
-      cmp-nvim-lsp
-      friendly-snippets
-      cmp-cmdline
-      cmp-nvim-lsp-signature-help
-      cmp-cmdline-history
-      lspkind-nvim
-    ];
     general = with pkgs.neovimPlugins; {
       markdown = [
         render-markdown-nvim
         markdown-preview-nvim
+      ];
+      blink = with pkgs.vimPlugins; [
+        luasnip
+        cmp-cmdline
+        blink-cmp
+        blink-compat
+        colorful-menu-nvim
       ];
       core = [
         nvim-treesitter-textobjects
