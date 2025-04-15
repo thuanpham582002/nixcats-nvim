@@ -1,5 +1,24 @@
 return {
   {
+    "vim-fugitive",
+    for_cat = "general.core",
+    cmd = { "G", "Git", "Gdiffsplit", "Gvdiffsplit", "Gedit", "Gread", "Gwrite",
+      "Ggrep", "GMove", "Glgrep", "GRename", "GDelete", "GRemove", "GBrowse",
+      "DiffviewOpen", "DiffviewClose", "DiffviewToggleFiles", "DiffviewFocusFiles",
+      "DiffviewRefresh", "DiffviewFileHistory", },
+    -- event = "",
+    -- ft = "",
+    -- keys = "",
+    -- colorscheme = "",
+    load = function (name)
+      require("lzextras").loaders.multi {
+        name,
+        "vim-rhubarb",
+        "diffview.nvim",
+      }
+    end,
+  },
+  {
     "gitsigns.nvim",
     for_cat = "general.core",
     event = "DeferredUIEnter",

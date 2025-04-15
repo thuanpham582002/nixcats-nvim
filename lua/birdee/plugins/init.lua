@@ -47,24 +47,10 @@ return {
   { import = "birdee.plugins.blink", },
   { import = "birdee.plugins.grapple", },
   { import = "birdee.plugins.lualine", },
-  { import = "birdee.plugins.gutter", },
+  { import = "birdee.plugins.git", },
   { import = "birdee.plugins.image", },
   { import = "birdee.plugins.which-key", },
   { import = "birdee.plugins.AI", },
-  {
-    "markdown-preview.nvim",
-    for_cat = "general.markdown",
-    cmd = { "MarkdownPreview", "MarkdownPreviewStop", "MarkdownPreviewToggle", },
-    ft = "markdown",
-    keys = {
-      {"<leader>mp", "<cmd>MarkdownPreview <CR>", mode = {"n"}, noremap = true, desc = "markdown preview"},
-      {"<leader>ms", "<cmd>MarkdownPreviewStop <CR>", mode = {"n"}, noremap = true, desc = "markdown preview stop"},
-      {"<leader>mt", "<cmd>MarkdownPreviewToggle <CR>", mode = {"n"}, noremap = true, desc = "markdown preview toggle"},
-    },
-    before = function(_)
-      vim.g.mkdp_auto_close = 0
-    end,
-  },
   {
     "treesj",
     for_cat = "general.core",
@@ -101,13 +87,25 @@ return {
     end,
   },
   {
-    "undotree",
-    for_cat = "general.core",
-    cmd = { "UndotreeToggle", "UndotreeHide", "UndotreeShow", "UndotreeFocus", "UndotreePersistUndo", },
-    keys = { { "<leader>U", "<cmd>UndotreeToggle<CR>", mode = { "n" }, desc = "Undo Tree" }, },
+    "markdown-preview.nvim",
+    for_cat = "general.markdown",
+    cmd = { "MarkdownPreview", "MarkdownPreviewStop", "MarkdownPreviewToggle", },
+    ft = "markdown",
+    keys = {
+      {"<leader>mp", "<cmd>MarkdownPreview <CR>", mode = {"n"}, noremap = true, desc = "markdown preview"},
+      {"<leader>ms", "<cmd>MarkdownPreviewStop <CR>", mode = {"n"}, noremap = true, desc = "markdown preview stop"},
+      {"<leader>mt", "<cmd>MarkdownPreviewToggle <CR>", mode = {"n"}, noremap = true, desc = "markdown preview toggle"},
+    },
     before = function(_)
-      vim.g.undotree_WindowLayout = 1
-      vim.g.undotree_SplitWidth = 40
+      vim.g.mkdp_auto_close = 0
+    end,
+  },
+  {
+    "render-markdown.nvim",
+    for_cat = "general.markdown",
+    ft = "markdown",
+    after = function(_)
+      require('render-markdown').setup({})
     end,
   },
   {
@@ -155,22 +153,13 @@ return {
     end,
   },
   {
-    "vim-fugitive",
+    "undotree",
     for_cat = "general.core",
-    cmd = { "G", "Git", "Gdiffsplit", "Gvdiffsplit", "Gedit", "Gread", "Gwrite",
-      "Ggrep", "GMove", "Glgrep", "GRename", "GDelete", "GRemove", "GBrowse",
-      "DiffviewOpen", "DiffviewClose", "DiffviewToggleFiles", "DiffviewFocusFiles",
-      "DiffviewRefresh", "DiffviewFileHistory", },
-    -- event = "",
-    -- ft = "",
-    -- keys = "",
-    -- colorscheme = "",
-    load = function (name)
-      require("lzextras").loaders.multi {
-        name,
-        "vim-rhubarb",
-        "diffview.nvim",
-      }
+    cmd = { "UndotreeToggle", "UndotreeHide", "UndotreeShow", "UndotreeFocus", "UndotreePersistUndo", },
+    keys = { { "<leader>U", "<cmd>UndotreeToggle<CR>", mode = { "n" }, desc = "Undo Tree" }, },
+    before = function(_)
+      vim.g.undotree_WindowLayout = 1
+      vim.g.undotree_SplitWidth = 40
     end,
   },
   {
@@ -178,18 +167,9 @@ return {
     for_cat = "C",
     ft = { "cmake" },
     cmd = {
-      "CMakeGenerate",
-      "CMakeClean",
-      "CMakeBuild",
-      "CMakeInstall",
-      "CMakeRun",
-      "CMakeTest",
-      "CMakeSwitch",
-      "CMakeOpen",
-      "CMakeClose",
-      "CMakeToggle",
-      "CMakeCloseOverlay",
-      "CMakeStop",
+      "CMakeGenerate", "CMakeClean", "CMakeBuild", "CMakeInstall",
+      "CMakeRun", "CMakeTest", "CMakeSwitch", "CMakeOpen", "CMakeClose",
+      "CMakeToggle", "CMakeCloseOverlay", "CMakeStop",
     },
     after = function(_)
       vim.api.nvim_create_user_command('BirdeeCMake', [[:CMake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .<CR>]],
@@ -248,14 +228,6 @@ return {
         highlight_on_key = true, -- show highlights only after key press
         dim = true,          -- dim all other characters
       }
-    end,
-  },
-  {
-    "render-markdown.nvim",
-    for_cat = "general.markdown",
-    ft = "markdown",
-    after = function(_)
-      require('render-markdown').setup({})
     end,
   },
   {

@@ -48,11 +48,6 @@ return {
     end,
   },
   {
-    "clangd_extensions.nvim",
-    for_cat = 'C',
-    dep_of = { "nvim-lspconfig", "blink.cmp", },
-  },
-  {
     "lua_ls",
     enabled = nixCats('lua') or nixCats('neonixdev'),
     lsp = {
@@ -265,28 +260,6 @@ return {
     },
   },
   {
-    "clangd",
-    for_cat = "C",
-    lsp = {
-      filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
-      -- unneded thanks to clangd_extensions-nvim I think
-      -- settings = {
-      --   clangd_config = {
-      --     init_options = {
-      --       compilationDatabasePath="./build",
-      --     },
-      --   }
-      -- }
-    },
-  },
-  {
-    "cmake",
-    for_cat = "C",
-    lsp = {
-      filetypes = { "cmake" },
-    },
-  },
-  {
     "htmx",
     for_cat = "web.HTMX",
     lsp = {
@@ -332,6 +305,33 @@ return {
           },
         },
       },
+    },
+  },
+  {
+    "clangd_extensions.nvim",
+    for_cat = 'C',
+    dep_of = { "nvim-lspconfig", "blink.cmp", },
+  },
+  {
+    "cmake",
+    for_cat = "C",
+    lsp = {
+      filetypes = { "cmake" },
+    },
+  },
+  {
+    "clangd",
+    for_cat = "C",
+    lsp = {
+      filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
+      -- unneded thanks to clangd_extensions-nvim I think
+      -- settings = {
+      --   clangd_config = {
+      --     init_options = {
+      --       compilationDatabasePath="./build",
+      --     },
+      --   }
+      -- }
     },
   },
 }
