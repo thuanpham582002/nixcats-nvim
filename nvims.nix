@@ -43,6 +43,7 @@ inputs: let
     otter = true;
     bash = true;
     neonixdev = true;
+    markdown = true;
     java = true;
     web = true;
     go = true;
@@ -126,6 +127,7 @@ in {
       theme = true;
       other = true;
       debug = true;
+      markdown = true;
       customPlugins = true;
       general = true;
       otter = true;

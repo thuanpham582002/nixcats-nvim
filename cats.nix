@@ -52,6 +52,11 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       coreutils-full
       curl
     ];
+    markdown = [
+      marksman
+      python311Packages.pylatexenc
+      harper
+    ];
     general = {
       core = [
         universal-ctags
@@ -59,14 +64,6 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
         fd
         ast-grep
         lazygit
-      ];
-      other = [
-        sqlite
-      ];
-      markdown = [
-        marksman
-        python311Packages.pylatexenc
-        harper
       ];
     };
     AI = [
@@ -245,7 +242,6 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
     other = [
       img-clip-nvim
       nvim-highlight-colors
-      nvim-neoclip-lua
       which-key-nvim
       eyeliner-nvim
       todo-comments-nvim
@@ -254,11 +250,11 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       pkgs.neovimPlugins.hlargs
       pkgs.neovimPlugins.visual-whitespace
     ];
+    markdown = [
+      render-markdown-nvim
+      markdown-preview-nvim
+    ];
     general = with pkgs.neovimPlugins; {
-      markdown = [
-        render-markdown-nvim
-        markdown-preview-nvim
-      ];
       blink = with pkgs.vimPlugins; [
         luasnip
         cmp-cmdline
