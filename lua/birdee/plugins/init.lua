@@ -333,12 +333,4 @@ return {
       }
     end,
   },
-  -- {
-  --   "indent-blankline.nvim",
-  --   for_cat = "general.core",
-  --   event = "DeferredUIEnter",
-  --   after = function(plugin)
-  --     require("ibl").setup()
-  --   end,
-  -- },
 }

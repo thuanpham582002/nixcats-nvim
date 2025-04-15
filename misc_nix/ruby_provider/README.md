@@ -4,10 +4,6 @@ It is just an updated version of [this directory from nixpkgs.](https://github.c
 
 If you don't provide it, it will grab it from there.
 
-This is not an overlay, it's just in here to keep it out of the way.
-
-Path to this file is provided to gem_path setting in packageDefinitions.
-
 To update it when required, cd here and then run:
 
 nix run --no-write-lock-file github:BirdeeHub/neovim_ruby_updater
