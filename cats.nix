@@ -250,7 +250,6 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       eyeliner-nvim
       todo-comments-nvim
       vim-startuptime
-      grapple-nvim
       pkgs.neovimPlugins.hlargs
       pkgs.neovimPlugins.visual-whitespace
     ];
@@ -275,6 +274,7 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
         lualine-lsp-progress
         lualine-nvim
         gitsigns-nvim
+        grapple-nvim
         # marks-nvim
         nvim-lint
         conform-nvim

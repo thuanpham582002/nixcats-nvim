@@ -1,7 +1,7 @@
 return {
   {
     "grapple.nvim",
-    for_cat = "other",
+    for_cat = "general.core",
     -- cmd = { "" },
     event = "DeferredUIEnter",
     dep_of = { "lualine.nvim" },
