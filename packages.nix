@@ -6,9 +6,22 @@ inputs: let
     configDirName = "birdeevim";
     wrapRc = true;
     hosts.node.enable = true;
-    hosts.ruby.enable = true;
     hosts.python3.enable = true;
     hosts.perl.enable = false;
+    hosts.ruby.enable = true;
+    hosts.ruby.path = let
+      rubyEnv = pkgs.bundlerEnv {
+        name = "neovim-ruby-env";
+        postBuild = "ln -sf ${pkgs.ruby}/bin/* $out/bin";
+        gemdir = ./misc_nix/ruby_provider;
+      };
+    in {
+      value = "${rubyEnv}/bin/neovim-ruby-host";
+      nvimArgs = [
+        "--set" "GEM_HOME" "${rubyEnv}/${rubyEnv.ruby.gemPath}"
+        "--suffix" "PATH" ":" "${rubyEnv}/bin"
+      ];
+    };
     unwrappedCfgPath = utils.n2l.types.inline-unsafe.mk {
       body = /*lua*/ ''(os.getenv("HOME") or "/home/birdee") .. "/.birdeevim"'';
     };
