@@ -79,8 +79,8 @@
       doCheck = false; # <- seriously, python stuff runs 10 years of tests its not worth it.
     };
     dependencyOverlays = import ./misc_nix/overlays inputs;
-    categoryDefinitions = import ./categories.nix inputs;
-    packageDefinitions = import ./packages.nix inputs;
+    categoryDefinitions = import ./cats.nix inputs;
+    packageDefinitions = import ./nvims.nix inputs;
     defaultPackageName = "birdeevim";
 
     module_args = {
