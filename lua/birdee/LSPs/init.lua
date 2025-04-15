@@ -100,7 +100,7 @@ return {
   },
   {
     "gradle_ls",
-    enabled = nixCats('java') or nixCats('kotlin'),
+    enabled = nixCats('java') or nixCats('kotlin') or false,
     lsp = {
       filetypes = { "kotlin", "java" },
       root_pattern = { "settings.gradle", "settings.gradle.kts", 'gradlew', 'mvnw' },
