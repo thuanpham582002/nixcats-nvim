@@ -48,7 +48,6 @@ return {
   { import = "birdee.plugins.grapple", },
   { import = "birdee.plugins.lualine", },
   { import = "birdee.plugins.gutter", },
-  { import = "birdee.plugins.clipboard", },
   { import = "birdee.plugins.image", },
   { import = "birdee.plugins.which-key", },
   { import = "birdee.plugins.AI", },
