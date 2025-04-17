@@ -47,7 +47,7 @@ inputs: let
     java = true;
     web = true;
     go = true;
-    kotlin = true;
+    kotlin = false;
     python = true;
     rust = true;
     SQL = true;
