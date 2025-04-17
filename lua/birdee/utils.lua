@@ -99,4 +99,24 @@ function M.lazy_require_funcs(moduleName)
   })
 end
 
+function M.nix_table()
+  local allow_createfn = true
+  local createfn
+  createfn = function(key)
+      return allow_createfn and vim.defaulttable(createfn) or nil
+  end
+  return setmetatable({}, {
+    __index = function(tbl, key)
+      if allow_createfn and key == "resolve" then
+        return function()
+          allow_createfn = false
+          return tbl
+        end
+      end
+      rawset(tbl, key, createfn(key))
+      return rawget(tbl, key)
+    end,
+  })
+end
+
 return M
