@@ -3,9 +3,15 @@ if catUtils.isNixCats and nixCats('lspDebugMode') then
   vim.lsp.set_log_level("debug")
 end
 require('lze').h.lsp.set_ft_fallback(function(name)
+  vim.api.nvim_create_user_command("LspGetFiletypesToClipboard",function(opts)
+    local sname = opts.fargs[1] or vim.fn.getreg("+")
+    vim.fn.setreg("+",
+      "filetypes = "
+      .. vim.inspect(dofile(nixCats.pawsible("allPlugins.opt.nvim-lspconfig") .. "/lsp/" .. sname .. ".lua").filetypes)
+      .. ","
+    )
+  end, { nargs = 1 })
   error(name .. " not provided filetype")
-  -- NOTE: gets filetypes = {}, for server name in + register and puts it into the + register, overwriting server name.
-  -- :lua vim.fn.setreg([[+]],"filetypes = " .. vim.inspect(require('lspconfig.configs.' .. vim.fn.getreg("+")).default_config.filetypes) .. ",")
   return dofile(nixCats.pawsible({ "allPlugins", "opt", "nvim-lspconfig" }) .. "/lsp/" .. name .. ".lua").filetypes or {}
 end)
 return {
