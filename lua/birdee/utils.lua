@@ -108,8 +108,8 @@ function M.nix_table()
   return setmetatable({}, {
     __index = function(tbl, key)
       if allow_createfn and key == "resolve" then
-        return function()
-          allow_createfn = false
+        return function(reopen)
+          allow_createfn = reopen
           return tbl
         end
       end
