@@ -100,7 +100,7 @@ return {
     lsp = {
       filetypes = { "kotlin", "java" },
       root_pattern = { "settings.gradle", "settings.gradle.kts", 'gradlew', 'mvnw' },
-      cmd = { nixCats.extra("javaExtras.gradle-ls") .. "/share/vscode/extensions/vscjava.vscode-gradle/lib/gradle-server" },
+      cmd = nixCats.extra("javaExtras.gradle-ls") and { nixCats.extra("javaExtras.gradle-ls") .. "/share/vscode/extensions/vscjava.vscode-gradle/lib/gradle-server" } or nil,
     }
   },
   {
