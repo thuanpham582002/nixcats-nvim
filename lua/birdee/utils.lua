@@ -122,8 +122,8 @@ end
 function M.lsp_ft_fallback(name)
   local nvimlspcfg = nixCats.pawsible({ "allPlugins", "opt", "nvim-lspconfig" }) or nixCats.pawsible({ "allPlugins", "start", "nvim-lspconfig" })
   if not nvimlspcfg then
-    local match = next(vim.api.nvim_get_runtime_file("pack/*/*/nvim-lspconfig", false))
-    nvimlspcfg = assert(match and match[1], "nvim-lspconfig not found!")
+    local matches = vim.api.nvim_get_runtime_file("pack/*/*/nvim-lspconfig", false)
+    nvimlspcfg = assert(matches[1], "nvim-lspconfig not found!")
   end
   vim.api.nvim_create_user_command("LspGetFiletypesToClipboard",function(opts)
     local lspname = opts.fargs[1] or vim.fn.getreg("+") or name
