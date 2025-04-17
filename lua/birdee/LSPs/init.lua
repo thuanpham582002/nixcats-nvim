@@ -10,7 +10,7 @@ require('lze').h.lsp.set_ft_fallback(function(name)
       .. vim.inspect(dofile(nixCats.pawsible("allPlugins.opt.nvim-lspconfig") .. "/lsp/" .. sname .. ".lua").filetypes)
       .. ","
     )
-  end, { nargs = 1 })
+  end, { nargs = '?' })
   error(name .. " not provided filetype")
   return dofile(nixCats.pawsible({ "allPlugins", "opt", "nvim-lspconfig" }) .. "/lsp/" .. name .. ".lua").filetypes or {}
 end)
