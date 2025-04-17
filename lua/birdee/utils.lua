@@ -119,4 +119,26 @@ function M.nix_table()
   })
 end
 
+function M.lsp_ft_fallback(name)
+  local nvimlspcfg = nixCats.pawsible({ "allPlugins", "opt", "nvim-lspconfig" }) or nixCats.pawsible({ "allPlugins", "start", "nvim-lspconfig" })
+  if not nvimlspcfg then
+    local k
+    k, nvimlspcfg = next(vim.api.nvim_get_runtime_file("pack/*/*/nvim-lspconfig", false))
+    assert(k , "nvim-lspconfig not found!")
+  end
+  vim.api.nvim_create_user_command("LspGetFiletypesToClipboard",function(opts)
+    local lspname = opts.fargs[1] or vim.fn.getreg("+") or name
+    local lsppath = "/lsp/" .. lspname .. ".lua"
+    local ok, lspcfg = pcall(dofile, nvimlspcfg .. lsppath)
+    if not ok or not lspcfg then error("failed to get config for lsp: " .. lspname) end
+    vim.fn.setreg("+",
+      "filetypes = "
+      .. vim.inspect(lspcfg.filetypes or {})
+      .. ","
+    )
+  end, { nargs = '?' })
+  vim.schedule(function() vim.notify((name or "lsp") .. " not provided filetype", vim.log.levels.WARN) end)
+  return name and dofile(nvimlspcfg .. "/lsp/" .. name .. ".lua").filetypes or {}
+end
+
 return M

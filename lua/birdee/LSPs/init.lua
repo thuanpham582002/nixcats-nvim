@@ -2,18 +2,7 @@ local catUtils = require('nixCatsUtils')
 if catUtils.isNixCats and nixCats('lspDebugMode') then
   vim.lsp.set_log_level("debug")
 end
-require('lze').h.lsp.set_ft_fallback(function(name)
-  vim.api.nvim_create_user_command("LspGetFiletypesToClipboard",function(opts)
-    local sname = opts.fargs[1] or vim.fn.getreg("+")
-    vim.fn.setreg("+",
-      "filetypes = "
-      .. vim.inspect(dofile(nixCats.pawsible("allPlugins.opt.nvim-lspconfig") .. "/lsp/" .. sname .. ".lua").filetypes)
-      .. ","
-    )
-  end, { nargs = '?' })
-  error(name .. " not provided filetype")
-  return dofile(nixCats.pawsible({ "allPlugins", "opt", "nvim-lspconfig" }) .. "/lsp/" .. name .. ".lua").filetypes or {}
-end)
+require('lze').h.lsp.set_ft_fallback(require("birdee.utils").lsp_ft_fallback)
 return {
   {
     "mason.nvim",
