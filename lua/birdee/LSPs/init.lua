@@ -2,7 +2,8 @@ local catUtils = require('nixCatsUtils')
 if catUtils.isNixCats and nixCats('lspDebugMode') then
   vim.lsp.set_log_level("debug")
 end
-require('lze').h.lsp.set_ft_fallback(require("birdee.utils").lsp_ft_fallback)
+local lsputils = require('birdee.LSPs.utils')
+require('lze').h.lsp.set_ft_fallback(lsputils.lsp_ft_fallback)
 return {
   {
     "mason.nvim",
@@ -23,7 +24,7 @@ return {
     end,
     before = function(_)
       vim.lsp.config('*', {
-        on_attach = require('birdee.LSPs.on_attach'),
+        on_attach = lsputils.on_attach,
       })
     end,
   },
