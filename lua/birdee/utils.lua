@@ -126,7 +126,7 @@ function M.lsp_ft_fallback(name)
     nvimlspcfg = assert(matches[1], "nvim-lspconfig not found!")
   end
   vim.api.nvim_create_user_command("LspGetFiletypesToClipboard",function(opts)
-    local lspname = opts.fargs[1] or vim.fn.getreg("+") or name
+    local lspname = assert(opts.fargs[1] or vim.fn.getreg("+") or name, "no name to search for provided or in clipboard")
     local lsppath = "/lsp/" .. lspname .. ".lua"
     local ok, lspcfg = pcall(dofile, nvimlspcfg .. lsppath)
     if not ok or not lspcfg then error("failed to get config for lsp: " .. lspname) end
