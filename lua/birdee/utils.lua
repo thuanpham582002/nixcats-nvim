@@ -45,6 +45,28 @@ function M.get_os_command_output(cmd, cwd)
   return stdout, ret, stderr
 end
 
+local function full_logon()
+  local email = vim.fn.inputsecret('Enter email: ')
+  local pass = vim.fn.inputsecret('Enter password: ')
+  local handle = io.popen([[bw login --raw --quiet ]] .. email .. " " .. pass .. ">/dev/null 2>&1", "w")
+  if handle then
+    local client_secret = vim.fn.inputsecret('New device login code: ')
+    handle:write(client_secret)
+    handle:close()
+    return pass, true
+  end
+  return pass, false
+end
+local function unlock(password)
+  local handle = io.popen([[bw unlock --raw --nointeraction ]] .. (password or vim.fn.inputsecret('Enter password: ')), "r")
+  if handle then
+    local session = handle:read("*l")
+    handle:close()
+    return session, true
+  else
+    return nil, false
+  end
+end
 function M.authTerminal()
   local session
   local handle
@@ -58,26 +80,12 @@ function M.authTerminal()
     session = vim.fn.expand('$BW_SESSION')
   else
     if session == "You are logged in!" then
-      handle = io.popen([[bw unlock --raw --nointeraction ]] .. vim.fn.inputsecret('Enter password: '), "r")
-      if handle then
-        session = handle:read("*l")
-        handle:close()
-        ok = true
-      end
+      session, ok = unlock()
     else
-      local email = vim.fn.inputsecret('Enter email: ')
-      local pass = vim.fn.inputsecret('Enter password: ')
-      handle = io.popen([[bw login --raw --quiet ]] .. email .. " " .. pass .. ">/dev/null 2>&1", "w")
-      if handle then
-        local client_secret = vim.fn.inputsecret('New device login code: ')
-        handle:write(client_secret)
-        handle:close()
-      end
-      handle = io.popen([[bw unlock --raw --nointeraction ]] .. pass, "r")
-      if handle then
-        session = handle:read("*l")
-        handle:close()
-        ok = true
+      local pass
+      pass, ok = full_logon()
+      if ok and pass then
+        session, ok = unlock(pass)
       end
     end
   end
