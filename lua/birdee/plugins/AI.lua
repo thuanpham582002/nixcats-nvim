@@ -5,67 +5,11 @@ return {
     for_cat = "AI",
     dep_of = { "windsurf.nvim", "minuet-ai.nvim" },
     load = function(_)
-      ---@class aiauthentry
-      ---@field enable boolean
-      ---@field cache boolean
-      ---@field bw_id string
-      ---@field localpath string
-      ---@field action fun(key)
-
-      ---@param entries table<string, aiauthentry>
-      local function get_auths(entries)
-        local to_fetch = {}
-        local cached = {}
-        for name, entry in pairs(entries) do
-          if entry.enable ~= false and entry.bw_id and entry.localpath and vim.fn.filereadable(entry.localpath) == 0 then
-            to_fetch[name] = entry
-          elseif entry.enable ~= false and entry.localpath and vim.fn.filereadable(entry.localpath) ~= 0 then
-            cached[name] = entry
-          end
-        end
-        local final = {}
-        if next(to_fetch) ~= nil then
-          local session, ok = require("birdee.utils").authTerminal()
-          if session and ok then
-            for name, entry in pairs(to_fetch) do
-              local handle = io.popen("bw get --nointeraction --session " .. session .. " " .. entry.bw_id, "r")
-              local key
-              if handle then
-                key = handle:read("*l")
-                handle:close()
-              end
-              if entry.cache and key then
-                local handle2 = io.open(entry.localpath, "w")
-                if handle2 then
-                  handle2:write(key)
-                  handle2:close()
-                end
-              end
-              final[name] = handle and key or nil
-            end
-          end
-        end
-        for name, entry in pairs(cached) do
-          local handle = io.open(entry.localpath, "r")
-          local key
-          if handle then
-            key = handle:read("*l")
-            handle:close()
-          end
-          final[name] = handle and key or nil
-        end
-        for name, key in pairs(final) do
-          if entries[name].action then
-            entries[name].action(key)
-          end
-        end
-      end
-
       local bitwardenAuths = nixCats.extra('bitwarden_uuids')
       local codeiumDir = vim.fn.stdpath('cache') .. '/' .. 'codeium'
       local codeiumAuthFile = codeiumDir .. '/' .. 'config.json'
       local codeiumAuthInvalid = vim.fn.filereadable(codeiumAuthFile) == 0
-      get_auths({
+      require('birdee.utils').get_auths({
         windsurf = {
           enable = catUtils.isNixCats and codeiumAuthInvalid and bitwardenAuths.windsurf and nixCats("AI.windsurf") or false,
           cache = false, -- <- this one is cached by its action

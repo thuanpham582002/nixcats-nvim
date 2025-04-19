@@ -84,6 +84,62 @@ function M.authTerminal()
   return session, ok
 end
 
+---@class birdee.authentry
+---@field enable boolean
+---@field cache boolean
+---@field bw_id string
+---@field localpath string
+---@field action fun(key)
+
+---@param entries table<string, birdee.authentry>
+function M.get_auths(entries)
+  local to_fetch = {}
+  local cached = {}
+  for name, entry in pairs(entries) do
+    if entry.enable ~= false and entry.bw_id and entry.localpath and vim.fn.filereadable(entry.localpath) == 0 then
+      to_fetch[name] = entry
+    elseif entry.enable ~= false and entry.localpath and vim.fn.filereadable(entry.localpath) ~= 0 then
+      cached[name] = entry
+    end
+  end
+  local final = {}
+  if next(to_fetch) ~= nil then
+    local session, ok = M.authTerminal()
+    if session and ok then
+      for name, entry in pairs(to_fetch) do
+        local handle = io.popen("bw get --nointeraction --session " .. session .. " " .. entry.bw_id, "r")
+        local key
+        if handle then
+          key = handle:read("*l")
+          handle:close()
+        end
+        if entry.cache and key then
+          local handle2 = io.open(entry.localpath, "w")
+          if handle2 then
+            handle2:write(key)
+            handle2:close()
+          end
+        end
+        final[name] = handle and key or nil
+      end
+    end
+  end
+  for name, entry in pairs(cached) do
+    local handle = io.open(entry.localpath, "r")
+    local key
+    if handle then
+      key = handle:read("*l")
+      handle:close()
+    end
+    final[name] = handle and key or nil
+  end
+  for name, key in pairs(final) do
+    if entries[name].action then
+      entries[name].action(key)
+    end
+  end
+end
+
 ---@type fun(moduleName: string): any
 function M.lazy_require_funcs(moduleName)
   return setmetatable({}, {
