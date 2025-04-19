@@ -6,25 +6,25 @@ return {
     dep_of = { "windsurf.nvim", "minuet-ai.nvim" },
     load = function(_)
       local bitwardenAuths = nixCats.extra('bitwarden_uuids')
-      local codeiumDir = vim.fn.stdpath('cache') .. '/' .. 'codeium'
-      local codeiumAuthFile = codeiumDir .. '/' .. 'config.json'
-      local codeiumAuthInvalid = vim.fn.filereadable(codeiumAuthFile) == 0
+      local windsurfDir = vim.fn.stdpath('cache') .. '/' .. 'codeium'
+      local windsurfAuthFile = windsurfDir .. '/' .. 'config.json'
+      local windsurfAuthInvalid = vim.fn.filereadable(windsurfAuthFile) == 0
       require('birdee.utils').get_auths({
         windsurf = {
-          enable = catUtils.isNixCats and codeiumAuthInvalid and bitwardenAuths.windsurf and nixCats("AI.windsurf") or false,
+          enable = catUtils.isNixCats and windsurfAuthInvalid and bitwardenAuths.windsurf and nixCats("AI.windsurf") or false,
           cache = false, -- <- this one is cached by its action
           bw_id = bitwardenAuths.windsurf,
           localpath = vim.fn.expand("$HOME") .. "/.secrets/windsurf",
           action = function (key)
-            if vim.fn.isdirectory(codeiumDir) == 0 then
-              vim.fn.mkdir(codeiumDir, 'p')
+            if vim.fn.isdirectory(windsurfDir) == 0 then
+              vim.fn.mkdir(windsurfDir, 'p')
             end
             if (string.len(key) > 10) then
-              local file = io.open(codeiumAuthFile, 'w')
+              local file = io.open(windsurfAuthFile, 'w')
               if file then
                 file:write('{"api_key": "' .. key .. '"}')
                 file:close()
-                vim.loop.fs_chmod(codeiumAuthFile, 384, function(err, success)
+                vim.loop.fs_chmod(windsurfAuthFile, 384, function(err, success)
                   if err then
                     print("Failed to set file permissions: " .. err)
                   end
@@ -33,7 +33,7 @@ return {
             end
           end,
         },
-        Gemini = {
+        gemini = {
           enable = catUtils.isNixCats and bitwardenAuths.gemini and nixCats("AI.minuet") or false,
           cache = true,
           bw_id = bitwardenAuths.gemini,
@@ -44,8 +44,8 @@ return {
         },
       })
       if nixCats("AI.windsurf") then
-        vim.api.nvim_create_user_command("ClearCodeiumAuth", function (opts)
-          print(require("birdee.utils").deleteFileIfExists(codeiumAuthFile))
+        vim.api.nvim_create_user_command("ClearWindsurfAuth", function (opts)
+          print(require("birdee.utils").deleteFileIfExists(windsurfAuthFile))
         end, {})
       end
       vim.api.nvim_create_user_command("ClearBitwardenData", function (opts)
