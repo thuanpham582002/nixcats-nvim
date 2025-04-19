@@ -140,15 +140,9 @@ return {
           enable_auto_complete = nixCats('blink') or false,
         },
         n_completions = 1, -- recommend for local model for resource saving
-        -- I recommend beginning with a small context window size and incrementally
-        -- expanding it, depending on your local computing power. A context window
-        -- of 512, serves as an good starting point to estimate your computing
-        -- power. Once you have a reliable estimate of your local computing power,
-        -- you should adjust the context window to a larger value.
         context_ratio = 0.75,
         throttle = 1000, -- only send the request every x milliseconds, use 0 to disable throttle.
-        -- debounce the request in x milliseconds, set to 0 to disable debounce
-        debounce = 250,
+        debounce = 250, -- debounce the request in x milliseconds, set to 0 to disable debounce
         context_window = 512,
         request_timeout = 3,
         -- notify = "debug",
