@@ -1,6 +1,123 @@
 local catUtils = require('nixCatsUtils')
 return {
   {
+    "AI_auths",
+    for_cat = "AI",
+    dep_of = { "windsurf.nvim", "minuet-ai.nvim" },
+    load = function(_)
+      ---@class aiauthentry
+      ---@field enable boolean
+      ---@field cache boolean
+      ---@field bw_id string
+      ---@field localpath string
+      ---@field action fun(key)
+
+      ---@param entries table<string, aiauthentry>
+      local function get_auths(entries)
+        local to_fetch = {}
+        local cached = {}
+        for name, entry in pairs(entries) do
+          if entry.enable ~= false and entry.bw_id and entry.localpath and vim.fn.filereadable(entry.localpath) == 0 then
+            to_fetch[name] = entry
+          elseif entry.enable ~= false and entry.localpath and vim.fn.filereadable(entry.localpath) ~= 0 then
+            cached[name] = entry
+          end
+        end
+        local final = {}
+        if next(to_fetch) ~= nil then
+          local session, ok = require("birdee.utils").authTerminal()
+          if session and ok then
+            for name, entry in pairs(to_fetch) do
+              local handle = io.popen("bw get --nointeraction --session " .. session .. " " .. entry.bw_id, "r")
+              local key
+              if handle then
+                key = handle:read("*l")
+                handle:close()
+              end
+              if entry.cache and key then
+                local handle2 = io.open(entry.localpath, "w")
+                if handle2 then
+                  handle2:write(key)
+                  handle2:close()
+                end
+              end
+              final[name] = handle and key or nil
+            end
+          end
+        end
+        for name, entry in pairs(cached) do
+          local handle = io.open(entry.localpath, "r")
+          local key
+          if handle then
+            key = handle:read("*l")
+            handle:close()
+          end
+          final[name] = handle and key or nil
+        end
+        for name, key in pairs(final) do
+          if entries[name].action then
+            entries[name].action(key)
+          end
+        end
+      end
+
+      local bitwardenAuths = nixCats.extra('bitwarden_uuids')
+      local codeiumDir = vim.fn.stdpath('cache') .. '/' .. 'codeium'
+      local codeiumAuthFile = codeiumDir .. '/' .. 'config.json'
+      local codeiumAuthInvalid = vim.fn.filereadable(codeiumAuthFile) == 0
+      get_auths({
+        windsurf = {
+          enable = catUtils.isNixCats and codeiumAuthInvalid and bitwardenAuths.windsurf and nixCats("AI.windsurf") or false,
+          cache = false, -- <- this one is cached by its action
+          bw_id = bitwardenAuths.windsurf,
+          localpath = vim.fn.expand("$HOME") .. "/.secrets/windsurf",
+          action = function (key)
+            if vim.fn.isdirectory(codeiumDir) == 0 then
+              vim.fn.mkdir(codeiumDir, 'p')
+            end
+            if (string.len(key) > 10) then
+              local file = io.open(codeiumAuthFile, 'w')
+              if file then
+                file:write('{"api_key": "' .. key .. '"}')
+                file:close()
+                vim.loop.fs_chmod(codeiumAuthFile, 384, function(err, success)
+                  if err then
+                    print("Failed to set file permissions: " .. err)
+                  end
+                end)
+              end
+            end
+          end,
+        },
+        Gemini = {
+          enable = catUtils.isNixCats and bitwardenAuths.gemini and nixCats("AI.minuet") or false,
+          cache = true,
+          bw_id = bitwardenAuths.gemini,
+          localpath = vim.fn.expand("$HOME") .. "/.secrets/gemini",
+          action = function(key)
+            vim.env.GEMINI_API_KEY = key
+          end,
+        },
+      })
+      if nixCats("AI.windsurf") then
+        vim.api.nvim_create_user_command("ClearCodeiumAuth", function (opts)
+          print(require("birdee.utils").deleteFileIfExists(codeiumAuthFile))
+        end, {})
+      end
+      vim.api.nvim_create_user_command("ClearBitwardenData", function (opts)
+        print(require("birdee.utils").deleteFileIfExists(vim.fn.stdpath('config') .. [[/../Bitwarden\ CLI/data.json]]))
+      end, {})
+    end
+  },
+  {
+    "windsurf.nvim",
+    for_cat = { cat = 'AI.windsurf', default = false },
+    event = "InsertEnter",
+    after = function (_)
+      require("codeium").setup({ enable_chat = false, })
+    end,
+  },
+  {
     "codecompanion.nvim",
     for_cat = { cat = 'AI.default', default = false },
     cmd = {
@@ -115,82 +232,6 @@ return {
           },
         },
       }
-    end,
-  },
-  {
-    "windsurf.nvim",
-    for_cat = { cat = 'AI.windsurf', default = false },
-    event = "InsertEnter",
-    after = function (_)
-      local bitwardenAuth = nixCats.extra('AIextras.codeium_bitwarden_uuid')
-      if not catUtils.isNixCats then bitwardenAuth = false end
-
-      local codeiumDir = vim.fn.stdpath('cache') .. '/' .. 'codeium'
-      local codeiumAuthFile = codeiumDir .. '/' .. 'config.json'
-
-      local localKeyPath = vim.fn.expand("$HOME") .. "/.secrets/codeium"
-      local havelocalkey = vim.fn.filereadable(localKeyPath) == 1
-
-      local codeiumAuthInvalid = vim.fn.filereadable(codeiumAuthFile) == 0
-
-      local session
-      local ok
-      if bitwardenAuth then
-        if codeiumAuthInvalid and not havelocalkey then
-          local bw_secret = vim.fn.expand("$HOME") .. "/.secrets/bw"
-          local result = nil
-          if vim.fn.filereadable(bw_secret) == 1 then
-            local handle = io.open(bw_secret, "r")
-            if handle then
-              result = handle:read("*l")
-              handle:close()
-            end
-          end
-          session, ok = require("birdee.utils").authTerminal(result)
-          if not ok then
-            bitwardenAuth = false
-          end
-        end
-      end
-      if codeiumAuthInvalid then
-        if (bitwardenAuth or havelocalkey) then
-          local result
-          local handle
-          if havelocalkey then
-            handle = io.open(localKeyPath, "r")
-          elseif bitwardenAuth then
-            handle = io.popen("bw get --nointeraction --session " .. session .. " " .. bitwardenAuth, "r")
-          end
-          if handle then
-            result = handle:read("*l")
-            handle:close()
-          end
-          if vim.fn.isdirectory(codeiumDir) == 0 then
-            vim.fn.mkdir(codeiumDir, 'p')
-          end
-          if (string.len(result) > 10) then
-            local file = io.open(codeiumAuthFile, 'w')
-            if file then
-              file:write('{"api_key": "' .. result .. '"}')
-              file:close()
-              vim.loop.fs_chmod(codeiumAuthFile, 384, function(err, success)
-                if err then
-                  print("Failed to set file permissions: " .. err)
-                end
-              end)
-            end
-          end
-        end
-      end
-
-      require("codeium").setup({ enable_chat = false, })
-
-      vim.api.nvim_create_user_command("ClearCodeiumAuth", function (opts)
-        print(require("birdee.utils").deleteFileIfExists(codeiumAuthFile))
-      end, {})
-      vim.api.nvim_create_user_command("ClearBitwardenData", function (opts)
-        print(require("birdee.utils").deleteFileIfExists(vim.fn.stdpath('config') .. [[/../Bitwarden\ CLI/data.json]]))
-      end, {})
     end,
   },
 }

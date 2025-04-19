@@ -67,9 +67,9 @@ inputs: let
         body = ''return [[import ${./misc_nix/nixd.nix} ${pkgs.path} "]] .. type .. [[" ]] .. (path or "./.")'';
       };
     };
-    AIextras = {
-      gemini_uuid = "notes bcd197b5-ba11-4c86-8969-b2bd01506654";
-      codeium_token_uuid = "notes d9124a28-89ad-4335-b84f-b0c20135b048";
+    bitwarden_uuids = {
+      gemini = "notes bcd197b5-ba11-4c86-8969-b2bd01506654";
+      windsurf = "notes d9124a28-89ad-4335-b84f-b0c20135b048";
     };
   };
 in {
