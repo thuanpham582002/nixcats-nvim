@@ -1,11 +1,10 @@
-local M = {}
 -- vim.api.nvim_create_autocmd('LspAttach', {
 --   group = vim.api.nvim_create_augroup('nixCats-lsp-attach', { clear = true }),
 --   callback = function(event)
 --     require('birdee.LSPs.on_attach')(vim.lsp.get_client_by_id(event.data.client_id), event.buf)
 --   end,
 -- })
-function M.on_attach(_, bufnr)
+return function(_, bufnr)
   -- we create a function that lets us more easily define mappings specific
   -- for LSP related items. It sets the mode, buffer and description for us each time.
 
@@ -49,26 +48,3 @@ function M.on_attach(_, bufnr)
   --   })
   -- end
 end
-
-function M.lsp_ft_fallback(name)
-  local nvimlspcfg = nixCats.pawsible({ "allPlugins", "opt", "nvim-lspconfig" }) or nixCats.pawsible({ "allPlugins", "start", "nvim-lspconfig" })
-  if not nvimlspcfg then
-    local matches = vim.api.nvim_get_runtime_file("pack/*/*/nvim-lspconfig", false)
-    nvimlspcfg = assert(matches[1], "nvim-lspconfig not found!")
-  end
-  vim.api.nvim_create_user_command("LspGetFiletypesToClipboard",function(opts)
-    local lspname = assert(opts.fargs[1] or vim.fn.getreg("+") or name, "no name to search for provided or in clipboard")
-    local lsppath = "/lsp/" .. lspname .. ".lua"
-    local ok, lspcfg = pcall(dofile, nvimlspcfg .. lsppath)
-    if not ok or not lspcfg then error("failed to get config for lsp: " .. lspname) end
-    vim.fn.setreg("+",
-      "filetypes = "
-      .. vim.inspect(lspcfg.filetypes or {})
-      .. ","
-    )
-  end, { nargs = '?' })
-  vim.schedule(function() vim.notify((name or "lsp") .. " not provided filetype", vim.log.levels.WARN) end)
-  return name and dofile(nvimlspcfg .. "/lsp/" .. name .. ".lua").filetypes or {}
-end
-
-return M
