@@ -70,16 +70,6 @@ inputs: let
     AIextras = {
       gemini_uuid = "notes bcd197b5-ba11-4c86-8969-b2bd01506654";
       codeium_token_uuid = "notes d9124a28-89ad-4335-b84f-b0c20135b048";
-      # codeium table gets deep extended into codeium settings.
-      codeium = {
-        tools = {
-          uname = "${pkgs.coreutils}/bin/uname";
-          uuidgen = "${pkgs.util-linux}/bin/uuidgen";
-          curl = "${pkgs.curl}/bin/curl";
-          gzip = "${pkgs.gzip}/bin/gzip";
-          language_server = "${inputs.windsurf.packages.${pkgs.system}.codeium-lsp}/bin/codeium-lsp";
-        };
-      };
     };
   };
 in {

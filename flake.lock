@@ -148,24 +148,6 @@
         "type": "github"
       }
     },
-    "flake-utils_6": {
-      "inputs": {
-        "systems": "systems_3"
-      },
-      "locked": {
-        "lastModified": 1701680307,
-        "narHash": "sha256-kAuep2h5ajznlPMD9rnQyffWG8EM/C73lejGofXvdM8=",
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "rev": "4022d587cbbfd70fe950c1e2083a02621806a725",
-        "type": "github"
-      },
-      "original": {
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "type": "github"
-      }
-    },
     "gitignore": {
       "inputs": {
         "nixpkgs": [
@@ -405,22 +387,6 @@
         "type": "github"
       }
     },
-    "nixpkgs_8": {
-      "locked": {
-        "lastModified": 1702346276,
-        "narHash": "sha256-eAQgwIWApFQ40ipeOjVSoK4TEHVd6nbSd9fApiHIw5A=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "cf28ee258fd5f9a52de6b9865cdb93a1f96d09b7",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "ref": "nixos-23.11",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
     "norg": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -605,8 +571,7 @@
         "plugins-rustaceanvim": "plugins-rustaceanvim",
         "plugins-snacks.nvim": "plugins-snacks.nvim",
         "plugins-visual-whitespace": "plugins-visual-whitespace",
-        "templ": "templ",
-        "windsurf": "windsurf"
+        "templ": "templ"
       }
     },
     "rust-analyzer-src": {
@@ -642,21 +607,6 @@
       }
     },
     "systems_2": {
-      "locked": {
-        "lastModified": 1681028828,
-        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
-        "owner": "nix-systems",
-        "repo": "default",
-        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-systems",
-        "repo": "default",
-        "type": "github"
-      }
-    },
-    "systems_3": {
       "locked": {
         "lastModified": 1681028828,
         "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
@@ -711,25 +661,6 @@
       "original": {
         "owner": "a-h",
         "repo": "version",
-        "type": "github"
-      }
-    },
-    "windsurf": {
-      "inputs": {
-        "flake-utils": "flake-utils_6",
-        "nixpkgs": "nixpkgs_8"
-      },
-      "locked": {
-        "lastModified": 1743787951,
-        "narHash": "sha256-qah1QzyrAOEA+k1D0Li47zmw0xLDGtsQxshpw3sb0BE=",
-        "owner": "Exafunction",
-        "repo": "windsurf.nvim",
-        "rev": "9569c9095a70370849345c861cdb2b06c4cadac7",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Exafunction",
-        "repo": "windsurf.nvim",
         "type": "github"
       }
     },

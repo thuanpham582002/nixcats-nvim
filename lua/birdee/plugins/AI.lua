@@ -183,19 +183,7 @@ return {
         end
       end
 
-      local codeium_settings = {
-        enable_chat = true,
-      }
-
-      if nixCats.extra('AIextras.codeium') then
-        require("codeium").setup(vim.tbl_deep_extend(
-          "force",
-          codeium_settings,
-          nixCats.extra('AIextras.codeium')
-        ))
-      else
-        require("codeium").setup(codeium_settings)
-      end
+      require("codeium").setup({ enable_chat = false, })
 
       vim.api.nvim_create_user_command("ClearCodeiumAuth", function (opts)
         print(require("birdee.utils").deleteFileIfExists(codeiumAuthFile))
