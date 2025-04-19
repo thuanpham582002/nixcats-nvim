@@ -43,14 +43,18 @@ return {
           end,
         },
       })
-      if nixCats("AI.windsurf") then
-        vim.api.nvim_create_user_command("ClearWindsurfAuth", function (opts)
-          print(require("birdee.utils").deleteFileIfExists(windsurfAuthFile))
+      local function mkClear(cmd, file)
+        vim.api.nvim_create_user_command(cmd, function(_)
+          print(require("birdee.utils").deleteFileIfExists(file))
         end, {})
       end
-      vim.api.nvim_create_user_command("ClearBitwardenData", function (opts)
-        print(require("birdee.utils").deleteFileIfExists(vim.fn.stdpath('config') .. [[/../Bitwarden\ CLI/data.json]]))
-      end, {})
+      if nixCats("AI.windsurf") then
+        mkClear("ClearWindsurfAuth", windsurfAuthFile)
+      end
+      if nixCats("AI.minuet") then
+        mkClear("ClearGeminiAuth", vim.fn.expand("$HOME") .. "/.secrets/gemini")
+      end
+      mkClear("ClearBitwardenData", vim.fn.stdpath('config') .. [[/../Bitwarden\ CLI/data.json]])
     end
   },
   {
