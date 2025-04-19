@@ -69,7 +69,7 @@ function M.authTerminal()
       local pass = vim.fn.inputsecret('Enter password: ')
       handle = io.popen([[bw login --raw --quiet ]] .. email .. " " .. pass .. ">/dev/null 2>&1", "w")
       if handle then
-        local client_secret = vim.fn.inputsecret('Enter new device login code: ')
+        local client_secret = vim.fn.inputsecret('New device login code: ')
         handle:write(client_secret)
         handle:close()
       end
