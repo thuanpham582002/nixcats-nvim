@@ -127,8 +127,7 @@ function M.lsp_ft_fallback(name)
   end
   vim.api.nvim_create_user_command("LspGetFiletypesToClipboard",function(opts)
     local lspname = assert(opts.fargs[1] or vim.fn.getreg("+") or name, "no name to search for provided or in clipboard")
-    local lsppath = "/lsp/" .. lspname .. ".lua"
-    local ok, lspcfg = pcall(dofile, nvimlspcfg .. lsppath)
+    local ok, lspcfg = pcall(dofile, nvimlspcfg .. "/lsp/" .. lspname .. ".lua")
     if not ok or not lspcfg then error("failed to get config for lsp: " .. lspname) end
     vim.fn.setreg("+",
       "filetypes = "
