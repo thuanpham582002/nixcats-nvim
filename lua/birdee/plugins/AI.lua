@@ -132,7 +132,7 @@ return {
     cmd = { "Minuet" },
     after = function()
       require('minuet').setup {
-        provider = 'openai_fim_compatible',
+        provider = 'gemini',
         cmp = {
           enable_auto_complete = false,
         },
