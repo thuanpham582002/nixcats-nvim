@@ -2,7 +2,7 @@ local catUtils = require('nixCatsUtils')
 return {
   {
     "AI_auths",
-    for_cat = "AI",
+    for_cat = catUtils.isNixCats and (nixCats("AI.windsurf") or nixCats("AI.minuet")) or false,
     dep_of = { "windsurf.nvim", "minuet-ai.nvim" },
     load = function(_)
       local bitwardenAuths = nixCats.extra('bitwarden_uuids')
