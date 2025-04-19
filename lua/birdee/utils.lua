@@ -118,6 +118,11 @@ function M.get_auths(entries)
           if handle2 then
             handle2:write(key)
             handle2:close()
+            vim.loop.fs_chmod(entry.localpath, 384, function(err, success)
+              if err then
+                print("Failed to set file permissions: " .. err)
+              end
+            end)
           end
         end
         final[name] = handle and key or nil
