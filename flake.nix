@@ -14,13 +14,19 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     # nixpkgsLocked.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    # nixCats.url = "github:BirdeeHub/nixCats-nvim";
-    nixCats.url = "git+file:/home/birdee/Projects/nixCats-nvim";
+    nixCats.url = "github:BirdeeHub/nixCats-nvim";
+    # nixCats.url = "git+file:/home/birdee/Projects/nixCats-nvim";
     # neovim-src = { url = "github:neovim/neovim/nightly"; flake = false; };
     # neovim-nightly-overlay = {
     #   url = "github:nix-community/neovim-nightly-overlay";
       # inputs.nixpkgs.follows = "nixpkgsNV";
       # inputs.neovim-src.follows = "neovim-src";
+    # };
+
+    # makeBinWrap = {
+    #   url = "github:BirdeeHub/testBinWrapper";
+    #   url = "git+file:/home/birdee/Projects/testBinWrapper";
+    #   flake = false;
     # };
 
     fenix.url = "github:nix-community/fenix";
@@ -96,6 +102,7 @@
       } categoryDefinitions packageDefinitions;
       defaultPackage = nixCatsBuilder defaultPackageName;
     in {
+      # packages = utils.mkAllWithDefault (defaultPackage.overrideAttrs { nativeBuildInputs = [ (inputs.nixpkgs.legacyPackages.${system}.callPackage inputs.makeBinWrap {}) ];});
       packages = utils.mkAllWithDefault defaultPackage;
       app-images = let bundler = inputs.nix-appimage.bundlers.${system}.default; in {
         portableVim = bundler (nixCatsBuilder "portableVim");
