@@ -14,8 +14,8 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     # nixpkgsLocked.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    nixCats.url = "github:BirdeeHub/nixCats-nvim";
-    # nixCats.url = "git+file:/home/birdee/Projects/nixCats-nvim";
+    # nixCats.url = "github:BirdeeHub/nixCats-nvim";
+    nixCats.url = "git+file:/home/birdee/Projects/nixCats-nvim";
     # neovim-src = { url = "github:neovim/neovim/nightly"; flake = false; };
     # neovim-nightly-overlay = {
     #   url = "github:nix-community/neovim-nightly-overlay";
