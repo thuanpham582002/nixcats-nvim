@@ -23,15 +23,21 @@
       # inputs.neovim-src.follows = "neovim-src";
     # };
 
-    # do not do this, makeBinaryWrapper is bad for this usecase, limited, and not faster.
+    # NOTE: do not do this, makeBinaryWrapper is bad for this usecase, limited, and not faster.
     # It is used for interpreters for systems that require binary shebangs.
     # I am doing this because I have decided to try to make both it and makeWrapper better
     # and nixCats lets me easily stress test it.
-    # makeBinWrap = {
-    #   url = "github:BirdeeHub/testBinWrapper";
+    makeBinWrap = {
+      url = "github:BirdeeHub/testBinWrapper";
     #   url = "git+file:/home/birdee/Projects/testBinWrapper";
-    #   flake = false;
-    # };
+      flake = false;
+    };
+
+    makeShellWrap = {
+      url = "github:BirdeeHub/testShellWrapper";
+    #   url = "git+file:/home/birdee/Projects/testBinWrapper";
+      flake = false;
+    };
 
     fenix.url = "github:nix-community/fenix";
     nix-appimage.url = "github:ralismark/nix-appimage";
@@ -106,8 +112,8 @@
       } categoryDefinitions packageDefinitions;
       defaultPackage = nixCatsBuilder defaultPackageName;
     in {
-      # packages = utils.mkAllWithDefault (defaultPackage.overrideAttrs { nativeBuildInputs = [ (inputs.nixpkgs.legacyPackages.${system}.callPackage inputs.makeBinWrap {}) ];});
-      packages = utils.mkAllWithDefault defaultPackage;
+      packages = utils.mkAllWithDefault (defaultPackage.overrideAttrs { nativeBuildInputs = [ (inputs.nixpkgs.legacyPackages.${system}.callPackage inputs.makeShellWrap {}) ];});
+      # packages = utils.mkAllWithDefault defaultPackage;
       app-images = let bundler = inputs.nix-appimage.bundlers.${system}.default; in {
         portableVim = bundler (nixCatsBuilder "portableVim");
       };

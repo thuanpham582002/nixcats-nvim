@@ -169,6 +169,38 @@
         "type": "github"
       }
     },
+    "makeBinWrap": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1745195412,
+        "narHash": "sha256-ln21DovEV/P3QYsbzN6pfv14aTec+6NLG+2cLu0Dq3w=",
+        "owner": "BirdeeHub",
+        "repo": "testBinWrapper",
+        "rev": "0dbb0fd8cbf746f21316296f1bfb39c2139a25ca",
+        "type": "github"
+      },
+      "original": {
+        "owner": "BirdeeHub",
+        "repo": "testBinWrapper",
+        "type": "github"
+      }
+    },
+    "makeShellWrap": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1745196646,
+        "narHash": "sha256-DsC+E5rNqYMJkPA65+KhCkGQkVRbJ7FoXarw/Bdcwbo=",
+        "owner": "BirdeeHub",
+        "repo": "testShellWrapper",
+        "rev": "b32b0801ec432c803ac50fb60c22773739300780",
+        "type": "github"
+      },
+      "original": {
+        "owner": "BirdeeHub",
+        "repo": "testShellWrapper",
+        "type": "github"
+      }
+    },
     "neorg": {
       "flake": false,
       "locked": {
@@ -559,6 +591,8 @@
     "root": {
       "inputs": {
         "fenix": "fenix",
+        "makeBinWrap": "makeBinWrap",
+        "makeShellWrap": "makeShellWrap",
         "neorg-overlay": "neorg-overlay",
         "nix-appimage": "nix-appimage",
         "nixCats": "nixCats",
