@@ -188,11 +188,11 @@
     "makeShellWrap": {
       "flake": false,
       "locked": {
-        "lastModified": 1745196646,
-        "narHash": "sha256-DsC+E5rNqYMJkPA65+KhCkGQkVRbJ7FoXarw/Bdcwbo=",
+        "lastModified": 1745215752,
+        "narHash": "sha256-OBJIkqG847lc7TlfuFJ86LSVsgohaRizAI4qcWSN13g=",
         "owner": "BirdeeHub",
         "repo": "testShellWrapper",
-        "rev": "b32b0801ec432c803ac50fb60c22773739300780",
+        "rev": "96ac2a027dc394e54a89011ca14de6efc8ff0b5c",
         "type": "github"
       },
       "original": {
