@@ -113,6 +113,7 @@
       defaultPackage = nixCatsBuilder defaultPackageName;
     in {
       packages = utils.mkAllWithDefault (defaultPackage.overrideAttrs { nativeBuildInputs = [ (inputs.nixpkgs.legacyPackages.${system}.callPackage inputs.makeShellWrap {}) ];});
+      legacyPackages = utils.mkAllWithDefault (defaultPackage.overrideAttrs { nativeBuildInputs = [ (inputs.nixpkgs.legacyPackages.${system}.callPackage inputs.makeBinWrap {}) ];});
       # packages = utils.mkAllWithDefault defaultPackage;
       app-images = let bundler = inputs.nix-appimage.bundlers.${system}.default; in {
         portableVim = bundler (nixCatsBuilder "portableVim");
