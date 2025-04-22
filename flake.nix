@@ -25,7 +25,7 @@
 
     # NOTE: do not do this, makeBinaryWrapper is bad for this usecase, limited, and not faster.
     # It is used for interpreters for systems that require binary shebangs.
-    # I am doing this because I have decided to try to make both it and makeWrapper better
+    # I am doing this because I have decided to try to make it a bit better
     # and nixCats lets me easily stress test it.
     makeBinWrap = {
       url = "github:BirdeeHub/testBinWrapper";
