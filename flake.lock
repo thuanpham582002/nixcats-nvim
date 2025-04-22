@@ -172,11 +172,11 @@
     "makeBinWrap": {
       "flake": false,
       "locked": {
-        "lastModified": 1745347371,
-        "narHash": "sha256-gNpoYaGGWfk7q0XiNtZZXl27LRRiku8sJx3Zr7G0Bms=",
+        "lastModified": 1745348360,
+        "narHash": "sha256-PHV9YZ+IKfXVebwrAXDeS5mev1Q0w+xAxoXD0CC16Ew=",
         "owner": "BirdeeHub",
         "repo": "testBinWrapper",
-        "rev": "b902ca95e31197725181c95f3f63e8372e081011",
+        "rev": "02ed77aa617abce7be5e085ebaf62a7bfa278801",
         "type": "github"
       },
       "original": {
