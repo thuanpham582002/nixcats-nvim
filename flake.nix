@@ -33,12 +33,6 @@
       flake = false;
     };
 
-    makeShellWrap = {
-      url = "github:BirdeeHub/testShellWrapper";
-    #   url = "git+file:/home/birdee/Projects/testBinWrapper";
-      flake = false;
-    };
-
     fenix.url = "github:nix-community/fenix";
     nix-appimage.url = "github:ralismark/nix-appimage";
     templ.url = "github:a-h/templ";
@@ -112,9 +106,8 @@
       } categoryDefinitions packageDefinitions;
       defaultPackage = nixCatsBuilder defaultPackageName;
     in {
-      packages = utils.mkAllWithDefault (defaultPackage.overrideAttrs { nativeBuildInputs = [ (inputs.nixpkgs.legacyPackages.${system}.callPackage inputs.makeShellWrap {}) ];});
+      packages = utils.mkAllWithDefault defaultPackage;
       legacyPackages = utils.mkAllWithDefault (defaultPackage.overrideAttrs { nativeBuildInputs = [ (inputs.nixpkgs.legacyPackages.${system}.callPackage inputs.makeBinWrap {}) ];});
-      # packages = utils.mkAllWithDefault defaultPackage;
       app-images = let bundler = inputs.nix-appimage.bundlers.${system}.default; in {
         portableVim = bundler (nixCatsBuilder "portableVim");
       };
