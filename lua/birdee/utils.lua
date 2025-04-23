@@ -208,4 +208,14 @@ function M.lsp_ft_fallback(name)
   return name and dofile(nvimlspcfg .. "/lsp/" .. name .. ".lua").filetypes or {}
 end
 
+function M.insert_many(dst, ...)
+  for i = 1, select('#', ...) do
+    local val = select(i, ...)
+    if val ~= nil then
+      table.insert(dst, val)
+    end
+  end
+  return dst
+end
+
 return M

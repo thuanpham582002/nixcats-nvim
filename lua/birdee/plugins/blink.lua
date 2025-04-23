@@ -98,7 +98,7 @@ return {
                   ellipsis = false,
                   width = { fill = true },
                   text = function (ctx)
-                    if ctx.item.source_id == 'minuet' then
+                    if ctx.item.source_id == 'minuet' or ctx.item.source_id == 'windsurf' then
                       return "AI"
                     end
                     return ctx.kind
@@ -124,7 +124,11 @@ return {
           preset = 'luasnip',
         },
         sources = {
-          default = { 'lsp', 'path', 'snippets', 'buffer', 'minuet', 'omni' },
+          default = require("birdee.utils").insert_many(
+            { 'lsp', 'path', 'snippets', 'buffer', 'omni' },
+            nixCats('AI.minuet') and 'minuet' or nil,
+            nixCats('AI.windsurf') and 'windsurf' or nil
+          ),
           per_filetype = {
             codecompanion = { "codecompanion" },
           },
@@ -142,18 +146,17 @@ return {
               name = 'minuet',
               module = 'minuet.blink',
               async = true,
-              -- Should match minuet.config.request_timeout * 1000,
-              -- since minuet.config.request_timeout is in seconds
-              timeout_ms = 3000,
-              score_offset = 50, -- Gives minuet higher priority among suggestions
-            } or {
-              name = 'minuet',
+              timeout_ms = 3000, -- minuet.config.request_timeout * 1000,
+              score_offset = 50,
+            } or nil,
+            windsurf = nixCats('AI.windsurf') and {
+              name = 'windsurf',
               module = 'blink.compat.source',
               opts = {
                 cmp_name = 'codeium',
               },
               score_offset = 39,
-            },
+            } or nil,
             cmp_cmdline = {
               name = 'cmp_cmdline',
               module = 'blink.compat.source',
