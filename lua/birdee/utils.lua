@@ -218,4 +218,14 @@ function M.insert_many(dst, ...)
   return dst
 end
 
+function M.extend_many(dst, ...)
+  for i = 1, select('#', ...) do
+    local val = select(i, ...)
+    if type(val) == 'table' then
+      vim.list_extend(dst, val)
+    end
+  end
+  return dst
+end
+
 return M
