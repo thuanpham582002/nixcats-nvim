@@ -55,19 +55,27 @@ local function command(cmd, ...)
 
 		if args.input then
 			local f = io.open(M.luash_tmpfile, 'w')
-			f:write(args.input)
-			f:close()
-			s = s .. ' <' .. M.luash_tmpfile
+			if f then
+				f:write(args.input)
+				f:close()
+				s = s .. ' <' .. M.luash_tmpfile
+			end
 		end
-		local p = io.popen(s, 'r')
-		local output = p:read('*a')
-		local _, exit, status = p:close()
+		local p = io.popen(s .. "; echo __EXITCODE__$?;", 'r')
+		local output = ""
+		if p then
+			output = p:read('*a')
+			p:close()
+		end
 		os.remove(M.luash_tmpfile)
-
+		local exit
+		output = output:gsub("__EXITCODE__(%d*)\n?$", function(code)
+			exit = tonumber(code)
+			return ""
+		end)
 		local t = {
 			__input = output,
-			__exitcode = exit == 'exit' and status or 127,
-			__signal = exit == 'signal' and status or 0,
+			__exitcode = exit or 127,
 		}
 		local mt = {
 			__index = function(self, k, ...)
