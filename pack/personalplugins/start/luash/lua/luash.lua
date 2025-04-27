@@ -3,15 +3,15 @@ local M = {}
 -- converts key and it's argument to "-k" or "-k=v" or just ""
 local function arg(k, a)
 	if not a then return k end
-	if type(a) == 'string' and #a > 0 then return k..'=\''..a..'\'' end
-	if type(a) == 'number' then return k..'='..tostring(a) end
+	if type(a) == 'string' and #a > 0 then return k .. '=\'' .. a .. '\'' end
+	if type(a) == 'number' then return k .. '=' .. tostring(a) end
 	if type(a) == 'boolean' and a == true then return k end
 	error("invalid argument type: '" .. type(a) .. "' of value: '" .. a .. "'")
 end
 
 -- converts nested tables into a flat list of arguments and concatenated input
 local function flatten(t)
-	local result = {args = {}, input = ''}
+	local result = { args = {}, input = '' }
 
 	local function f(t)
 		local keys = {}
@@ -28,8 +28,8 @@ local function flatten(t)
 			if k == '__input' then
 				result.input = result.input .. v
 			elseif not keys[k] and k:sub(1, 1) ~= '_' then
-				local key = '-'..k
-				if #k > 1 then key = '-' ..key end
+				local key = '-' .. k
+				if #k > 1 then key = '-' .. key end
 				table.insert(result.args, arg(key, v))
 			end
 		end
@@ -42,9 +42,9 @@ end
 -- returns a function that executes the command with given args and returns its
 -- output, exit status etc
 local function command(cmd, ...)
-	local prearg = {...}
+	local prearg = { ... }
 	return function(...)
-		local args = flatten({...})
+		local args = flatten({ ... })
 		local s = cmd
 		for _, v in ipairs(prearg) do
 			s = s .. ' ' .. v
@@ -57,7 +57,7 @@ local function command(cmd, ...)
 			local f = io.open(M.luash_tmpfile, 'w')
 			f:write(args.input)
 			f:close()
-			s = s .. ' <'..M.luash_tmpfile
+			s = s .. ' <' .. M.luash_tmpfile
 		end
 		local p = io.popen(s, 'r')
 		local output = p:read('*a')
@@ -86,12 +86,12 @@ end
 M.luash_tmpfile = '/tmp/shluainput'
 
 return setmetatable(M, {
-    -- set hook for undefined variables
-    __index = function(_, cmd)
-        return command(cmd)
-    end,
-    -- allow to call sh to run shell commands
-    __call = function(_, cmd, ...)
-        return command(cmd, ...)
-    end,
+	-- set hook for undefined variables
+	__index = function(_, cmd)
+		return command(cmd)
+	end,
+	-- allow to call sh to run shell commands
+	__call = function(_, cmd, ...)
+		return command(cmd, ...)
+	end,
 })
