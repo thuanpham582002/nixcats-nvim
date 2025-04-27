@@ -5,6 +5,7 @@ inputs: let
     extraName = "birdeevim";
     configDirName = "birdeevim";
     wrapRc = true;
+    useBinaryWrapper = true;
     hosts.node.enable = true;
     hosts.python3.enable = true;
     hosts.perl.enable = false;
