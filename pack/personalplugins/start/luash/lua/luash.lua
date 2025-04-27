@@ -76,6 +76,7 @@ local function command(cmd, ...)
 		local t = {
 			__input = output,
 			__exitcode = exit or 127,
+			__signal = (exit and exit > 128) and (exit - 128) or 0
 		}
 		local mt = {
 			__index = function(self, k, ...)
