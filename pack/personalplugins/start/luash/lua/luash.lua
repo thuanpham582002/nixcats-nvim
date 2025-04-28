@@ -1,5 +1,16 @@
 local M = {}
 
+local is_pre_5_2 = (function()
+	local majorversion, minorversion = _VERSION:match("Lua (%d+).(%d+)")
+	majorversion = tonumber(majorversion)
+	if majorversion < 6 then
+		if majorversion == 5 and tonumber(minorversion) < 2 then
+			return true
+		end
+	end
+	return false
+end)()
+
 -- converts key and it's argument to "-k" or "-k=v" or just ""
 local function arg(k, a)
 	if not a then return k end
@@ -49,7 +60,7 @@ local function command(cmd, ...)
 		for _, v in ipairs(prearg) do
 			s = s .. ' ' .. v
 		end
-		for k, v in pairs(args.args) do
+		for _, v in pairs(args.args) do
 			s = s .. ' ' .. v
 		end
 
@@ -61,23 +72,40 @@ local function command(cmd, ...)
 				s = s .. ' <' .. M.luash_tmpfile
 			end
 		end
-		local p = io.popen(s .. "; echo __EXITCODE__$?;", 'r')
-		local output = ""
-		if p then
-			output = p:read('*a')
-			p:close()
+		local t = {}
+		if is_pre_5_2 then
+			local p = io.popen(s .. "; echo __EXITCODE__$?;", 'r')
+			local output = ""
+			if p then
+				output = p:read('*a')
+				p:close()
+			end
+			os.remove(M.luash_tmpfile)
+			local exit
+			output = output:gsub("__EXITCODE__(%d*)\n?$", function(code)
+				exit = tonumber(code)
+				return ""
+			end)
+			t = {
+				__input = output,
+				__exitcode = exit or 127,
+				__signal = (exit and exit > 128) and (exit - 128) or 0
+			}
+		else
+			local p = io.popen(s, 'r')
+			local output, exit, status
+			if p then
+				output = p:read('*a')
+				_, exit, status = p:close()
+			end
+			os.remove(M.luash_tmpfile)
+
+			t = {
+				__input = output,
+				__exitcode = exit == 'exit' and status or 127,
+				__signal = exit == 'signal' and status or 0,
+			}
 		end
-		os.remove(M.luash_tmpfile)
-		local exit
-		output = output:gsub("__EXITCODE__(%d*)\n?$", function(code)
-			exit = tonumber(code)
-			return ""
-		end)
-		local t = {
-			__input = output,
-			__exitcode = exit or 127,
-			__signal = (exit and exit > 128) and (exit - 128) or 0
-		}
 		local mt = {
 			__index = function(self, k, ...)
 				return M[k] --, ...
