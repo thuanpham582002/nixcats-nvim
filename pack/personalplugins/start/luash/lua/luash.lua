@@ -21,14 +21,14 @@ local function pre_5_2_sh(tmp, cmd, input)
 		end
 	end
 	local p = io.popen(cmd .. "; echo __EXITCODE__$?;", 'r')
-	local output = ""
+	local output
 	if p then
 		output = p:read('*a')
 		p:close()
 	end
 	os.remove(tmp)
 	local exit
-	output = output:gsub("__EXITCODE__(%d*)\n?$", function(code)
+	output = (output or ""):gsub("__EXITCODE__(%d*)\n?$", function(code)
 		exit = tonumber(code)
 		return ""
 	end)
