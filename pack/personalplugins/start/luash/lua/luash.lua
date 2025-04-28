@@ -11,6 +11,58 @@ local is_pre_5_2 = (function()
 	return false
 end)()
 
+local function pre_5_2_sh(tmp, cmd, input)
+	if input then
+		local f = io.open(tmp, 'w')
+		if f then
+			f:write(input)
+			f:close()
+			cmd = cmd .. ' <' .. tmp
+		end
+	end
+	local p = io.popen(cmd .. "; echo __EXITCODE__$?;", 'r')
+	local output = ""
+	if p then
+		output = p:read('*a')
+		p:close()
+	end
+	os.remove(tmp)
+	local exit
+	output = output:gsub("__EXITCODE__(%d*)\n?$", function(code)
+		exit = tonumber(code)
+		return ""
+	end)
+	return {
+		__input = output,
+		__exitcode = exit or 127,
+		__signal = (exit and exit > 128) and (exit - 128) or 0
+	}
+end
+
+local function post_5_2_sh(tmp, cmd, input)
+	if input then
+		local f = io.open(tmp, 'w')
+		if f then
+			f:write(input)
+			f:close()
+			cmd = cmd .. ' <' .. tmp
+		end
+	end
+	local p = io.popen(cmd, 'r')
+	local output, exit, status
+	if p then
+		output = p:read('*a')
+		_, exit, status = p:close()
+	end
+	os.remove(tmp)
+
+	return {
+		__input = output,
+		__exitcode = exit == 'exit' and status or 127,
+		__signal = exit == 'signal' and status or 0,
+	}
+end
+
 -- converts key and it's argument to "-k" or "-k=v" or just ""
 local function arg(k, a)
 	if not a then return k end
@@ -21,8 +73,8 @@ local function arg(k, a)
 end
 
 -- converts nested tables into a flat list of arguments and concatenated input
-local function flatten(t)
-	local result = { args = {}, input = '' }
+local function flatten(input)
+	local result = { args = {} }
 
 	local function f(t)
 		local keys = {}
@@ -37,7 +89,7 @@ local function flatten(t)
 		end
 		for k, v in pairs(t) do
 			if k == '__input' then
-				result.input = result.input .. v
+				result.input = (result.input and result.input or "") .. v
 			elseif not keys[k] and k:sub(1, 1) ~= '_' then
 				local key = '-' .. k
 				if #k > 1 then key = '-' .. key end
@@ -46,7 +98,7 @@ local function flatten(t)
 		end
 	end
 
-	f(t)
+	f(input)
 	return result
 end
 
@@ -63,48 +115,11 @@ local function command(cmd, ...)
 		for _, v in pairs(args.args) do
 			s = s .. ' ' .. v
 		end
-
-		if args.input then
-			local f = io.open(M.luash_tmpfile, 'w')
-			if f then
-				f:write(args.input)
-				f:close()
-				s = s .. ' <' .. M.luash_tmpfile
-			end
-		end
-		local t = {}
+		local t
 		if is_pre_5_2 then
-			local p = io.popen(s .. "; echo __EXITCODE__$?;", 'r')
-			local output = ""
-			if p then
-				output = p:read('*a')
-				p:close()
-			end
-			os.remove(M.luash_tmpfile)
-			local exit
-			output = output:gsub("__EXITCODE__(%d*)\n?$", function(code)
-				exit = tonumber(code)
-				return ""
-			end)
-			t = {
-				__input = output,
-				__exitcode = exit or 127,
-				__signal = (exit and exit > 128) and (exit - 128) or 0
-			}
+			t = pre_5_2_sh(M.luash_tmpfile, s, args.input)
 		else
-			local p = io.popen(s, 'r')
-			local output, exit, status
-			if p then
-				output = p:read('*a')
-				_, exit, status = p:close()
-			end
-			os.remove(M.luash_tmpfile)
-
-			t = {
-				__input = output,
-				__exitcode = exit == 'exit' and status or 127,
-				__signal = exit == 'signal' and status or 0,
-			}
+			t = post_5_2_sh(M.luash_tmpfile, s, args.input)
 		end
 		local mt = {
 			__index = function(self, k, ...)
