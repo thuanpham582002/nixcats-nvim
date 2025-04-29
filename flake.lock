@@ -185,6 +185,21 @@
         "type": "github"
       }
     },
+    "n2l": {
+      "locked": {
+        "lastModified": 1745878523,
+        "narHash": "sha256-hzDMLJNk5e7J5sh/e2Tkhco0A048Tu06cLa3QY3sH+E=",
+        "owner": "BirdeeHub",
+        "repo": "nixToLua",
+        "rev": "42cc3d283baf6c66ec71fd97eea9dde1ca6b0b67",
+        "type": "github"
+      },
+      "original": {
+        "owner": "BirdeeHub",
+        "repo": "nixToLua",
+        "type": "github"
+      }
+    },
     "neorg": {
       "flake": false,
       "locked": {
@@ -389,6 +404,22 @@
     },
     "nixpkgs_7": {
       "locked": {
+        "lastModified": 1745377448,
+        "narHash": "sha256-jhZDfXVKdD7TSEGgzFJQvEEZ2K65UMiqW5YJ2aIqxMA=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "507b63021ada5fee621b6ca371c4fca9ca46f52c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_8": {
+      "locked": {
         "lastModified": 1741862977,
         "narHash": "sha256-prZ0M8vE/ghRGGZcflvxCu40ObKaB+ikn74/xQoNrGQ=",
         "owner": "NixOS",
@@ -588,6 +619,7 @@
         "plugins-rustaceanvim": "plugins-rustaceanvim",
         "plugins-snacks.nvim": "plugins-snacks.nvim",
         "plugins-visual-whitespace": "plugins-visual-whitespace",
+        "shelua": "shelua",
         "templ": "templ"
       }
     },
@@ -605,6 +637,25 @@
         "owner": "rust-lang",
         "ref": "nightly",
         "repo": "rust-analyzer",
+        "type": "github"
+      }
+    },
+    "shelua": {
+      "inputs": {
+        "n2l": "n2l",
+        "nixpkgs": "nixpkgs_7"
+      },
+      "locked": {
+        "lastModified": 1745917613,
+        "narHash": "sha256-+Son8Tx4a/xAdnP6zW70J/VDCPPpIx/MMkTz215Gljo=",
+        "owner": "BirdeeHub",
+        "repo": "shelua",
+        "rev": "92e4d1bce1e1d57508dbbe0524b910e4683aef6f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "BirdeeHub",
+        "repo": "shelua",
         "type": "github"
       }
     },
@@ -641,7 +692,7 @@
     "templ": {
       "inputs": {
         "gitignore": "gitignore",
-        "nixpkgs": "nixpkgs_7",
+        "nixpkgs": "nixpkgs_8",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "version": "version",
         "xc": "xc"

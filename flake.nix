@@ -29,6 +29,7 @@
       flake = false;
     };
 
+    shelua.url = "github:BirdeeHub/shelua";
     fenix.url = "github:nix-community/fenix";
     nix-appimage.url = "github:ralismark/nix-appimage";
     templ.url = "github:a-h/templ";

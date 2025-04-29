@@ -44,6 +44,9 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
   # populates $LUA_PATH and $LUA_CPATH
   extraLuaPackages = {
     # vimagePreview = [ (lp: with lp; [ magick ]) ];
+    other = [ (inputs.shelua.packages.${pkgs.system}.default.override {
+      inherit (if settings.neovim-unwrapped != null then settings.neovim-unwrapped else pkgs.neovim-unwrapped) lua;
+    }) ];
   };
 
   lspsAndRuntimeDeps = with pkgs; {
