@@ -1,48 +1,11 @@
 local M = {}
 
----@param file_path string
----@return boolean existed
-function M.deleteFileIfExists(file_path)
-  if vim.fn.filereadable(file_path) == 1 then
-    os.remove(file_path)
-    return true
-  end
-  return false
-end
-
 function M.split_string(str, delimiter)
   local result = {}
   for match in (str .. delimiter):gmatch("(.-)" .. delimiter) do
     table.insert(result, match)
   end
   return result
-end
-
----Requires plenary
----@param cmd string[]
----@param cwd string
----@return table
----@return unknown
----@return table
-function M.get_os_command_output(cmd, cwd)
-  if type(cmd) ~= "table" then
-    print("[get_os_command_output]: cmd has to be a table")
-    ---@diagnostic disable-next-line: return-type-mismatch
-    return {}, nil, nil
-  end
-  local command = table.remove(cmd, 1)
-  local stderr = {}
-  local stdout, ret = require("plenary.job")
-      :new({
-        command = command,
-        args = cmd,
-        cwd = cwd,
-        on_stderr = function(_, data)
-          table.insert(stderr, data)
-        end,
-      })
-      :sync()
-  return stdout, ret, stderr
 end
 
 local function full_logon()

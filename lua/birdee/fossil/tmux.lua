@@ -1,7 +1,33 @@
 local global_config = {
     tmux_autoclose_windows = false,
 }
-local utils = require("birdee.utils")
+
+---Requires plenary
+---@param cmd string[]
+---@param cwd string
+---@return table
+---@return unknown
+---@return table
+local function get_os_command_output(cmd, cwd)
+  if type(cmd) ~= "table" then
+    print("[get_os_command_output]: cmd has to be a table")
+    ---@diagnostic disable-next-line: return-type-mismatch
+    return {}, nil, nil
+  end
+  local command = table.remove(cmd, 1)
+  local stderr = {}
+  local stdout, ret = require("plenary.job")
+      :new({
+        command = command,
+        args = cmd,
+        cwd = cwd,
+        on_stderr = function(_, data)
+          table.insert(stderr, data)
+        end,
+      })
+      :sync()
+  return stdout, ret, stderr
+end
 
 local M = {}
 local tmux_windows = {}
@@ -24,7 +50,7 @@ local function create_terminal()
     local window_id
 
     -- Create a new tmux window and store the window id
-    local out, ret, _ = utils.get_os_command_output({
+    local out, ret, _ = get_os_command_output({
         "tmux",
         "new-window",
         "-P",
@@ -47,7 +73,7 @@ end
 local function terminal_exists(window_id)
     local exists = false
 
-    local window_list, _, _ = utils.get_os_command_output({
+    local window_list, _, _ = get_os_command_output({
         "tmux",
         "list-windows",
     }, vim.loop.cwd())
@@ -55,7 +81,7 @@ local function terminal_exists(window_id)
     -- This has to be done this way because tmux has-session does not give
     -- updated results
     for _, line in pairs(window_list) do
-        local window_info = utils.split_string(line, "@")[2]
+        local window_info = require("birdee.utils").split_string(line, "@")[2]
 
         if string.find(window_info, string.sub(window_id, 2)) then
             exists = true
@@ -107,7 +133,7 @@ end
 function M.gotoTerminal(idx)
     local window_handle = find_terminal(idx)
 
-    local _, ret, stderr = utils.get_os_command_output({
+    local _, ret, stderr = get_os_command_output({
         "tmux",
         window_handle.pane and "select-pane" or "select-window",
         "-t",
@@ -122,7 +148,7 @@ end
 function M.clear_all()
     for _, window in pairs(tmux_windows) do
         -- Delete the current tmux window
-        utils.get_os_command_output({
+        get_os_command_output({
             "tmux",
             "kill-window",
             "-t",

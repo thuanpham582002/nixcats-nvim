@@ -44,9 +44,7 @@ return {
         },
       })
       local function mkClear(cmd, file)
-        vim.api.nvim_create_user_command(cmd, function(_)
-          print(require("birdee.utils").deleteFileIfExists(file))
-        end, {})
+        vim.api.nvim_create_user_command(cmd, function(_) os.remove(file) end, {})
       end
       if nixCats("AI.windsurf") then
         mkClear("ClearWindsurfAuth", windsurfAuthFile)
