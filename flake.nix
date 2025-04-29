@@ -29,8 +29,6 @@
       flake = false;
     };
 
-    shelua.url = "github:BirdeeHub/shelua";
-    shelua.inputs.nixpkgs.follows = "nixpkgs";
     fenix.url = "github:nix-community/fenix";
     nix-appimage.url = "github:ralismark/nix-appimage";
     templ.url = "github:a-h/templ";
@@ -48,6 +46,10 @@
     plugins-lzextras = {
       url = "github:BirdeeHub/lzextras";
       # url = "git+file:/home/birdee/Projects/lzextras";
+      flake = false;
+    };
+    plugins-shelua = {
+      url = "github:BirdeeHub/shelua";
       flake = false;
     };
     "plugins-hlargs" = {

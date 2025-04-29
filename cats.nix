@@ -44,9 +44,6 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
   # populates $LUA_PATH and $LUA_CPATH
   extraLuaPackages = {
     # vimagePreview = [ (lp: with lp; [ magick ]) ];
-    other = [ (inputs.shelua.packages.${pkgs.system}.default.override {
-      inherit (if settings.neovim-unwrapped != null then settings.neovim-unwrapped else pkgs.neovim-unwrapped) lua;
-    }) ];
   };
 
   lspsAndRuntimeDeps = with pkgs; {
@@ -189,6 +186,7 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
     ];
     other = [
       nvim-spectre
+      pkgs.neovimPlugins.shelua
       # (pkgs.neovimUtils.grammarToPlugin (pkgs.tree-sitter-grammars.tree-sitter-nu.overrideAttrs (p: { installQueries = true; })))
     ];
     lua = [
