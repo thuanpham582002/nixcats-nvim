@@ -34,10 +34,10 @@ end
 -- end
 
 
-local function tbl_get(t, path, default)
-  if #path == 0 then return default end
-  for _, key in ipairs(path) do
-	if type(t) ~= "table" then return default end
+local function tbl_get(t, ...)
+  if #{...} == 0 then return nil end
+  for _, key in ipairs({...}) do
+	if type(t) ~= "table" then return nil end
 	t = t[key]
   end
   return t
