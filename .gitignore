@@ -1,3 +1,4 @@
 **/result
+**/.nvim.lua
 **/repl-result-out
 **/.luarc.json
