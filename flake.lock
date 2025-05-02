@@ -543,11 +543,11 @@
     "plugins-shelua": {
       "flake": false,
       "locked": {
-        "lastModified": 1745984360,
-        "narHash": "sha256-V104wsmdsZEu/YgxfOhS8IekJbaPOBg+mNAYezfO8vQ=",
+        "lastModified": 1746226164,
+        "narHash": "sha256-aQjxv2FMrDRYEDDVEig4O8brm5Wjlk7C1CwSyFwk/x4=",
         "owner": "BirdeeHub",
         "repo": "shelua",
-        "rev": "118799bf11dd4e84c65699091f4a47243e9c14aa",
+        "rev": "5100ad46179aff4d17dab9acf00c8017f3c14833",
         "type": "github"
       },
       "original": {
