@@ -1,15 +1,25 @@
 _G.sh = require('sh')
 ---@type SheluaOpts
 local sh_settings = getmetatable(sh)
-local escapeShellArg = sh_settings.repr.posix.escape
-
+string.escapeShellArg = sh_settings.repr.posix.escape
+function os.write_file(opts, filename, content)
+  local file = assert(io.open(filename, opts.append and "a" or "w"))
+  file:write(content .. (opts.newline ~= false and "\n" or ""))
+  file:close()
+end
+function os.read_file(filename)
+  local file = assert(io.open(filename, "r"))
+  local content = file:read("*a")
+  file:close()
+  return content
+end
 local concat_cmd = function(opts, cmd, input)
   local function normalize_shell_expr(v)
     if v.c then return v.c end
     if v.s and (v.e.__exitcode or 0) == 0 then
-      return "echo " .. escapeShellArg(v.s)
+      return "echo " .. string.escapeShellArg(v.s)
     end
-    return "{ echo " .. escapeShellArg(v.e.__stderr or v.s) .. " 1>&2; false; }"
+    return "{ echo " .. string.escapeShellArg(v.e.__stderr or v.s) .. " 1>&2; false; }"
   end
   if cmd:sub(1, 3) == "AND" then
     for i, v in ipairs(input) do
@@ -35,7 +45,11 @@ end
 local function run_command(opts, cmd, msg)
   local result
   if opts.proper_pipes then
-    result = vim.system({ "bash", "-c", cmd }, { text = true }):wait()
+    -- result = vim.system({ "bash", '-c', cmd }, { text = true }):wait()
+    local tmp = os.tmpname()
+    os.write_file({ newline = false }, tmp, cmd)
+    result = vim.system({ "bash", tmp }, { text = true }):wait()
+    os.remove(tmp)
   else
     result = vim.system(cmd, { stdin = msg, text = true }):wait()
   end
@@ -55,7 +69,7 @@ sh_settings.repr.vim = {
     if opts.proper_pipes then
       if opts.escape_args then
         for k, v in ipairs(args) do
-          args[k] = escapeShellArg(v)
+          args[k] = string.escapeShellArg(v)
         end
       end
       return cmd .. " " .. table.concat(args, " ")
