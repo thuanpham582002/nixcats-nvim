@@ -2,12 +2,12 @@ _G.sh = require('sh')
 ---@type SheluaOpts
 local sh_settings = getmetatable(sh)
 
-local function run_command(_, cmd, msg)
+local function run_command(opts, cmd, msg)
   local result
-  if cmd.cmd then
-    result = vim.system({ cmd.cmd, unpack(cmd.args or {}) }, { stdin = cmd.input, text = true }):wait()
-  else
+  if opts.proper_pipes then
     result = vim.system({ "bash", "-c", cmd }, { text = true }):wait()
+  else
+    result = vim.system({ cmd.cmd, unpack(cmd.args or {}) }, { stdin = cmd.input, text = true }):wait()
   end
   return {
     __input = result.stdout,
