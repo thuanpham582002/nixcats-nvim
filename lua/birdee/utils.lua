@@ -8,6 +8,7 @@ function M.split_string(str, delimiter)
   return result
 end
 
+local sh = sh { proper_pipes = false, escape_args = false, assert_zero = false, transforms = {}, shell = "vim" }
 function M.authTerminal()
   local function full_logon()
     local email = vim.fn.inputsecret('Enter email: ')
