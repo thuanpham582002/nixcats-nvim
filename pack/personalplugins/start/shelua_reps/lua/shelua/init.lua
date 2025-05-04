@@ -1,6 +1,7 @@
 _G.sh = require('sh')
 ---@type SheluaOpts
 local sh_settings = getmetatable(sh)
+local escapeShellArg = sh_settings.repr.posix.escape
 
 local function run_command(opts, cmd, msg)
   local result
@@ -26,7 +27,7 @@ sh_settings.repr.vim = {
     if opts.proper_pipes then
         if opts.escape_args then
           for k, v in ipairs(args) do
-            args[k] = sh_settings.repr.posix.escape(v)
+            args[k] = escapeShellArg(v)
           end
         end
         return cmd .. " " .. table.concat(args, " ")
