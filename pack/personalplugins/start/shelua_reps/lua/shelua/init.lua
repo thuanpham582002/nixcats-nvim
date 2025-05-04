@@ -1,5 +1,6 @@
+_G.sh = require('sh')
 ---@type SheluaOpts
-local sh_settings = getmetatable(require('sh'))
+local sh_settings = getmetatable(sh)
 
 local function run_command(_, cmd, msg)
   local result
