@@ -8,17 +8,17 @@ function M.split_string(str, delimiter)
   return result
 end
 
-local function full_logon()
-  local email = vim.fn.inputsecret('Enter email: ')
-  local pass = vim.fn.inputsecret('Enter password: ')
-  local ret = sh.bw("login", "--raw", "--quiet", email, pass, { __input = vim.fn.inputsecret('New device login code: ') })
-  return pass, ret.__exitcode == 0
-end
-local function unlock(password)
-  local ret = sh.bw("unlock", "--raw", "--nointeraction", (password or vim.fn.inputsecret('Enter password: ')))
-  return tostring(ret), ret.__exitcode == 0
-end
 function M.authTerminal()
+  local function full_logon()
+    local email = vim.fn.inputsecret('Enter email: ')
+    local pass = vim.fn.inputsecret('Enter password: ')
+    local ret = sh.bw("login", "--raw", "--quiet", email, pass, { __input = vim.fn.inputsecret('New device login code: ') })
+    return pass, ret.__exitcode == 0
+  end
+  local function unlock(password)
+    local ret = sh.bw("unlock", "--raw", "--nointeraction", (password or vim.fn.inputsecret('Enter password: ')))
+    return tostring(ret), ret.__exitcode == 0
+  end
   local session = os.getenv('BW_SESSION')
   if session then
     return session, true
