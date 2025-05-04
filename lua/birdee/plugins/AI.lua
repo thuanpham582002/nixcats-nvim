@@ -1,8 +1,8 @@
-local catUtils = require('nixCatsUtils')
+local isNixCats = require('nixCatsUtils')
 return {
   {
     "AI_auths",
-    enabled = catUtils.isNixCats and (nixCats("AI.windsurf") or nixCats("AI.minuet")) or false,
+    enabled = isNixCats and (nixCats("AI.windsurf") or nixCats("AI.minuet")) or false,
     dep_of = { "windsurf.nvim", "minuet-ai.nvim" },
     load = function(_)
       local bitwardenAuths = nixCats.extra('bitwarden_uuids')
@@ -11,7 +11,7 @@ return {
       local windsurfAuthInvalid = vim.fn.filereadable(windsurfAuthFile) == 0
       require('birdee.utils').get_auths({
         windsurf = {
-          enable = catUtils.isNixCats and windsurfAuthInvalid and bitwardenAuths.windsurf and nixCats("AI.windsurf") or false,
+          enable = isNixCats and windsurfAuthInvalid and bitwardenAuths.windsurf and nixCats("AI.windsurf") or false,
           cache = false, -- <- this one is cached by its action
           bw_id = bitwardenAuths.windsurf,
           localpath = (os.getenv("HOME") or "~") .. "/.secrets/windsurf",
@@ -34,7 +34,7 @@ return {
           end,
         },
         gemini = {
-          enable = catUtils.isNixCats and bitwardenAuths.gemini and nixCats("AI.minuet") or false,
+          enable = isNixCats and bitwardenAuths.gemini and nixCats("AI.minuet") or false,
           cache = true,
           bw_id = bitwardenAuths.gemini,
           localpath = (os.getenv("HOME") or "~") .. "/.secrets/gemini",
@@ -139,7 +139,7 @@ return {
           enable_auto_complete = false,
         },
         blink = {
-          enable_auto_complete = nixCats('blink') or false,
+          enable_auto_complete = nixCats('general.blink') or false,
         },
         n_completions = 1, -- recommend for local model for resource saving
         context_ratio = 0.75,
