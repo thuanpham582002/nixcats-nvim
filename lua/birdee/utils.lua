@@ -63,10 +63,10 @@ function M.get_auths(entries)
         local ret = sh.bw("get", "--nointeraction", "--session", session, entry.bw_id)
         local key = ret.__exitcode == 0 and tostring(ret) or nil
         if entry.cache and key then
-          local handle2 = io.open(entry.localpath, "w")
-          if handle2 then
-            handle2:write(key)
-            handle2:close()
+          local handle = io.open(entry.localpath, "w")
+          if handle then
+            handle:write(key)
+            handle:close()
             vim.loop.fs_chmod(entry.localpath, 384, function(err, success)
               if err then
                 print("Failed to set file permissions: " .. err)
