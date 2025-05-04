@@ -1,5 +1,5 @@
 local M = {}
-
+require('shelua_reps')
 function M.split_string(str, delimiter)
   local result = {}
   for match in (str .. delimiter):gmatch("(.-)" .. delimiter) do
