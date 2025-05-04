@@ -5,12 +5,17 @@ local function add_args(opts, cmd, args)
   if opts.proper_pipes then
       return cmd .. " " .. table.concat(args, " ")
   else
-    return { cmd = cmd, args = args }
+    return setmetatable({ cmd = cmd, args = args }, {
+      __tostring = function(self)
+        return vim.inspect(self)
+      end,
+    })
   end
 end
 
 local function single_stdin(opts, cmd, input)
-  return { cmd = cmd.cmd, args = cmd.args, input = input }
+  cmd.input = input
+  return cmd
 end
 
 local function run_command(_, cmd, msg)
@@ -29,7 +34,7 @@ local function run_command(_, cmd, msg)
 end
 
 ---@type Shelua.Repr
-local newrep = {
+sh_settings.repr.vim = {
   escape = sh_settings.repr.posix.escape,
   arg_tbl = sh_settings.repr.posix.arg_tbl,
   add_args = add_args,
@@ -39,5 +44,4 @@ local newrep = {
   pre_5_2_run = run_command,
   extra_cmd_results = { "__stderr" },
 }
-
-sh_settings.repr.posix = newrep
+sh_settings.shell = "vim"
