@@ -17,23 +17,31 @@ _G.sh = require('sh')
 local sh_settings = getmetatable(sh)
 string.escapeShellArg = sh_settings.repr.posix.escape
 local concat_cmd = function(opts, cmd, input)
-  local function normalize_shell_expr(v)
+  local function normalize_shell_expr(v, cmd_mod)
     if v.c then return v.c end
-    if v.s and (v.e.__exitcode or 0) == 0 then
-      return "echo " .. string.escapeShellArg(v.s)
+    if v.s and cmd_mod and (v.e.__exitcode or 0) ~= 0 then
+      return "{ echo " .. string.escapeShellArg(v.e.__stderr or v.s) .. " 1>&2; false; }"
     end
-    return "{ echo " .. string.escapeShellArg(v.e.__stderr or v.s) .. " 1>&2; false; }"
+    return "echo " .. string.escapeShellArg(v.s)
   end
   if cmd:sub(1, 3) == "AND" then
-    for i, v in ipairs(input) do
-      input[i] = normalize_shell_expr(v)
+    local initial = normalize_shell_expr(input[1], "AND")
+    local res = {}
+    for i = 2, #input do
+      table.insert(res, normalize_shell_expr(input[i]))
     end
-    return table.concat(input, " && ")
+    if #res == 0 then error("AND requires at least 2 commands") end
+    if #res == 1 then return initial .. " && " .. res[1] end
+    return initial .. " && { " .. table.concat(res, " ; ") .. " ; }"
   elseif cmd:sub(1, 2) == "OR" then
-    for i, v in ipairs(input) do
-      input[i] = normalize_shell_expr(v)
+    local initial = normalize_shell_expr(input[1], "OR")
+    local res = {}
+    for i = 2, #input do
+      table.insert(res, normalize_shell_expr(input[i]))
     end
-    return table.concat(input, " || ")
+    if #res == 0 then error("OR requires at least 2 commands") end
+    if #res == 1 then return initial .. " || " .. res[1] end
+    return initial .. " || { " .. table.concat(res, " ; ") .. " ; }"
   elseif #input == 1 then
     return normalize_shell_expr(input[1]) .. " | " .. cmd
   elseif #input > 1 then
@@ -45,12 +53,54 @@ local concat_cmd = function(opts, cmd, input)
     return cmd
   end
 end
+local AND = setmetatable({}, { __tostring = function() return "AND" end })
+local OR = setmetatable({}, { __tostring = function() return "OR" end })
+local single_stdin = function(opts, cmd, inputs, codes)
+  if cmd[1] == "AND" then
+    if not inputs or #inputs < 2 then error("AND requires at least 2 commands") end
+    local c0 = codes[1]
+    local cf = codes[#codes]
+    if c0.__exitcode == 0 then
+      local res = ""
+      for _, v in ipairs(inputs) do
+        res = res .. v
+      end
+      cf.__input = res
+      return AND, cf
+    else
+      c0.__input = inputs[1]
+      return AND, c0
+    end
+  elseif cmd[1] == "OR" then
+    if not inputs or #inputs < 2 then error("OR requires at least 2 commands") end
+    local c0 = codes[1]
+    local cf = codes[#codes]
+    if c0.__exitcode == 0 then
+      c0.__input = inputs[1]
+      return OR, c0
+    else
+      local res = ""
+      for _, v in ipairs(inputs) do
+        res = res .. v
+      end
+      cf.__input = res
+      return OR, cf
+    end
+  else
+    return cmd, inputs
+  end
+end
 local function run_command(opts, cmd, msg)
   local result
   if opts.proper_pipes then
     result = vim.system({ "bash", '-c', cmd }, { text = true }):wait()
     -- local tmp = os.tmpname()
     -- result = vim.system({ "bash", os.write_file({ newline = false }, tmp, cmd) }, { text = true }, function() os.remove(tmp) end):wait()
+  elseif cmd == AND or cmd == OR then
+    msg.__exitcode = msg.__exitcode or 0
+    msg.__signal = msg.__signal or 0
+    msg.__stderr = msg.__stderr or ""
+    return msg
   else
     result = vim.system(cmd, { stdin = msg, text = true }):wait()
   end
@@ -80,9 +130,7 @@ sh_settings.repr.vim = {
       })
     end
   end,
-  single_stdin = function(opts, cmd, inputs, codes)
-    return cmd, inputs
-  end,
+  single_stdin = single_stdin,
   post_5_2_run = run_command,
   pre_5_2_run = run_command,
   extra_cmd_results = { "__stderr" },
