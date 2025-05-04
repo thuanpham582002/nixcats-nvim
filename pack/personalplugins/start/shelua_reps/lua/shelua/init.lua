@@ -4,7 +4,7 @@ local sh_settings = getmetatable(sh)
 local escapeShellArg = sh_settings.repr.posix.escape
 
 local concat_cmd = function(opts, cmd, input)
-  local function normalize_and_or(v)
+  local function normalize_shell_expr(v)
     if v.c then return v.c end
     if v.s and (v.e.__exitcode or 0) == 0 then
       return "echo " .. escapeShellArg(v.s)
@@ -12,31 +12,20 @@ local concat_cmd = function(opts, cmd, input)
     return "{ echo " .. escapeShellArg(v.e.__stderr or v.s) .. " 1>&2; false; }"
   end
   if cmd:sub(1, 3) == "AND" then
-    for k, v in ipairs(input) do
-      input[k] = normalize_and_or(v)
+    for i, v in ipairs(input) do
+      input[i] = normalize_shell_expr(v)
     end
     return table.concat(input, " && ")
   elseif cmd:sub(1, 2) == "OR" then
-    for k, v in ipairs(input) do
-      input[k] = normalize_and_or(v)
+    for i, v in ipairs(input) do
+      input[i] = normalize_shell_expr(v)
     end
     return table.concat(input, " || ")
   elseif #input == 1 then
-    local v = input[1]
-    if v.s then
-      return "echo " .. escapeShellArg(v.s) .. " | " .. cmd
-    else
-      return v.c .. " | " .. cmd
-    end
+    return normalize_shell_expr(input[1]) .. " | " .. cmd
   elseif #input > 1 then
-    for i = 1, #input do
-      local v = input[i]
-      if v.s then
-        input[i] = "echo " .. escapeShellArg(v.s)
-      elseif v.c then
-        ---@diagnostic disable-next-line: assign-type-mismatch
-        input[i] = v.c
-      end
+    for i, v in ipairs(input) do
+      input[i] = normalize_shell_expr(v)
     end
     return "{ " .. table.concat(input, " ; ") .. " ; } | " .. cmd
   else
