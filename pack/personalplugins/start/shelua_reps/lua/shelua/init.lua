@@ -19,11 +19,14 @@ end
 
 ---@type Shelua.Repr
 sh_settings.repr.vim = {
-  escape = sh_settings.repr.posix.escape,
+  escape = function (s) return s end,
   arg_tbl = sh_settings.repr.posix.arg_tbl,
   concat_cmd = sh_settings.repr.posix.concat_cmd,
   add_args = function(opts, cmd, args)
     if opts.proper_pipes then
+        for k, v in ipairs(args) do
+          args[k] = sh_settings.repr.posix.escape(v)
+        end
         return cmd .. " " .. table.concat(args, " ")
     else
       return setmetatable({ cmd, unpack(args) }, {
