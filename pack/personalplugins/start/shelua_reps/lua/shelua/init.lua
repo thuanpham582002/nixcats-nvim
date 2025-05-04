@@ -1,7 +1,3 @@
-_G.sh = require('sh')
----@type SheluaOpts
-local sh_settings = getmetatable(sh)
-string.escapeShellArg = sh_settings.repr.posix.escape
 function os.write_file(opts, filename, content)
   local file = io.open(filename, opts.append and "a" or "w")
   if not file then return nil end
@@ -16,6 +12,10 @@ function os.read_file(filename)
   file:close()
   return content
 end
+_G.sh = require('sh')
+---@type SheluaOpts
+local sh_settings = getmetatable(sh)
+string.escapeShellArg = sh_settings.repr.posix.escape
 local concat_cmd = function(opts, cmd, input)
   local function normalize_shell_expr(v)
     if v.c then return v.c end
@@ -48,9 +48,9 @@ end
 local function run_command(opts, cmd, msg)
   local result
   if opts.proper_pipes then
-    -- result = vim.system({ "bash", '-c', cmd }, { text = true }):wait()
-    local tmp = os.tmpname()
-    result = vim.system({ "bash", os.write_file({ newline = false }, tmp, cmd) }, { text = true }, function() os.remove(tmp) end):wait()
+    result = vim.system({ "bash", '-c', cmd }, { text = true }):wait()
+    -- local tmp = os.tmpname()
+    -- result = vim.system({ "bash", os.write_file({ newline = false }, tmp, cmd) }, { text = true }, function() os.remove(tmp) end):wait()
   else
     result = vim.system(cmd, { stdin = msg, text = true }):wait()
   end
