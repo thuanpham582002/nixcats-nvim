@@ -19,21 +19,19 @@ local function unlock(password)
   return tostring(ret), ret.__exitcode == 0
 end
 function M.authTerminal()
-  local session = sh.bw("login", "--check")
-  if vim.fn.expand('$BW_SESSION') ~= "$BW_SESSION" then
-    return vim.fn.expand('$BW_SESSION'), true
+  local session = os.getenv('BW_SESSION')
+  if session then
+    return session, true
   else
-    local ok = false
-    if session == "You are logged in!" then
-      session, ok = unlock()
+    if tostring(sh.bw("login", "--check")) == "You are logged in!" then
+      return unlock()
     else
-      local pass
-      pass, ok = full_logon()
+      local pass, ok = full_logon()
       if ok and pass then
-        session, ok = unlock(pass)
+        return unlock(pass)
       end
     end
-    return session, ok
+    return session, false
   end
 end
 
