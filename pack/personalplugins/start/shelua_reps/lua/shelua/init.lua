@@ -61,8 +61,8 @@ sh_settings.repr.vim = {
       })
     end
   end,
-  single_stdin = function (opts, cmd, input)
-    return cmd, input
+  single_stdin = function (opts, cmd, inputs, codes)
+    return cmd, inputs
   end,
   post_5_2_run = run_command,
   pre_5_2_run = run_command,
