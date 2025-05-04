@@ -28,7 +28,7 @@ sh_settings.repr.vim = {
     else
       return setmetatable({ cmd, unpack(args) }, {
         __tostring = function(self)
-          return vim.inspect(self)
+          return table.concat(self, " ")
         end,
       })
     end
