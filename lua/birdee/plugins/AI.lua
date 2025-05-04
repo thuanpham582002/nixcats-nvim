@@ -14,7 +14,7 @@ return {
           enable = catUtils.isNixCats and windsurfAuthInvalid and bitwardenAuths.windsurf and nixCats("AI.windsurf") or false,
           cache = false, -- <- this one is cached by its action
           bw_id = bitwardenAuths.windsurf,
-          localpath = vim.fn.expand("$HOME") .. "/.secrets/windsurf",
+          localpath = (os.getenv("HOME") or "~") .. "/.secrets/windsurf",
           action = function (key)
             if vim.fn.isdirectory(windsurfDir) == 0 then
               vim.fn.mkdir(windsurfDir, 'p')
@@ -37,7 +37,7 @@ return {
           enable = catUtils.isNixCats and bitwardenAuths.gemini and nixCats("AI.minuet") or false,
           cache = true,
           bw_id = bitwardenAuths.gemini,
-          localpath = vim.fn.expand("$HOME") .. "/.secrets/gemini",
+          localpath = (os.getenv("HOME") or "~") .. "/.secrets/gemini",
           action = function(key)
             vim.env.GEMINI_API_KEY = key
           end,
@@ -50,7 +50,7 @@ return {
         mkClear("ClearWindsurfAuth", windsurfAuthFile)
       end
       if nixCats("AI.minuet") then
-        mkClear("ClearGeminiAuth", vim.fn.expand("$HOME") .. "/.secrets/gemini")
+        mkClear("ClearGeminiAuth", (os.getenv("HOME") or "~") .. "/.secrets/gemini")
       end
       mkClear("ClearBitwardenData", vim.fn.stdpath('config') .. [[/../Bitwarden\ CLI/data.json]])
     end
