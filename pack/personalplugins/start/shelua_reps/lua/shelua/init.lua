@@ -7,7 +7,7 @@ local function run_command(opts, cmd, msg)
   if opts.proper_pipes then
     result = vim.system({ "bash", "-c", cmd }, { text = true }):wait()
   else
-    result = vim.system({ cmd.cmd, unpack(cmd.args or {}) }, { stdin = cmd.input, text = true }):wait()
+    result = vim.system(cmd, { stdin = msg, text = true }):wait()
   end
   return {
     __input = result.stdout,
@@ -26,7 +26,7 @@ sh_settings.repr.vim = {
     if opts.proper_pipes then
         return cmd .. " " .. table.concat(args, " ")
     else
-      return setmetatable({ cmd = cmd, args = args }, {
+      return setmetatable({ cmd, unpack(args) }, {
         __tostring = function(self)
           return vim.inspect(self)
         end,
@@ -34,8 +34,7 @@ sh_settings.repr.vim = {
     end
   end,
   single_stdin = function (opts, cmd, input)
-    cmd.input = input
-    return cmd
+    return cmd, input
   end,
   post_5_2_run = run_command,
   pre_5_2_run = run_command,
