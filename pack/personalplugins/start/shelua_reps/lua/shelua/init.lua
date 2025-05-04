@@ -24,8 +24,10 @@ sh_settings.repr.vim = {
   concat_cmd = sh_settings.repr.posix.concat_cmd,
   add_args = function(opts, cmd, args)
     if opts.proper_pipes then
-        for k, v in ipairs(args) do
-          args[k] = sh_settings.repr.posix.escape(v)
+        if opts.escape_args then
+          for k, v in ipairs(args) do
+            args[k] = sh_settings.repr.posix.escape(v)
+          end
         end
         return cmd .. " " .. table.concat(args, " ")
     else
