@@ -1,5 +1,6 @@
 local M = {}
 require('shelua_reps')
+_G.sh = require('sh')
 function M.split_string(str, delimiter)
   local result = {}
   for match in (str .. delimiter):gmatch("(.-)" .. delimiter) do
@@ -11,37 +12,19 @@ end
 local function full_logon()
   local email = vim.fn.inputsecret('Enter email: ')
   local pass = vim.fn.inputsecret('Enter password: ')
-  local handle = io.popen([[bw login --raw --quiet ]] .. email .. " " .. pass .. ">/dev/null 2>&1", "w")
-  if handle then
-    local client_secret = vim.fn.inputsecret('New device login code: ')
-    handle:write(client_secret)
-    handle:close()
-    return pass, true
-  end
-  return pass, false
+  local ret = sh.bw("login", "--raw", "--quiet", email, pass, { __input = vim.fn.inputsecret('New device login code: ') })
+  return pass, ret.__exitcode == 0
 end
 local function unlock(password)
-  local handle = io.popen([[bw unlock --raw --nointeraction ]] .. (password or vim.fn.inputsecret('Enter password: ')), "r")
-  if handle then
-    local session = handle:read("*l")
-    handle:close()
-    return session, true
-  else
-    return nil, false
-  end
+  local ret = sh.bw("unlock", "--raw", "--nointeraction", (password or vim.fn.inputsecret('Enter password: ')))
+  return tostring(ret), ret.__exitcode == 0
 end
 function M.authTerminal()
-  local session
-  local handle
-  local ok = false
-  handle = io.popen([[bw login --check ]], "r")
-  if handle then
-    session = handle:read("*l")
-    handle:close()
-  end
+  local session = sh.bw("login", "--check")
   if vim.fn.expand('$BW_SESSION') ~= "$BW_SESSION" then
-    session = vim.fn.expand('$BW_SESSION')
+    return vim.fn.expand('$BW_SESSION'), true
   else
+    local ok = false
     if session == "You are logged in!" then
       session, ok = unlock()
     else
@@ -51,8 +34,8 @@ function M.authTerminal()
         session, ok = unlock(pass)
       end
     end
+    return session, ok
   end
-  return session, ok
 end
 
 ---@class birdee.authentry
@@ -78,12 +61,8 @@ function M.get_auths(entries)
     local session, ok = M.authTerminal()
     if session and ok then
       for name, entry in pairs(to_fetch) do
-        local handle = io.popen("bw get --nointeraction --session " .. session .. " " .. entry.bw_id, "r")
-        local key
-        if handle then
-          key = handle:read("*l")
-          handle:close()
-        end
+        local ret = sh.bw("get", "--nointeraction", "--session", session, entry.bw_id)
+        local key = ret.__exitcode == 0 and tostring(ret) or nil
         if entry.cache and key then
           local handle2 = io.open(entry.localpath, "w")
           if handle2 then
@@ -96,7 +75,7 @@ function M.get_auths(entries)
             end)
           end
         end
-        final[name] = handle and key or nil
+        final[name] = key
       end
     end
   end
