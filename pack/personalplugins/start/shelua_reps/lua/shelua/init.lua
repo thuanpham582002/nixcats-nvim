@@ -39,8 +39,8 @@ local concat_cmd = function(opts, cmd, input)
     return cmd
   end
 end
-local AND = setmetatable({}, { __tostring = function() return "AND" end })
-local OR = setmetatable({}, { __tostring = function() return "OR" end })
+local function mkToken(n) return setmetatable({}, { __tostring = function() return n end }) end
+local AND, OR = mkToken("AND"), mkToken("OR")
 local single_stdin = function(opts, cmd, inputs, codes)
   if cmd[1] == "AND" then
     if not inputs or #inputs < 2 then error("AND requires at least 2 commands") end
