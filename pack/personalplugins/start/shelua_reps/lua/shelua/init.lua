@@ -2,47 +2,91 @@ _G.sh = require('sh')
 ---@type SheluaOpts
 local sh_settings = getmetatable(sh)
 string.escapeShellArg = sh_settings.repr.posix.escape
--- allows AND and OR.
-local concat_cmd = function(opts, cmd, input)
-  local function normalize_shell_expr(v, cmd_mod)
-    if v.c then return v.c end
-    if v.s and cmd_mod and (v.e.__exitcode or 0) ~= 0 then
-      return "{ printf '%s' " .. string.escapeShellArg(v.e.__stderr or v.s) .. " 1>&2; false; }"
+local function str_fun_iterator(list)
+  local i = 1
+  local currfn = nil
+  return function()
+    if not list then return nil end
+    while true do
+      if currfn then
+        local val = currfn()
+        if val ~= nil then
+          return val
+        else
+          currfn = nil
+        end
+      else
+        local v = list[i]
+        i = i + 1
+        if v == nil then
+          return nil
+        elseif type(v) == "function" then
+          currfn = v
+        else
+          return v
+        end
+      end
     end
-    return "printf '%s' " .. string.escapeShellArg(v.s)
   end
+end
+local function normalize_shell_xtra(v, cmd_mod)
+  if v.c then return v.c, v.m end
+  if v.s and cmd_mod and (v.e.__exitcode or 0) ~= 0 then
+    return "{ printf '%s' " .. string.escapeShellArg(v.e.__stderr or v.s) .. " 1>&2; false; }", v.e
+  end
+  if type(v.s) == "string" then
+    return "printf '%s' " .. string.escapeShellArg(v.s), v.e
+  end
+  return v.s, v.e
+end
+local function and_or(mode, input)
+  local sep = mode == "AND" and " && " or " || "
+  local initial, codes = normalize_shell_xtra(input[1], mode)
+  local env = (codes or {}).__env or {}
+  local res = {}
+  for i = 2, #input do
+    local c, e = normalize_shell_xtra(input[i])
+    table.insert(res, c)
+    for key, value in pairs((e or {}).__env or {}) do
+      env[key] = value
+    end
+  end
+  if #res == 0 then error(mode .. " requires at least 2 commands") end
+  if #res == 1 then return initial .. sep .. res[1], { __env = env } end
+  return initial .. sep .. "{ " .. table.concat(res, " ; ") .. " ; }", { __env = env }
+end
+-- allows AND, OR, and __env.
+local concat_cmd = function(opts, cmd, input)
   if cmd:sub(1, 3) == "AND" then
-    local initial = normalize_shell_expr(input[1], "AND")
-    local res = {}
-    for i = 2, #input do
-      table.insert(res, normalize_shell_expr(input[i]))
-    end
-    if #res == 0 then error("AND requires at least 2 commands") end
-    if #res == 1 then return initial .. " && " .. res[1] end
-    return initial .. " && { " .. table.concat(res, " ; ") .. " ; }"
+    return and_or("AND", input)
   elseif cmd:sub(1, 2) == "OR" then
-    local initial = normalize_shell_expr(input[1], "OR")
-    local res = {}
-    for i = 2, #input do
-      table.insert(res, normalize_shell_expr(input[i]))
-    end
-    if #res == 0 then error("OR requires at least 2 commands") end
-    if #res == 1 then return initial .. " || " .. res[1] end
-    return initial .. " || { " .. table.concat(res, " ; ") .. " ; }"
+    return and_or("OR", input)
   elseif #input == 1 then
-    return normalize_shell_expr(input[1]) .. " | " .. cmd
-  elseif #input > 1 then
-    for i, v in ipairs(input) do
-      input[i] = normalize_shell_expr(v)
+    local c, e = normalize_shell_xtra(input[1])
+    if type(c) == "string" then
+      return c .. " | " .. cmd, e
     end
-    return "{ " .. table.concat(input, " ; ") .. " ; } | " .. cmd
+    return cmd, e
+  elseif #input > 1 then
+    local env = {}
+    local res = {}
+    for _, v in ipairs(input) do
+      local c, codes = normalize_shell_xtra(v)
+      if type(c) == "string" then
+        table.insert(res, c)
+      end
+      for key, value in pairs((codes or {}).__env or {}) do
+        env[key] = value
+      end
+    end
+    return "{ " .. table.concat(res, " ; ") .. " ; } | " .. cmd, { __env = env }
   else
     return cmd
   end
 end
 local function mkToken(n) return setmetatable({}, { __tostring = function() return n end }) end
 local AND, OR = mkToken("AND"), mkToken("OR")
--- allow AND, OR, and function type __input, escape_args == false doesnt work, also accepts __env
+-- allow AND, OR, and __env. Allows function type __input, escape_args == false doesnt work
 local single_stdin = function(opts, cmd, inputs, codes)
   if cmd[1] == "AND" then
     if not inputs or #inputs < 2 then error("AND requires at least 2 commands") end
@@ -67,33 +111,6 @@ local single_stdin = function(opts, cmd, inputs, codes)
       return OR, cf
     end
   else
-    local function make_iterator(list)
-      local i = 1
-      local currfn = nil
-      return function()
-        if not list then return nil end
-        while true do
-          if currfn then
-            local val = currfn()
-            if val ~= nil then
-              return val
-            else
-              currfn = nil
-            end
-          else
-            local v = list[i]
-            i = i + 1
-            if v == nil then
-              return nil
-            elseif type(v) == "function" then
-              currfn = v
-            else
-              return v
-            end
-          end
-        end
-      end
-    end
     local env = {}
     for _, res in ipairs(codes or {}) do
       if res.__env then
@@ -102,13 +119,13 @@ local single_stdin = function(opts, cmd, inputs, codes)
         end
       end
     end
-    return cmd, { env = env, f = make_iterator(inputs) }
+    return cmd, { env = env, f = str_fun_iterator(inputs) }
   end
 end
 local function run_command(opts, cmd, msg)
   local result
   if opts.proper_pipes then
-    result = vim.system({ "bash" }, { stdin = cmd, text = true }):wait()
+    result = vim.system({ "bash" }, { env = (msg or {}).__env, stdin = cmd, text = true }):wait()
   elseif cmd == AND or cmd == OR then
     msg.__exitcode = msg.__exitcode or 0
     msg.__signal = msg.__signal or 0
@@ -161,9 +178,6 @@ sh_settings.repr.nvim = {
   post_5_2_run = run_command,
   pre_5_2_run = run_command,
   extra_cmd_results = function (opts)
-    if opts.proper_pipes then
-      return { "__stderr"}
-    end
     return { "__env", "__stderr" }
   end,
 }
