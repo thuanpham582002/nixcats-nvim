@@ -17,11 +17,11 @@
     nixCats.url = "github:BirdeeHub/nixCats-nvim";
     # nixCats.url = "git+file:/home/birdee/Projects/nixCats-nvim";
     # neovim-src = { url = "github:neovim/neovim/nightly"; flake = false; };
-    # neovim-nightly-overlay = {
-    #   url = "github:nix-community/neovim-nightly-overlay";
+    neovim-nightly-overlay = {
+      url = "github:nix-community/neovim-nightly-overlay";
       # inputs.nixpkgs.follows = "nixpkgsNV";
       # inputs.neovim-src.follows = "neovim-src";
-    # };
+    };
 
     makeBinWrap = {
       url = "github:BirdeeHub/testBinWrapper";
