@@ -5,6 +5,7 @@ function os.write_file(opts, filename, content)
   file:close()
   return filename
 end
+
 function os.read_file(filename)
   local file = io.open(filename, "r")
   if not file then return nil end
@@ -12,6 +13,7 @@ function os.read_file(filename)
   file:close()
   return content
 end
+
 _G.sh = require('sh')
 ---@type SheluaOpts
 local sh_settings = getmetatable(sh)
@@ -106,7 +108,13 @@ end
 ---@type Shelua.Repr
 sh_settings.repr.vim = {
   escape = function(s) return s end,
-  arg_tbl = sh_settings.repr.posix.arg_tbl,
+  arg_tbl = function(opts, k, a)
+    k = (#k > 1 and '--' or '-') .. k
+    if type(a) == 'boolean' and a then return k end
+    if type(a) == 'string' then return k .. "=" .. string.escapeShellArg(a) end
+    if type(a) == 'number' then return k .. '=' .. tostring(a) end
+    return nil
+  end,
   concat_cmd = concat_cmd,
   add_args = function(opts, cmd, args)
     if opts.proper_pipes then
