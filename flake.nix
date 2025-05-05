@@ -19,7 +19,7 @@
     # neovim-src = { url = "github:neovim/neovim/nightly"; flake = false; };
     neovim-nightly-overlay = {
       url = "github:nix-community/neovim-nightly-overlay";
-      # inputs.nixpkgs.follows = "nixpkgsNV";
+      # inputs.nixpkgs.follows = "nixpkgs";
       # inputs.neovim-src.follows = "neovim-src";
     };
 
