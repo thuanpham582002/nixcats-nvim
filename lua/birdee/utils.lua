@@ -42,8 +42,7 @@ function M.authTerminal()
     return pass, ret.__exitcode == 0
   end
   local function unlock(password)
-    local ret = sh.bw("unlock", "--raw", "--nointeraction", "--passwordenv", "BWPASS", {
-      __input = function() end,
+    local ret = sh.bw("unlock", "--raw", "--nointeraction", "--passwordenv", "BWPASS", { __input = false,
       __env = { BWPASS = password or vim.fn.inputsecret('Enter password: ') },
     })
     return tostring(ret), ret.__exitcode == 0
@@ -87,7 +86,7 @@ function M.get_auths(entries)
     local session, ok = M.authTerminal()
     if session and ok then
       for name, entry in pairs(to_fetch) do
-        local ret = sh.bw("get", "--nointeraction", unpack(entry.bw_id), { __env = { BW_SESSION = session }, __input = function() end, })
+        local ret = sh.bw("get", "--nointeraction", unpack(entry.bw_id), { __env = { BW_SESSION = session }, __input = false, })
         local key = ret.__exitcode == 0 and tostring(ret) or nil
         if entry.cache and key then
           local handle = io.open(entry.localpath, "w")

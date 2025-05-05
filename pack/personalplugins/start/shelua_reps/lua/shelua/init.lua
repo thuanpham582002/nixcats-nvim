@@ -18,12 +18,12 @@ local function str_fun_iterator(list)
       else
         local v = list[i]
         i = i + 1
-        if v == nil then
-          return nil
-        elseif type(v) == "function" then
+        if type(v) == "function" then
           currfn = v
-        else
+        elseif type(v) == "string" then
           return v
+        elseif v == nil then
+          return nil
         end
       end
     end
@@ -177,9 +177,7 @@ sh_settings.repr.nvim = {
   single_stdin = single_stdin,
   post_5_2_run = run_command,
   pre_5_2_run = run_command,
-  extra_cmd_results = function (opts)
-    return { "__env", "__stderr" }
-  end,
+  extra_cmd_results = { "__env", "__stderr" },
 }
 sh_settings.shell = "nvim"
 return sh
