@@ -97,7 +97,6 @@ local function run_command(opts, cmd, msg)
     -- local tmp = os.tmpname()
     -- result = vim.system({ "bash", os.write_file({ newline = false }, tmp, cmd) }, { text = true }, function() os.remove(tmp) end):wait()
   elseif cmd == AND or cmd == OR then
-    print(vim.inspect(msg))
     msg.__exitcode = msg.__exitcode or 0
     msg.__signal = msg.__signal or 0
     msg.__stderr = msg.__stderr or ""
