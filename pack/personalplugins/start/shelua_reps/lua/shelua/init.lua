@@ -159,7 +159,6 @@ sh_settings.repr.nvim = {
     if type(a) == 'number' then return k .. '=' .. tostring(a) end
     return nil
   end,
-  concat_cmd = concat_cmd,
   add_args = function(opts, cmd, args)
     if opts.proper_pipes then
       if opts.escape_args then
@@ -174,6 +173,7 @@ sh_settings.repr.nvim = {
       })
     end
   end,
+  concat_cmd = concat_cmd,
   single_stdin = single_stdin,
   post_5_2_run = run_command,
   pre_5_2_run = run_command,
