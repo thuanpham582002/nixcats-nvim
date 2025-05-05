@@ -1,5 +1,19 @@
 local M = {}
 require('shelua')
+function os.write_file(opts, filename, content)
+  local file = io.open(filename, opts.append and "a" or "w")
+  if not file then return nil end
+  file:write(content .. (opts.newline ~= false and "\n" or ""))
+  file:close()
+  return filename
+end
+function os.read_file(filename)
+  local file = io.open(filename, "r")
+  if not file then return nil end
+  local content = file:read("*a")
+  file:close()
+  return content
+end
 function M.split_string(str, delimiter)
   local result = {}
   for match in (str .. delimiter):gmatch("(.-)" .. delimiter) do

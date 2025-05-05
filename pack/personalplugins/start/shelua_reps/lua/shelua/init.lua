@@ -1,19 +1,3 @@
-function os.write_file(opts, filename, content)
-  local file = io.open(filename, opts.append and "a" or "w")
-  if not file then return nil end
-  file:write(content .. (opts.newline ~= false and "\n" or ""))
-  file:close()
-  return filename
-end
-
-function os.read_file(filename)
-  local file = io.open(filename, "r")
-  if not file then return nil end
-  local content = file:read("*a")
-  file:close()
-  return content
-end
-
 _G.sh = require('sh')
 ---@type SheluaOpts
 local sh_settings = getmetatable(sh)
@@ -87,9 +71,7 @@ end
 local function run_command(opts, cmd, msg)
   local result
   if opts.proper_pipes then
-    result = vim.system({ "bash", '-c', cmd }, { text = true }):wait()
-    -- local tmp = os.tmpname()
-    -- result = vim.system({ "bash", os.write_file({ newline = false }, tmp, cmd) }, { text = true }, function() os.remove(tmp) end):wait()
+    result = vim.system({ "bash" }, { stdin = cmd, text = true }):wait()
   elseif cmd == AND or cmd == OR then
     msg.__exitcode = msg.__exitcode or 0
     msg.__signal = msg.__signal or 0
