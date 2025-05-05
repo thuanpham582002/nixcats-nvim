@@ -2,6 +2,7 @@ _G.sh = require('sh')
 ---@type SheluaOpts
 local sh_settings = getmetatable(sh)
 string.escapeShellArg = sh_settings.repr.posix.escape
+-- allows AND and OR.
 local concat_cmd = function(opts, cmd, input)
   local function normalize_shell_expr(v, cmd_mod)
     if v.c then return v.c end
@@ -41,6 +42,7 @@ local concat_cmd = function(opts, cmd, input)
 end
 local function mkToken(n) return setmetatable({}, { __tostring = function() return n end }) end
 local AND, OR = mkToken("AND"), mkToken("OR")
+-- allow AND, OR, and function type __input, escape_args == false doesnt work
 local single_stdin = function(opts, cmd, inputs, codes)
   if cmd[1] == "AND" then
     if not inputs or #inputs < 2 then error("AND requires at least 2 commands") end
