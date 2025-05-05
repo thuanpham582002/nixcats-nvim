@@ -27,7 +27,15 @@ function M.authTerminal()
   local function full_logon()
     local email = vim.fn.inputsecret('Enter email: ')
     local pass = vim.fn.inputsecret('Enter password: ')
-    local ret = sh.bw("login", "--raw", "--quiet", email, pass, { __input = vim.fn.inputsecret('New device login code: ') })
+    local i = 0
+    local ret = sh.bw("login", "--raw", "--quiet", email, pass, { __input = function()
+      i = i + 1
+      if i == 1 then
+        return vim.fn.inputsecret('New device login code: ')
+      else
+        return nil
+      end
+    end })
     return pass, ret.__exitcode == 0
   end
   local function unlock(password)
@@ -53,7 +61,7 @@ end
 ---@class birdee.authentry
 ---@field enable boolean
 ---@field cache boolean
----@field bw_id string
+---@field bw_id string[]
 ---@field localpath string
 ---@field action fun(key)
 
@@ -73,7 +81,7 @@ function M.get_auths(entries)
     local session, ok = M.authTerminal()
     if session and ok then
       for name, entry in pairs(to_fetch) do
-        local ret = sh.bw("get", "--nointeraction", "--session", session, entry.bw_id)
+        local ret = sh.bw("get", "--nointeraction", "--session", session, unpack(entry.bw_id))
         local key = ret.__exitcode == 0 and tostring(ret) or nil
         if entry.cache and key then
           local handle = io.open(entry.localpath, "w")

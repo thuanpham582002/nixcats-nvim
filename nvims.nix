@@ -69,8 +69,8 @@ inputs: let
       };
     };
     bitwarden_uuids = {
-      gemini = "notes bcd197b5-ba11-4c86-8969-b2bd01506654";
-      windsurf = "notes d9124a28-89ad-4335-b84f-b0c20135b048";
+      gemini = [ "notes" "bcd197b5-ba11-4c86-8969-b2bd01506654" ];
+      windsurf = [ "notes" "d9124a28-89ad-4335-b84f-b0c20135b048" ];
     };
   };
 in {

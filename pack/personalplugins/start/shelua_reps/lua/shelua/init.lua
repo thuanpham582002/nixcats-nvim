@@ -65,7 +65,34 @@ local single_stdin = function(opts, cmd, inputs, codes)
       return OR, cf
     end
   else
-    return cmd, inputs and table.concat(inputs) or nil
+    local function make_iterator(list)
+      local i = 1
+      local currfn = nil
+      return function()
+        if not list then return nil end
+        while true do
+          if currfn then
+            local val = currfn()
+            if val ~= nil then
+              return val
+            else
+              currfn = nil
+            end
+          else
+            local v = list[i]
+            i = i + 1
+            if v == nil then
+              return nil
+            elseif type(v) == "function" then
+              currfn = v
+            else
+              return v
+            end
+          end
+        end
+      end
+    end
+    return cmd, make_iterator(inputs)
   end
 end
 local function run_command(opts, cmd, msg)
@@ -78,7 +105,14 @@ local function run_command(opts, cmd, msg)
     msg.__stderr = msg.__stderr or ""
     return msg
   else
-    result = vim.system(cmd, { stdin = msg, text = true }):wait()
+    result = vim.system(cmd, { stdin = true, text = true })
+    local n = msg()
+    while n ~= nil do
+      result:write(n)
+      n = msg()
+    end
+    result:write(nil)
+    result = result:wait()
   end
   return {
     __input = result.stdout,
