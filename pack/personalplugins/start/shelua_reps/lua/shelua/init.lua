@@ -61,11 +61,7 @@ local single_stdin = function(opts, cmd, inputs, codes)
     local c0 = codes[1]
     local cf = codes[#codes]
     if c0.__exitcode == 0 then
-      local res = ""
-      for _, v in ipairs(inputs) do
-        res = res .. v
-      end
-      cf.__input = res
+      cf.__input = table.concat(inputs)
       return AND, cf
     else
       c0.__input = inputs[1]
@@ -79,11 +75,7 @@ local single_stdin = function(opts, cmd, inputs, codes)
       c0.__input = inputs[1]
       return OR, c0
     else
-      local res = ""
-      for _, v in ipairs(inputs) do
-        res = res .. v
-      end
-      cf.__input = res
+      cf.__input = table.concat(inputs)
       return OR, cf
     end
   else
