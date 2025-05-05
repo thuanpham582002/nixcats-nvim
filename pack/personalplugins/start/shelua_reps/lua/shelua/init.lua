@@ -1,7 +1,35 @@
+---@type Shelua
 local sh = require('sh')
----@type SheluaOpts
+---@type Shelua.Opts
 local sh_settings = getmetatable(sh)
 local escapeShellArg = sh_settings.repr.posix.escape
+---@type Shelua.Repr
+sh_settings.repr.nvim = {
+  escape = function(s) return s end,
+  arg_tbl = function(opts, k, a)
+    k = (#k > 1 and '--' or '-') .. k
+    if type(a) == 'boolean' and a then return k end
+    if type(a) == 'string' then return k .. "=" .. escapeShellArg(a) end
+    if type(a) == 'number' then return k .. '=' .. tostring(a) end
+    return nil
+  end,
+  add_args = function(opts, cmd, args)
+    if opts.proper_pipes then
+      if opts.escape_args then
+        for k, v in ipairs(args) do
+          args[k] = escapeShellArg(v)
+        end
+      end
+      return cmd .. " " .. table.concat(args, " ")
+    else
+      return setmetatable({ cmd, unpack(args) }, {
+        __tostring = function(self) return table.concat(self, " ") end,
+      })
+    end
+  end,
+  extra_cmd_results = { "__env", "__stderr" },
+}
+sh_settings.shell = "nvim"
 local function str_fun_iterator(list)
   local i = 1
   local currfn = nil
@@ -56,7 +84,7 @@ local function and_or(mode, input)
   return initial .. sep .. "{ " .. table.concat(res, " ; ") .. " ; }", { __env = env }
 end
 -- allows AND, OR, and __env.
-local concat_cmd = function(opts, cmd, input)
+function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
   if cmd:sub(1, 3) == "AND" then
     return and_or("AND", input)
   elseif cmd:sub(1, 2) == "OR" then
@@ -87,7 +115,7 @@ end
 local function mkToken(n) return setmetatable({}, { __tostring = function() return n end }) end
 local AND, OR = mkToken("AND"), mkToken("OR")
 -- allow AND, OR, and __env. Allows function type __input, escape_args == false doesnt work
-local single_stdin = function(opts, cmd, inputs, codes)
+function sh_settings.repr.nvim.single_stdin(opts, cmd, inputs, codes)
   if cmd[1] == "AND" then
     if not inputs or #inputs < 2 then error("AND requires at least 2 commands") end
     local c0 = codes[1]
@@ -149,35 +177,6 @@ local function run_command(opts, cmd, msg)
     __env = false
   }
 end
----@type Shelua.Repr
-sh_settings.repr.nvim = {
-  escape = function(s) return s end,
-  arg_tbl = function(opts, k, a)
-    k = (#k > 1 and '--' or '-') .. k
-    if type(a) == 'boolean' and a then return k end
-    if type(a) == 'string' then return k .. "=" .. escapeShellArg(a) end
-    if type(a) == 'number' then return k .. '=' .. tostring(a) end
-    return nil
-  end,
-  add_args = function(opts, cmd, args)
-    if opts.proper_pipes then
-      if opts.escape_args then
-        for k, v in ipairs(args) do
-          args[k] = escapeShellArg(v)
-        end
-      end
-      return cmd .. " " .. table.concat(args, " ")
-    else
-      return setmetatable({ cmd, unpack(args) }, {
-        __tostring = function(self) return table.concat(self, " ") end,
-      })
-    end
-  end,
-  concat_cmd = concat_cmd,
-  single_stdin = single_stdin,
-  post_5_2_run = run_command,
-  pre_5_2_run = run_command,
-  extra_cmd_results = { "__env", "__stderr" },
-}
-sh_settings.shell = "nvim"
+sh_settings.repr.nvim.post_5_2_run = run_command
+sh_settings.repr.nvim.pre_5_2_run = run_command
 return sh
