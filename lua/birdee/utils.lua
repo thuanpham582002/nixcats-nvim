@@ -1,5 +1,5 @@
 local M = {}
-require('shelua')
+_G.sh = require('shelua')
 function os.write_file(opts, filename, content)
   local file = io.open(filename, opts.append and "a" or "w")
   if not file then return nil end

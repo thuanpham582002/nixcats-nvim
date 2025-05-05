@@ -1,4 +1,4 @@
-_G.sh = require('sh')
+local sh = require('sh')
 ---@type SheluaOpts
 local sh_settings = getmetatable(sh)
 string.escapeShellArg = sh_settings.repr.posix.escape
@@ -182,3 +182,4 @@ sh_settings.repr.nvim = {
   end,
 }
 sh_settings.shell = "nvim"
+return sh
