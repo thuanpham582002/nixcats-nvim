@@ -88,7 +88,7 @@ local function run_command(opts, cmd, msg)
   }
 end
 ---@type Shelua.Repr
-sh_settings.repr.vim = {
+sh_settings.repr.nvim = {
   escape = function(s) return s end,
   arg_tbl = function(opts, k, a)
     k = (#k > 1 and '--' or '-') .. k
@@ -117,4 +117,4 @@ sh_settings.repr.vim = {
   pre_5_2_run = run_command,
   extra_cmd_results = { "__stderr" },
 }
-sh_settings.shell = "vim"
+sh_settings.shell = "nvim"
