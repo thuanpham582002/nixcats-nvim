@@ -46,7 +46,7 @@ local single_stdin = function(opts, cmd, inputs, codes)
     if not inputs or #inputs < 2 then error("AND requires at least 2 commands") end
     local c0 = codes[1]
     local cf = codes[#codes]
-    if c0.__exitcode == 0 then
+    if (c0.__exitcode or 0) == 0 then
       cf.__input = table.concat(inputs)
       return AND, cf
     else
