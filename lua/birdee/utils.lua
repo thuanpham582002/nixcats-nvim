@@ -87,7 +87,7 @@ function M.get_auths(entries)
     local session, ok = M.authTerminal()
     if session and ok then
       for name, entry in pairs(to_fetch) do
-        local ret = sh.bw("get", "--nointeraction", "--session", session, unpack(entry.bw_id))
+        local ret = sh.bw("get", "--nointeraction", unpack(entry.bw_id), { __env = { BW_SESSION = session }, __input = function() end, })
         local key = ret.__exitcode == 0 and tostring(ret) or nil
         if entry.cache and key then
           local handle = io.open(entry.localpath, "w")
