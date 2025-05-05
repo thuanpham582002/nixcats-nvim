@@ -1,7 +1,7 @@
 local sh = require('sh')
 ---@type SheluaOpts
 local sh_settings = getmetatable(sh)
-string.escapeShellArg = sh_settings.repr.posix.escape
+local escapeShellArg = sh_settings.repr.posix.escape
 local function str_fun_iterator(list)
   local i = 1
   local currfn = nil
@@ -32,10 +32,10 @@ end
 local function normalize_shell_xtra(v, cmd_mod)
   if v.c then return v.c, v.m end
   if v.s and cmd_mod and (v.e.__exitcode or 0) ~= 0 then
-    return "{ printf '%s' " .. string.escapeShellArg(v.e.__stderr or v.s) .. " 1>&2; false; }", v.e
+    return "{ printf '%s' " .. escapeShellArg(v.e.__stderr or v.s) .. " 1>&2; false; }", v.e
   end
   if type(v.s) == "string" then
-    return "printf '%s' " .. string.escapeShellArg(v.s), v.e
+    return "printf '%s' " .. escapeShellArg(v.s), v.e
   end
   return v.s, v.e
 end
@@ -155,7 +155,7 @@ sh_settings.repr.nvim = {
   arg_tbl = function(opts, k, a)
     k = (#k > 1 and '--' or '-') .. k
     if type(a) == 'boolean' and a then return k end
-    if type(a) == 'string' then return k .. "=" .. string.escapeShellArg(a) end
+    if type(a) == 'string' then return k .. "=" .. escapeShellArg(a) end
     if type(a) == 'number' then return k .. '=' .. tostring(a) end
     return nil
   end,
@@ -163,7 +163,7 @@ sh_settings.repr.nvim = {
     if opts.proper_pipes then
       if opts.escape_args then
         for k, v in ipairs(args) do
-          args[k] = string.escapeShellArg(v)
+          args[k] = escapeShellArg(v)
         end
       end
       return cmd .. " " .. table.concat(args, " ")

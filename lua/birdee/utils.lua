@@ -1,13 +1,12 @@
 local M = {}
-_G.sh = require('shelua')
-function os.write_file(opts, filename, content)
+function M.write_file(opts, filename, content)
   local file = io.open(filename, opts.append and "a" or "w")
   if not file then return nil end
   file:write(content .. (opts.newline ~= false and "\n" or ""))
   file:close()
   return filename
 end
-function os.read_file(filename)
+function M.read_file(filename)
   local file = io.open(filename, "r")
   if not file then return nil end
   local content = file:read("*a")
@@ -22,8 +21,11 @@ function M.split_string(str, delimiter)
   return result
 end
 
-local sh = sh { proper_pipes = false, escape_args = false, assert_zero = false, transforms = {}, shell = "nvim" }
-function M.authTerminal()
+---@param sh? table
+---@return string? session
+---@return boolean ok
+function M.authTerminal(sh)
+  sh = sh or require('shelua') { proper_pipes = false, escape_args = false, assert_zero = false, transforms = {}, shell = "nvim" }
   local function full_logon()
     local email = vim.fn.inputsecret('Enter email: ')
     local pass = vim.fn.inputsecret('Enter password: ')
@@ -83,7 +85,8 @@ function M.get_auths(entries)
   end
   local final = {}
   if next(to_fetch) ~= nil then
-    local session, ok = M.authTerminal()
+    local sh = require('shelua') { proper_pipes = false, escape_args = false, assert_zero = false, transforms = {}, shell = "nvim" }
+    local session, ok = M.authTerminal(sh)
     if session and ok then
       for name, entry in pairs(to_fetch) do
         local ret = sh.bw("get", "--nointeraction", unpack(entry.bw_id), { __env = { BW_SESSION = session }, __input = false, })
