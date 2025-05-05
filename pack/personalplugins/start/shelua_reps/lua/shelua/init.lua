@@ -20,9 +20,9 @@ local concat_cmd = function(opts, cmd, input)
   local function normalize_shell_expr(v, cmd_mod)
     if v.c then return v.c end
     if v.s and cmd_mod and (v.e.__exitcode or 0) ~= 0 then
-      return "{ echo " .. string.escapeShellArg(v.e.__stderr or v.s) .. " 1>&2; false; }"
+      return "{ printf '%s' " .. string.escapeShellArg(v.e.__stderr or v.s) .. " 1>&2; false; }"
     end
-    return "echo " .. string.escapeShellArg(v.s)
+    return "printf '%s' " .. string.escapeShellArg(v.s)
   end
   if cmd:sub(1, 3) == "AND" then
     local initial = normalize_shell_expr(input[1], "AND")
@@ -87,7 +87,7 @@ local single_stdin = function(opts, cmd, inputs, codes)
       return OR, cf
     end
   else
-    return cmd, inputs
+    return cmd, inputs and table.concat(inputs) or nil
   end
 end
 local function run_command(opts, cmd, msg)
@@ -97,12 +97,14 @@ local function run_command(opts, cmd, msg)
     -- local tmp = os.tmpname()
     -- result = vim.system({ "bash", os.write_file({ newline = false }, tmp, cmd) }, { text = true }, function() os.remove(tmp) end):wait()
   elseif cmd == AND or cmd == OR then
+    print(vim.inspect(msg))
     msg.__exitcode = msg.__exitcode or 0
     msg.__signal = msg.__signal or 0
     msg.__stderr = msg.__stderr or ""
     return msg
   else
     result = vim.system(cmd, { stdin = msg, text = true }):wait()
+    print(vim.inspect(result))
   end
   return {
     __input = result.stdout,
