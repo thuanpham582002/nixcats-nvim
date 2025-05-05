@@ -94,7 +94,15 @@ local single_stdin = function(opts, cmd, inputs, codes)
         end
       end
     end
-    return cmd, make_iterator(inputs)
+    local env = {}
+    for _, res in ipairs(codes or {}) do
+      if res.__env then
+        for k, v in pairs(res.__env) do
+          env[k] = v
+        end
+      end
+    end
+    return cmd, { env = env, f = make_iterator(inputs) }
   end
 end
 local function run_command(opts, cmd, msg)
@@ -107,11 +115,11 @@ local function run_command(opts, cmd, msg)
     msg.__stderr = msg.__stderr or ""
     return msg
   else
-    result = vim.system(cmd, { stdin = true, text = true })
-    local n = msg()
+    result = vim.system(cmd, { env = msg.env, stdin = true, text = true })
+    local n = msg.f()
     while n ~= nil do
       result:write(n)
-      n = msg()
+      n = msg.f()
     end
     result:write(nil)
     result = result:wait()
@@ -121,6 +129,7 @@ local function run_command(opts, cmd, msg)
     __stderr = result.stderr,
     __exitcode = result.code,
     __signal = result.signal,
+    __env = false
   }
 end
 ---@type Shelua.Repr
@@ -151,6 +160,11 @@ sh_settings.repr.nvim = {
   single_stdin = single_stdin,
   post_5_2_run = run_command,
   pre_5_2_run = run_command,
-  extra_cmd_results = { "__stderr" },
+  extra_cmd_results = function (opts)
+    if opts.proper_pipes then
+      return { "__stderr"}
+    end
+    return { "__env", "__stderr" }
+  end,
 }
 sh_settings.shell = "nvim"

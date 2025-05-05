@@ -27,19 +27,25 @@ function M.authTerminal()
   local function full_logon()
     local email = vim.fn.inputsecret('Enter email: ')
     local pass = vim.fn.inputsecret('Enter password: ')
-    local i = 0
-    local ret = sh.bw("login", "--raw", "--quiet", email, pass, { __input = function()
-      i = i + 1
-      if i == 1 then
-        return vim.fn.inputsecret('New device login code: ')
-      else
-        return nil
+    local done = false
+    local ret = sh.bw("login", "--raw", "--quiet", "--passwordenv", "BWPASS", email, {
+      __env = { BWPASS = pass, },
+      __input = function()
+        if not done then
+          done = true
+          return vim.fn.inputsecret('New device login code: ')
+        else
+          return nil
+        end
       end
-    end })
+    })
     return pass, ret.__exitcode == 0
   end
   local function unlock(password)
-    local ret = sh.bw("unlock", "--raw", "--nointeraction", (password or vim.fn.inputsecret('Enter password: ')))
+    local ret = sh.bw("unlock", "--raw", "--nointeraction", "--passwordenv", "BWPASS", {
+      __input = function() end,
+      __env = { BWPASS = password or vim.fn.inputsecret('Enter password: ') },
+    })
     return tostring(ret), ret.__exitcode == 0
   end
   local session = os.getenv('BW_SESSION')
