@@ -104,7 +104,6 @@ local function run_command(opts, cmd, msg)
     return msg
   else
     result = vim.system(cmd, { stdin = msg, text = true }):wait()
-    print(vim.inspect(result))
   end
   return {
     __input = result.stdout,
