@@ -42,7 +42,7 @@ local concat_cmd = function(opts, cmd, input)
 end
 local function mkToken(n) return setmetatable({}, { __tostring = function() return n end }) end
 local AND, OR = mkToken("AND"), mkToken("OR")
--- allow AND, OR, and function type __input, escape_args == false doesnt work
+-- allow AND, OR, and function type __input, escape_args == false doesnt work, also accepts __env
 local single_stdin = function(opts, cmd, inputs, codes)
   if cmd[1] == "AND" then
     if not inputs or #inputs < 2 then error("AND requires at least 2 commands") end
