@@ -3,6 +3,7 @@ local sh = require('sh')
 ---@type Shelua.Opts
 local sh_settings = getmetatable(sh)
 local escapeShellArg = sh_settings.repr.posix.escape
+-- local uv = vim and (vim.uv or vim.loop) or require("luv")
 ---@type Shelua.Repr
 sh_settings.repr.nvim = {
   escape = function(s) return s end,

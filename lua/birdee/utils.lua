@@ -21,7 +21,8 @@ function M.split_string(str, delimiter)
   return result
 end
 
----@param sh? table
+---@module 'sh'
+---@param sh? Shelua
 ---@return string? session
 ---@return boolean ok
 function M.authTerminal(sh)
