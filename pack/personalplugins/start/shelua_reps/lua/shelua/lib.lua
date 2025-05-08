@@ -33,13 +33,16 @@ end
 --- Combine inputs into a writable in order (supports string, table, function, userdata)
 ---@param input_pipes any[]|any
 ---@param writeable uv.uv_stream_t|vim.SystemObj
-function M.combine_pipes(input_pipes, writeable)
+---@param close? boolean
+function M.combine_pipes(input_pipes, writeable, close)
   local inputs = type(input_pipes) == "table" and input_pipes or { input_pipes }
 
   local function process_next(i)
     local input = inputs[i]
     if not input then
-      writeable:write(nil)
+      if close ~= false then
+        writeable:write(nil)
+      end
       return
     end
 

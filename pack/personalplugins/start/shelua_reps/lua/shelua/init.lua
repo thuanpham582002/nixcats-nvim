@@ -73,17 +73,22 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
         last_code, last_signal = result.code, result.signal
       end
 
-      return function()
-        return {
+      return function(close)
+        local result = {
           wait = function ()
             return {
               stdout = table.concat(full_out),
               stderr = table.concat(full_err),
               code = last_code or 0,
-              signal = last_signal,
+              signal = last_signal or 0,
             }
           end,
         }
+        if close == false then
+          result.write = function()
+          end
+        end
+        return result
       end, AND
     end
   elseif cmd[1] == "OR" then
@@ -134,17 +139,22 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
         last_code, last_signal = result.code, result.signal
       end
 
-      return function()
-        return {
+      return function(close)
+        local result = {
           wait = function ()
             return {
               stdout = table.concat(full_out),
               stderr = table.concat(full_err),
-              code = last_code,
-              signal = last_signal,
+              code = last_code or 0,
+              signal = last_signal or 0,
             }
           end,
         }
+        if close == false then
+          result.write = function()
+          end
+        end
+        return result
       end, OR
     end
   elseif #input == 1 then
@@ -157,16 +167,16 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
       shelib.combine_pipes(v.c():wait().stdout, result)
       return result
     elseif v.c then
-      return function()
+      return function(close)
         local result = sherun(cmd, {
           stdin = true,
           text = true,
         })
-        shelib.combine_pipes(v.c()._state.stdout, result)
+        shelib.combine_pipes(v.c()._state.stdout, result, close)
         return result
       end
     else
-      return function()
+      return function(close)
         return sherun(cmd, {
           stdin = v.s,
           env = (v.e or {}).__env,
@@ -175,7 +185,7 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
       end
     end
   elseif #input > 1 then
-    return function ()
+    return function (close)
       local env = {}
       for _, v in ipairs(input) do
         for k, val in pairs((v.e or {}).__env or {}) do
@@ -197,12 +207,12 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
           table.insert(towrite, v.s)
         end
       end
-      shelib.combine_pipes(towrite, result)
+      shelib.combine_pipes(towrite, result, close)
       return result
     end
   else
-    return function()
-      return sherun(cmd, { text = true })
+    return function(close)
+      return sherun(cmd, { stdin = close == false, text = true })
     end
   end
 end
