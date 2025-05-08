@@ -167,11 +167,15 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
       end
     else
       return function(close)
-        return sherun(cmd, {
-          stdin = v.s,
+        local result = sherun(cmd, {
+          stdin = close == false and true or v.s,
           env = (v.e or {}).__env,
           text = true,
         })
+        if close == false and v.s then
+          result:write(v.s)
+        end
+        return result
       end
     end
   elseif #input > 1 then
