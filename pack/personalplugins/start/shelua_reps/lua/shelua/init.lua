@@ -3,7 +3,7 @@ local sh = require('sh')
 ---@type Shelua.Opts
 local sh_settings = getmetatable(sh)
 local shelib = require('shelua.lib')
-local sheluarun = require("shelua.system").run
+local sherun = require("shelua.system").run
 ---@type Shelua.Repr
 sh_settings.repr.nvim = {
   escape = function(s) return s end,
@@ -32,7 +32,7 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
     local v = input[1] or {}
     if v.c then
       return function()
-        local result = sheluarun(cmd, {
+        local result = sherun(cmd, {
           stdin = true,
           text = true,
         })
@@ -41,7 +41,7 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
       end
     else
       return function()
-        return sheluarun(cmd, {
+        return sherun(cmd, {
           stdin = v.s,
           env = (v.e or {}).__env,
           text = true,
@@ -56,7 +56,7 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
           env[k] = val
         end
       end
-      local result = sheluarun(cmd, {
+      local result = sherun(cmd, {
         stdin = true,
         env = env,
         text = true,
@@ -74,7 +74,7 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
     end
   else
     return function()
-      return sheluarun(cmd, { text = true })
+      return sherun(cmd, { text = true })
     end
   end
 end
@@ -126,7 +126,7 @@ local function run_command(opts, cmd, msg)
     msg.__stderr = msg.__stderr or ""
     return msg
   else
-    result = sheluarun(cmd, { env = msg.env, stdin = msg.f, text = true }):wait()
+    result = sherun(cmd, { env = msg.env, stdin = msg.f, text = true }):wait()
   end
   return {
     __input = result.stdout,
