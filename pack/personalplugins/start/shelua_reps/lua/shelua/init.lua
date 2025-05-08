@@ -73,8 +73,8 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
         last_code, last_signal = result.code, result.signal
       end
 
-      return function(close)
-        local result = {
+      return function()
+        return {
           wait = function ()
             return {
               stdout = table.concat(full_out),
@@ -84,11 +84,6 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
             }
           end,
         }
-        if close == false then
-          result.write = function()
-          end
-        end
-        return result
       end, AND
     end
   elseif cmd[1] == "OR" then
@@ -139,8 +134,8 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
         last_code, last_signal = result.code, result.signal
       end
 
-      return function(close)
-        local result = {
+      return function()
+        return {
           wait = function ()
             return {
               stdout = table.concat(full_out),
@@ -150,11 +145,6 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
             }
           end,
         }
-        if close == false then
-          result.write = function()
-          end
-        end
-        return result
       end, OR
     end
   elseif #input == 1 then
