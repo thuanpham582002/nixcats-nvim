@@ -2,7 +2,6 @@
 local sh = require('sh')
 ---@type Shelua.Opts
 local sh_settings = getmetatable(sh)
-local escapeShellArg = sh_settings.repr.posix.escape
 local shelib = require('shelua.lib')
 local sheluarun = require("shelua.system").run
 ---@type Shelua.Repr
