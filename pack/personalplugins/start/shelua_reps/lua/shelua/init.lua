@@ -22,12 +22,12 @@ sh_settings.repr.nvim = {
   extra_cmd_results = { "__env", "__stderr" },
 }
 sh_settings.shell = "nvim"
--- supports env (not yet AND or OR)
+-- supports __env (not yet AND or OR)
 function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
   if cmd[1] == "AND" then
-    error("AND not yet implemented")
+    error("TODO: AND not yet implemented")
   elseif cmd[1] == "OR" then
-    error("OR not yet implemented")
+    error("TODO: OR not yet implemented")
   elseif #input == 1 then
     local v = input[1] or {}
     if v.c then
@@ -78,8 +78,7 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
     end
   end
 end
-local function mkToken(n) return setmetatable({}, { __tostring = function() return n end }) end
-local AND, OR = mkToken("AND"), mkToken("OR")
+local AND, OR = shelib.mkToken("AND"), shelib.mkToken("OR")
 -- allow AND, OR, and __env. Allows function type __input, escape_args == false doesnt work
 function sh_settings.repr.nvim.single_stdin(opts, cmd, inputs, codes)
   if cmd[1] == "AND" then

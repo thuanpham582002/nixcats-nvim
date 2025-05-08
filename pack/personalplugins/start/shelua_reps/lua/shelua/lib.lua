@@ -1,6 +1,8 @@
 local uv = vim and (vim.uv or vim.loop) or require("luv")
 local M = {}
 
+function M.mkToken(n) return setmetatable({}, { __tostring = function() return n end }) end
+
 function M.str_fun_iterator(list)
   local i = 1
   local currfn = nil
