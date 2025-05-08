@@ -22,15 +22,141 @@ sh_settings.repr.nvim = {
   extra_cmd_results = { "__env", "__stderr" },
 }
 sh_settings.shell = "nvim"
+local AND, OR = shelib.mkToken("AND"), shelib.mkToken("OR")
 -- supports __env (not yet AND or OR)
 function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
   if cmd[1] == "AND" then
-    error("TODO: AND not yet implemented")
+    local v0 = input[1]
+    if v0.c then
+      v0 = v0.c():wait()
+    elseif v0.s then
+      local c0 = v0.e or {}
+      v0 = {
+        stdout = v0.s,
+        code = c0.__exitcode or 0,
+        signal = c0.__signal or 0,
+        stderr = c0.__stderr,
+      }
+    else
+      error("NOT ENOUGH ARGS")
+    end
+    if (v0.code or 0) ~= 0 then
+      return function()
+        return {
+          wait = function ()
+            return v0
+          end
+        }
+      end, AND
+    else
+      local full_out, full_err = {}, {}
+      if v0.stdout then table.insert(full_out, v0.stdout) end
+      if v0.stderr then table.insert(full_err, v0.stderr) end
+
+      local last_code, last_signal
+      for i = 2, #input do
+        local v = input[i]
+        local result
+        if v.c then
+          result = v.c():wait()
+        else
+          local ce = v.e or {}
+          result = {
+            stdout = v.s,
+            code = ce.__exitcode or 0,
+            signal = ce.__signal or 0,
+            stderr = ce.__stderr,
+          }
+        end
+        if result.stdout then table.insert(full_out, result.stdout) end
+        if result.stderr then table.insert(full_err, result.stderr) end
+        last_code, last_signal = result.code, result.signal
+      end
+
+      return function()
+        return {
+          wait = function ()
+            return {
+              stdout = table.concat(full_out),
+              stderr = table.concat(full_err),
+              code = last_code or 0,
+              signal = last_signal,
+            }
+          end,
+        }
+      end, AND
+    end
   elseif cmd[1] == "OR" then
-    error("TODO: OR not yet implemented")
+    local v0 = input[1]
+    if v0.c then
+      v0 = v0.c():wait()
+    elseif v0.s then
+      local c0 = v0.e or {}
+      v0 = {
+        stdout = v0.s,
+        code = c0.__exitcode or 0,
+        signal = c0.__signal or 0,
+        stderr = c0.__stderr,
+      }
+    else
+      error("NOT ENOUGH ARGS")
+    end
+    if (v0.code or 0) == 0 then
+      return function()
+        return {
+          wait = function ()
+            return v0
+          end
+        }
+      end, OR
+    else
+      local full_out, full_err = {}, {}
+      if v0.stdout then table.insert(full_out, v0.stdout) end
+      if v0.stderr then table.insert(full_err, v0.stderr) end
+
+      local last_code, last_signal
+      for i = 2, #input do
+        local v = input[i]
+        local result
+        if v.c then
+          result = v.c():wait()
+        else
+          local ce = v.e or {}
+          result = {
+            stdout = v.s,
+            code = ce.__exitcode or 0,
+            signal = ce.__signal or 0,
+            stderr = ce.__stderr,
+          }
+        end
+        if result.stdout then table.insert(full_out, result.stdout) end
+        if result.stderr then table.insert(full_err, result.stderr) end
+        last_code, last_signal = result.code, result.signal
+      end
+
+      return function()
+        return {
+          wait = function ()
+            return {
+              stdout = table.concat(full_out),
+              stderr = table.concat(full_err),
+              code = last_code,
+              signal = last_signal,
+            }
+          end,
+        }
+      end, OR
+    end
   elseif #input == 1 then
     local v = input[1] or {}
-    if v.c then
+    if v.m == AND or v.m == OR then
+      local result = sherun(cmd, {
+        stdin = true,
+        text = true,
+      })
+      shelib.combine_pipes(v.c():wait().stdout, result)
+      return result
+    elseif v.c then
       return function()
         local result = sherun(cmd, {
           stdin = true,
@@ -63,7 +189,9 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
       })
       local towrite = {}
       for _, v in ipairs(input) do
-        if v.c then
+        if v.m == AND or v.m == OR then
+          table.insert(towrite, v.c():wait().stdout)
+        elseif v.c then
           table.insert(towrite, v.c()._state.stdout)
         else
           table.insert(towrite, v.s)
@@ -78,7 +206,6 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
     end
   end
 end
-local AND, OR = shelib.mkToken("AND"), shelib.mkToken("OR")
 -- allow AND, OR, and __env. Allows function type __input, escape_args == false doesnt work
 function sh_settings.repr.nvim.single_stdin(opts, cmd, inputs, codes)
   if cmd[1] == "AND" then
