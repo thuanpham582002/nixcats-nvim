@@ -3,114 +3,80 @@ local sh = require('sh')
 ---@type Shelua.Opts
 local sh_settings = getmetatable(sh)
 local escapeShellArg = sh_settings.repr.posix.escape
--- local uv = vim and (vim.uv or vim.loop) or require("luv")
+local shelib = require('shelua.lib')
+local sheluarun = require("shelua.system").run
 ---@type Shelua.Repr
 sh_settings.repr.nvim = {
   escape = function(s) return s end,
   arg_tbl = function(opts, k, a)
     k = (#k > 1 and '--' or '-') .. k
     if type(a) == 'boolean' and a then return k end
-    if type(a) == 'string' then return k .. "=" .. escapeShellArg(a) end
-    if type(a) == 'number' then return k .. '=' .. tostring(a) end
+    if type(a) == 'string' then return { k, tostring(a) } end
+    if type(a) == 'number' then return { k, tostring(a) } end
     return nil
   end,
   add_args = function(opts, cmd, args)
-    if opts.proper_pipes then
-      if opts.escape_args then
-        for k, v in ipairs(args) do
-          args[k] = escapeShellArg(v)
-        end
-      end
-      return cmd .. " " .. table.concat(args, " ")
-    else
-      return setmetatable({ cmd, unpack(args) }, {
-        __tostring = function(self) return table.concat(self, " ") end,
-      })
-    end
+    return setmetatable({ cmd, unpack(args) }, {
+      __tostring = function(self) return table.concat(self, " ") end,
+    })
   end,
   extra_cmd_results = { "__env", "__stderr" },
 }
 sh_settings.shell = "nvim"
-local function str_fun_iterator(list)
-  local i = 1
-  local currfn = nil
-  return function()
-    if not list then return nil end
-    while true do
-      if currfn then
-        local val = currfn()
-        if val ~= nil then
-          return val
-        else
-          currfn = nil
-        end
-      else
-        local v = list[i]
-        i = i + 1
-        if type(v) == "function" then
-          currfn = v
-        elseif type(v) == "string" then
-          return v
-        elseif v == nil then
-          return nil
-        end
-      end
-    end
-  end
-end
-local function normalize_shell_xtra(v, cmd_mod)
-  if v.c then return v.c, v.m end
-  if v.s and cmd_mod and (v.e.__exitcode or 0) ~= 0 then
-    return "{ printf '%s' " .. escapeShellArg(v.e.__stderr or v.s) .. " 1>&2; false; }", v.e
-  end
-  if type(v.s) == "string" then
-    return "printf '%s' " .. escapeShellArg(v.s), v.e
-  end
-  return v.s, v.e
-end
-local function and_or(mode, input)
-  local sep = mode == "AND" and " && " or " || "
-  local initial, codes = normalize_shell_xtra(input[1], mode)
-  local env = (codes or {}).__env or {}
-  local res = {}
-  for i = 2, #input do
-    local c, e = normalize_shell_xtra(input[i])
-    table.insert(res, c)
-    for key, value in pairs((e or {}).__env or {}) do
-      env[key] = value
-    end
-  end
-  if #res == 0 then error(mode .. " requires at least 2 commands") end
-  if #res == 1 then return initial .. sep .. res[1], { __env = env } end
-  return initial .. sep .. "{ " .. table.concat(res, " ; ") .. " ; }", { __env = env }
-end
--- allows AND, OR, and __env.
+-- supports env (not yet AND or OR)
 function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
-  if cmd:sub(1, 3) == "AND" then
-    return and_or("AND", input)
-  elseif cmd:sub(1, 2) == "OR" then
-    return and_or("OR", input)
+  if cmd[1] == "AND" then
+    error("AND not yet implemented")
+  elseif cmd[1] == "OR" then
+    error("OR not yet implemented")
   elseif #input == 1 then
-    local c, e = normalize_shell_xtra(input[1])
-    if type(c) == "string" then
-      return c .. " | " .. cmd, e
+    local v = input[1] or {}
+    if v.c then
+      return function()
+        local result = sheluarun(cmd, {
+          stdin = true,
+          text = true,
+        })
+        shelib.combine_pipes(v.c()._state.stdout, result)
+        return result
+      end
+    else
+      return function()
+        return sheluarun(cmd, {
+          stdin = v.s,
+          env = (v.e or {}).__env,
+          text = true,
+        })
+      end
     end
-    return cmd, e
   elseif #input > 1 then
-    local env = {}
-    local res = {}
-    for _, v in ipairs(input) do
-      local c, codes = normalize_shell_xtra(v)
-      if type(c) == "string" then
-        table.insert(res, c)
+    return function ()
+      local env = {}
+      for _, v in ipairs(input) do
+        for k, val in pairs((v.e or {}).__env or {}) do
+          env[k] = val
+        end
       end
-      for key, value in pairs((codes or {}).__env or {}) do
-        env[key] = value
+      local result = sheluarun(cmd, {
+        stdin = true,
+        env = env,
+        text = true,
+      })
+      local towrite = {}
+      for _, v in ipairs(input) do
+        if v.c then
+          table.insert(towrite, v.c()._state.stdout)
+        else
+          table.insert(towrite, v.s)
+        end
       end
+      shelib.combine_pipes(towrite, result)
+      return result
     end
-    return "{ " .. table.concat(res, " ; ") .. " ; } | " .. cmd, { __env = env }
   else
-    return cmd
+    return function()
+      return sheluarun(cmd, { text = true })
+    end
   end
 end
 local function mkToken(n) return setmetatable({}, { __tostring = function() return n end }) end
@@ -148,27 +114,20 @@ function sh_settings.repr.nvim.single_stdin(opts, cmd, inputs, codes)
         end
       end
     end
-    return cmd, { env = env, f = str_fun_iterator(inputs) }
+    return cmd, { env = env, f = shelib.str_fun_iterator(inputs) }
   end
 end
 local function run_command(opts, cmd, msg)
   local result
   if opts.proper_pipes then
-    result = vim.system({ "bash" }, { env = (msg or {}).__env, stdin = cmd, text = true }):wait()
+    result = cmd():wait()
   elseif cmd == AND or cmd == OR then
     msg.__exitcode = msg.__exitcode or 0
     msg.__signal = msg.__signal or 0
     msg.__stderr = msg.__stderr or ""
     return msg
   else
-    result = vim.system(cmd, { env = msg.env, stdin = true, text = true })
-    local n = msg.f()
-    while n ~= nil do
-      result:write(n)
-      n = msg.f()
-    end
-    result:write(nil)
-    result = result:wait()
+    result = sheluarun(cmd, { env = msg.env, stdin = msg.f, text = true }):wait()
   end
   return {
     __input = result.stdout,
