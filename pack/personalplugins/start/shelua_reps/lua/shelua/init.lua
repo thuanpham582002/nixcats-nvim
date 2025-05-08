@@ -23,7 +23,7 @@ sh_settings.repr.nvim = {
 }
 sh_settings.shell = "nvim"
 local AND, OR = shelib.mkToken("AND"), shelib.mkToken("OR")
--- supports __env (not yet AND or OR)
+-- allow AND, OR, and __env. Allows function type __input, escape_args == false doesnt work
 function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
   if cmd[1] == "AND" then
     local v0 = input[1]
