@@ -154,7 +154,7 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
         stdin = true,
         text = true,
       })
-      shelib.combine_pipes(v.c():wait().stdout, result)
+      shelib.combine_pipes(v.c():wait().stdout, result._state.stdin)
       return result
     elseif v.c then
       return function(close)
@@ -162,7 +162,7 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
           stdin = true,
           text = true,
         })
-        shelib.combine_pipes(v.c()._state.stdout, result, close)
+        shelib.combine_pipes(v.c()._state.stdout, result._state.stdin, close)
         return result
       end
     else
@@ -201,7 +201,7 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
           table.insert(towrite, v.s)
         end
       end
-      shelib.combine_pipes(towrite, result, close)
+      shelib.combine_pipes(towrite, result._state.stdin, close)
       return result
     end
   else

@@ -30,22 +30,56 @@ function M.str_fun_iterator(list)
     end
   end
 end
+
+---@param pipe uv.uv_stream_t 
+---@param data string[]|string|fun()|nil
+function M.write(pipe, data)
+  if not pipe then
+    error('pipe has not been opened')
+  end
+
+  if type(data) == 'table' then
+    for _, v in ipairs(data) do
+      pipe:write(v)
+      pipe:write('\n')
+    end
+  elseif type(data) == 'string' then
+    pipe:write(data)
+  elseif type(data) == 'function' then
+    local new = data()
+    while new ~= nil do
+      pipe:write(new)
+      new = data()
+    end
+  elseif data == nil then
+    -- Shutdown the write side of the duplex stream and then close the pipe.
+    -- Note shutdown will wait for all the pending write requests to complete
+    -- TODO(lewis6991): apparently shutdown doesn't behave this way.
+    -- (https://github.com/neovim/neovim/pull/17620#discussion_r820775616)
+    pipe:write('', function()
+      pipe:shutdown(function()
+        if pipe and not pipe:is_closing() then
+          pipe:close()
+        end
+      end)
+    end)
+  end
+end
+
 --- Combine inputs into a writable in order (supports string, table, function, userdata)
 ---@param input_pipes any[]|any
----@param writeable uv.uv_stream_t|vim.SystemObj
+---@param target_pipe uv.uv_stream_t
 ---@param close? boolean
-function M.combine_pipes(input_pipes, writeable, close)
+function M.combine_pipes(input_pipes, target_pipe, close)
   local inputs = type(input_pipes) == "table" and input_pipes or { input_pipes }
-
   local function process_next(i)
     local input = inputs[i]
     if not input then
       if close ~= false then
-        writeable:write(nil)
+        M.write(target_pipe, nil)
       end
       return
     end
-
     if type(input) == "userdata" then
       local buffer = {}
       input:read_start(function(err, data)
@@ -55,32 +89,14 @@ function M.combine_pipes(input_pipes, writeable, close)
         else
           input:close()
           for _, chunk in ipairs(buffer) do
-            writeable:write(chunk)
+            M.write(target_pipe, chunk)
           end
           process_next(i + 1)
         end
       end)
-
-    elseif type(input) == "table" then
-      for _, v in ipairs(input) do
-        writeable:write(v)
-      end
-      process_next(i + 1)
-
-    elseif type(input) == "string" then
-      writeable:write(input)
-      process_next(i + 1)
-
-    elseif type(input) == "function" then
-      local val = input()
-      while val ~= nil do
-        writeable:write(val)
-        val = input()
-      end
-      process_next(i + 1)
-
     else
-      process_next(i + 1) -- skip unrecognized
+      M.write(target_pipe, input)
+      process_next(i + 1)
     end
   end
 

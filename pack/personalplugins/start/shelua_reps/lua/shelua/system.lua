@@ -1,6 +1,7 @@
 local uv = vim and (vim.uv or vim.loop) or require("luv")
+local shelib = require('shelua.lib')
 
---- @class vim.SystemOpts
+--- @class Shelua.SystemOpts
 --- @field stdin? string|string[]|true
 --- @field stdout? fun(err:string?, data: string?)|false
 --- @field stderr? fun(err:string?, data: string?)|false
@@ -11,13 +12,13 @@ local uv = vim and (vim.uv or vim.loop) or require("luv")
 --- @field timeout? integer Timeout in ms
 --- @field detach? boolean
 
---- @class vim.SystemCompleted
+--- @class Shelua.SystemCompleted
 --- @field code integer
 --- @field signal integer
 --- @field stdout? string
 --- @field stderr? string
 
---- @class vim.SystemState
+--- @class Shelua.SystemState
 --- @field cmd string[]
 --- @field handle? uv.uv_process_t
 --- @field timer?  uv.uv_timer_t
@@ -29,9 +30,9 @@ local uv = vim and (vim.uv or vim.loop) or require("luv")
 --- @field stderr? uv.uv_stream_t
 --- @field stdout_data? string[]
 --- @field stderr_data? string[]
---- @field result? vim.SystemCompleted
+--- @field result? Shelua.SystemCompleted
 
---- @enum vim.SystemSig
+--- @enum Shelua.SystemSig
 local SIG = {
   HUP = 1, -- Hangup
   INT = 2, -- Interrupt from keyboard
@@ -47,18 +48,18 @@ local function close_handle(handle)
   end
 end
 
---- @class vim.SystemObj
+--- @class Shelua.SystemObj
 --- @field cmd string[]
 --- @field pid integer
---- @field private _state vim.SystemState
---- @field wait fun(self: vim.SystemObj, timeout?: integer): vim.SystemCompleted
---- @field kill fun(self: vim.SystemObj, signal: integer|string)
---- @field write fun(self: vim.SystemObj, data?: string|string[])
---- @field is_closing fun(self: vim.SystemObj): boolean
+--- @field private _state Shelua.SystemState
+--- @field wait fun(self: Shelua.SystemObj, timeout?: integer): Shelua.SystemCompleted
+--- @field kill fun(self: Shelua.SystemObj, signal: integer|string)
+--- @field write fun(self: Shelua.SystemObj, data?: string|string[]|fun())
+--- @field is_closing fun(self: Shelua.SystemObj): boolean
 local SystemObj = {}
 
---- @param state vim.SystemState
---- @return vim.SystemObj
+--- @param state Shelua.SystemState
+--- @return Shelua.SystemObj
 local function new_systemobj(state)
   return setmetatable({
     cmd = state.cmd,
@@ -73,7 +74,7 @@ function SystemObj:kill(signal)
 end
 
 --- @package
---- @param signal? vim.SystemSig
+--- @param signal? Shelua.SystemSig
 function SystemObj:_timeout(signal)
   self._state.done = 'timeout'
   self:kill(signal or SIG.TERM)
@@ -116,7 +117,7 @@ end
 local MAX_TIMEOUT = 2 ^ 31 - 1
 
 --- @param timeout? integer
---- @return vim.SystemCompleted
+--- @return Shelua.SystemCompleted
 function SystemObj:wait(timeout)
   local state = self._state
 
@@ -135,32 +136,9 @@ function SystemObj:wait(timeout)
   return state.result
 end
 
---- @param data string[]|string|nil
+--- @param data string[]|string|fun()|nil
 function SystemObj:write(data)
-  local stdin = self._state.stdin
-
-  if not stdin then
-    error('stdin has not been opened on this object')
-  end
-
-  if type(data) == 'table' then
-    for _, v in ipairs(data) do
-      stdin:write(v)
-      stdin:write('\n')
-    end
-  elseif type(data) == 'string' then
-    stdin:write(data)
-  elseif data == nil then
-    -- Shutdown the write side of the duplex stream and then close the pipe.
-    -- Note shutdown will wait for all the pending write requests to complete
-    -- TODO(lewis6991): apparently shutdown doesn't behave this way.
-    -- (https://github.com/neovim/neovim/pull/17620#discussion_r820775616)
-    stdin:write('', function()
-      stdin:shutdown(function()
-        close_handle(stdin)
-      end)
-    end)
-  end
+  shelib.write(self._state.stdin, data)
 end
 
 --- @return boolean
@@ -287,10 +265,10 @@ local function timer_oneshot(timeout, cb)
   return timer
 end
 
---- @param state vim.SystemState
+--- @param state Shelua.SystemState
 --- @param code integer
 --- @param signal integer
---- @param on_exit fun(result: vim.SystemCompleted)?
+--- @param on_exit fun(result: Shelua.SystemCompleted)?
 local function _on_exit(state, code, signal, on_exit)
   close_handle(state.handle)
   close_handle(state.stdin)
@@ -335,7 +313,7 @@ local function _on_exit(state, code, signal, on_exit)
   end)
 end
 
---- @param state vim.SystemState
+--- @param state Shelua.SystemState
 local function _on_error(state)
   close_handle(state.handle)
   close_handle(state.stdin)
@@ -356,9 +334,9 @@ end
 --- Run a system command
 ---
 --- @param cmd string[]
---- @param opts? vim.SystemOpts
---- @param on_exit? fun(out: vim.SystemCompleted)
---- @return vim.SystemObj
+--- @param opts? Shelua.SystemOpts
+--- @param on_exit? fun(out: Shelua.SystemCompleted)
+--- @return Shelua.SystemObj
 function M.run(cmd, opts, on_exit)
   checkarg('cmd', cmd, 'table')
   checkarg('opts', opts, 'table', true)
@@ -370,7 +348,7 @@ function M.run(cmd, opts, on_exit)
   local stderr, stderr_handler, stderr_data = setup_output(opts.stderr, opts.text)
   local stdin, towrite = setup_input(opts.stdin)
 
-  --- @type vim.SystemState
+  --- @type Shelua.SystemState
   local state = {
     done = false,
     cmd = cmd,
@@ -412,14 +390,7 @@ function M.run(cmd, opts, on_exit)
 
   local obj = new_systemobj(state)
 
-  if type(towrite) == 'function' then
-    local new = towrite()
-    while new ~= nil do
-      obj:write(new)
-      new = towrite()
-    end
-    obj:write(nil)
-  elseif towrite then
+  if towrite then
     obj:write(towrite)
     obj:write(nil) -- close the stream
   end
