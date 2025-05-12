@@ -22,7 +22,7 @@ sh_settings.repr.nvim = {
 }
 sh_settings.shell = "nvim"
 local SPECIAL = require('shelua.specials')
--- allow AND, OR, and __env. Allows function type __input, escape_args == false doesnt work
+-- allow AND, OR, __cwd, and __env. Allows function type __input, escape_args == false doesnt work
 function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
   local special
   for k, def in pairs(SPECIAL) do
@@ -41,24 +41,22 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
       elseif v.c then
         towrite = v.c()._state.stdout
       else
-        mkopts = function(_)
-          opts.cwd = (v.e or {}).__cwd or opts.cwd
-          return {
-            stdin = close == false and true or v.s,
-            env = (v.e or {}).__env,
-            cwd = opts.cwd or nil,
-            text = true,
-          }
+        mkopts = function(prev)
+          opts.cwd = (v.e or {}).__cwd or prev.cwd
+          prev.env = (v.e or {}).__env
+          prev.cwd = opts.cwd
+          return prev
         end
-        if close == false and v.s then
-          towrite = v.s
-        end
+        towrite = v.s
       end
       local runargs = {
         stdin = true,
         text = true,
         cwd = opts.cwd or nil,
       }
+      if close ~= false and not towrite then
+        runargs.stdin = false
+      end
       local result = sherun(cmd, mkopts and mkopts(runargs) or runargs)
       if towrite then
         result:write_many({ towrite }, close)
@@ -106,7 +104,7 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
     end
   end
 end
--- allow AND, OR, and __env. Allows function type __input, escape_args == false doesnt work
+-- allow AND, OR, __cwd, and __env. Allows function type __input, escape_args == false doesnt work
 function sh_settings.repr.nvim.single_stdin(opts, cmd, inputs, codes)
   local special
   for k, def in pairs(SPECIAL) do
