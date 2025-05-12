@@ -39,7 +39,12 @@ return function(sh)
         if v.m then
           mkopts, towrite = v.m.recieve(opts, v.c)
         elseif v.c then
-          towrite = v.c()._state.stdout
+          local cstate = v.c()._state
+          towrite = cstate.stdout
+          mkopts = function(prev)
+            prev.cwd = cstate.cwd or prev.cwd
+            return prev
+          end
         else
           mkopts = function(prev)
             prev.cwd = (v.e or {}).__cwd or prev.cwd
@@ -90,7 +95,9 @@ return function(sh)
               table.insert(towrite, w)
             end
           elseif v.c then
-            table.insert(towrite, v.c()._state.stdout)
+            local cstate = v.c()._state
+            table.insert(towrite, cstate.stdout)
+            runargs.cwd = cstate.cwd or runargs.cwd
           else
             table.insert(towrite, v.s)
           end
