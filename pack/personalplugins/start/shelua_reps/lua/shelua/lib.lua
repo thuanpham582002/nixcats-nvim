@@ -70,7 +70,7 @@ end
 ---@param input_pipes any[]|any
 ---@param target_pipe uv.uv_stream_t
 ---@param close? boolean
-function M.combine_pipes(input_pipes, target_pipe, close)
+function M.write_many(input_pipes, target_pipe, close)
   local inputs = type(input_pipes) == "table" and input_pipes or { input_pipes }
   local function process_next(i)
     local input = inputs[i]

@@ -55,6 +55,7 @@ end
 --- @field wait fun(self: Shelua.SystemObj, timeout?: integer): Shelua.SystemCompleted
 --- @field kill fun(self: Shelua.SystemObj, signal: integer|string)
 --- @field write fun(self: Shelua.SystemObj, data?: string|string[]|fun())
+--- @field write_many fun(self: Shelua.SystemObj, data?: (string|string[]|fun()|uv.uv_stream_t)[], close?: boolean)
 --- @field is_closing fun(self: Shelua.SystemObj): boolean
 local SystemObj = {}
 
@@ -139,6 +140,12 @@ end
 --- @param data string[]|string|fun()|nil
 function SystemObj:write(data)
   shelib.write(self._state.stdin, data)
+end
+
+--- @param data (string[]|string|fun()|uv.uv_stream_t)[]
+--- @param close? boolean -- defaults to true
+function SystemObj:write_many(data, close)
+  return shelib.write_many(data, self._state.stdin, close)
 end
 
 --- @return boolean
