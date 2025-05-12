@@ -83,9 +83,9 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
       local towrite = {}
       for _, v in ipairs(input) do
         if v.m then
-          local f, w = v.m.recieve(opts, v.c)
-          if f then
-            runargs = f(runargs)
+          local mkopts, w = v.m.recieve(opts, v.c)
+          if mkopts then
+            runargs = mkopts(runargs)
           end
           table.insert(towrite, w)
         elseif v.c then
