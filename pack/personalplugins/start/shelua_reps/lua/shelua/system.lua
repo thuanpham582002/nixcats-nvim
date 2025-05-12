@@ -140,7 +140,7 @@ end
 function SystemObj:write(data)
   local stdin = self._state.stdin
   if not stdin then
-    error(debug.traceback('pipe has not been opened'))
+    error('pipe has not been opened')
   end
 
   if type(data) == 'table' then
