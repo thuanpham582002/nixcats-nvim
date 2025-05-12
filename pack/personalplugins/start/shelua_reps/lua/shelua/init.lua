@@ -51,7 +51,7 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
           }
         end
         if close == false and v.s then
-          towrite = { v.s }
+          towrite = v.s
         end
       end
       local runargs = {
@@ -61,7 +61,7 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
       }
       local result = sherun(cmd, mkopts and mkopts(runargs) or runargs)
       if towrite then
-        result:write_many(towrite, close)
+        result:write_many({ towrite }, close)
       end
       return result
     end
