@@ -131,8 +131,14 @@ local function run_command(opts, cmd, msg)
     result.__stderr = result.__stderr or ""
     return result
   else
-    result = sherun(cmd, { env = msg.env, stdin = true, text = true })
-    result:write_many(msg.towrite)
+    result = sherun(cmd, {
+      env = msg.env,
+      stdin = msg.towrite and true or false,
+      text = true,
+    })
+    if msg.towrite then
+      result:write_many(msg.towrite)
+    end
     result = result:wait()
   end
   return {
