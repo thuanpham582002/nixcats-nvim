@@ -163,6 +163,7 @@ M.AND = {
     end
   end,
 }
+M["and"] = M.AND
 M.OR = {
   single = function(opts, cmd, inputs, codes)
     if not inputs or #inputs < 2 then error("OR requires at least 2 commands") end
@@ -214,6 +215,7 @@ M.OR = {
     end
   end,
 }
+M["or"] = M.OR
 
 ---@param spec Shelua.Special
 local function mkSpecial(spec) return setmetatable({
