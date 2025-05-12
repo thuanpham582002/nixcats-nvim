@@ -94,7 +94,7 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
 end
 -- allow AND, OR, and __env. Allows function type __input, escape_args == false doesnt work
 function sh_settings.repr.nvim.single_stdin(opts, cmd, inputs, codes)
-  local special = false
+  local special
   for k, def in pairs(SPECIAL) do
     if cmd[1] == k then
       special = def
