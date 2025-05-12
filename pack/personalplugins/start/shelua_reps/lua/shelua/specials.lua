@@ -58,7 +58,7 @@ M.CD = {
         __signal = 0,
         __cwd = cmd[2] or error("cd requires a target directory"),
       }
-      for i, v in ipairs(inputs) do
+      for i, v in ipairs(inputs or {}) do
         local c = codes[i] or {}
         if v then
           result.__input = (result.__input or "") .. v
@@ -74,7 +74,7 @@ M.CD = {
   end,
   resolve = function (opts, cmd, input)
     local cwd = cmd[2] or error("cd requires a target directory")
-    local v0 = input[1]
+    local v0 = input[1] or {}
     if v0.c then
       return concat_inputs(v0.c():wait(), input, cwd)
     elseif v0.s then
