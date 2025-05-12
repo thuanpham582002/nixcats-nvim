@@ -57,6 +57,7 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
       local runargs = {
         stdin = true,
         text = true,
+        cwd = opts.cwd or nil,
       }
       local result = sherun(cmd, mkopts and mkopts(runargs) or runargs)
       if towrite then
@@ -118,6 +119,7 @@ function sh_settings.repr.nvim.single_stdin(opts, cmd, inputs, codes)
     return special.single(opts, cmd, inputs, codes)
   else
     local env = {}
+    local cwd = opts.cwd
     local towrite = {}
     for i, res in ipairs(codes or {}) do
       local newin = inputs[i]
@@ -125,12 +127,14 @@ function sh_settings.repr.nvim.single_stdin(opts, cmd, inputs, codes)
         table.insert(towrite, newin)
       end
       if res.__env then
-        for k, v in pairs(res.__env) do
+        for k, v in pairs(rawget(res, "__env") or {}) do
           env[k] = v
         end
       end
+      if res.__cwd then cwd = rawget(res, "__cwd") end
     end
-    return cmd, { env = env, towrite = towrite }
+    opts.cwd = cwd
+    return cmd, { env = env, towrite = towrite, cwd = cwd }
   end
 end
 
