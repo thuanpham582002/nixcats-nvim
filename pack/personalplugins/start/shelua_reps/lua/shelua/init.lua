@@ -22,7 +22,7 @@ sh_settings.repr.nvim = {
 }
 sh_settings.shell = "nvim"
 local SPECIAL = require('shelua.specials')
--- allow AND, OR, __cwd, and __env. Allows function type __input, escape_args == false doesnt work
+-- allow AND, OR, CD, cd, __cwd, and __env. Allows function type __input, escape_args == false doesnt work
 function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
   local special
   for k, def in pairs(SPECIAL) do
@@ -42,9 +42,8 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
         towrite = v.c()._state.stdout
       else
         mkopts = function(prev)
-          opts.cwd = (v.e or {}).__cwd or prev.cwd
+          prev.cwd = (v.e or {}).__cwd or prev.cwd
           prev.env = (v.e or {}).__env
-          prev.cwd = opts.cwd
           return prev
         end
         towrite = v.s
@@ -86,25 +85,26 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
           if mkopts then
             runargs = mkopts(runargs)
           end
-          table.insert(towrite, w)
+          if w then
+            table.insert(towrite, w)
+          end
         elseif v.c then
           table.insert(towrite, v.c()._state.stdout)
         else
           table.insert(towrite, v.s)
         end
       end
-      opts.cwd = runargs.cwd
       local result = sherun(cmd, runargs)
       result:write_many(towrite, close)
       return result
     end
   else
     return function(close)
-      return sherun(cmd, { stdin = close == false, text = true })
+      return sherun(cmd, { stdin = close == false, cwd = opts.cwd or nil, text = true })
     end
   end
 end
--- allow AND, OR, __cwd, and __env. Allows function type __input, escape_args == false doesnt work
+-- allow AND, OR, CD, cd, __cwd, and __env. Allows function type __input, escape_args == false doesnt work
 function sh_settings.repr.nvim.single_stdin(opts, cmd, inputs, codes)
   local special
   for k, def in pairs(SPECIAL) do
@@ -117,7 +117,7 @@ function sh_settings.repr.nvim.single_stdin(opts, cmd, inputs, codes)
     return special.single(opts, cmd, inputs, codes)
   else
     local env = {}
-    local cwd = opts.cwd
+    local cwd
     local towrite = {}
     for i, res in ipairs(codes or {}) do
       local newin = inputs[i]
@@ -131,7 +131,6 @@ function sh_settings.repr.nvim.single_stdin(opts, cmd, inputs, codes)
       end
       if res.__cwd then cwd = res.__cwd end
     end
-    opts.cwd = cwd
     return cmd, { env = env, towrite = towrite, cwd = cwd }
   end
 end
@@ -144,12 +143,12 @@ local function run_command(opts, cmd, msg)
     result = cmd()
     result.__exitcode = result.__exitcode or 0
     result.__signal = result.__signal or 0
+    result.__cwd = result.__cwd or opts.cwd or nil
     return result
   else
-    opts.cwd = msg.cwd or opts.cwd
     result = sherun(cmd, {
       env = msg.env,
-      cwd = opts.cwd or nil,
+      cwd = msg.cwd or opts.cwd or nil,
       stdin = msg.towrite and true or false,
       text = true,
     })
@@ -163,6 +162,7 @@ local function run_command(opts, cmd, msg)
     __stderr = result.stderr,
     __exitcode = result.code,
     __signal = result.signal,
+    __cwd = result.cwd,
   }
 end
 sh_settings.repr.nvim.post_5_2_run = run_command

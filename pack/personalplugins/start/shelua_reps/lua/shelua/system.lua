@@ -16,9 +16,11 @@ local uv = vim and (vim.uv or vim.loop) or require("luv")
 --- @field signal integer
 --- @field stdout? string
 --- @field stderr? string
+--- @field cwd? string
 
 --- @class Shelua.SystemState
 --- @field cmd string[]
+--- @field cwd? string
 --- @field handle? uv.uv_process_t
 --- @field timer?  uv.uv_timer_t
 --- @field pid? integer
@@ -361,6 +363,7 @@ local function _on_exit(state, code, signal, on_exit)
 
     state.result = {
       code = code,
+      cwd = state.cwd or nil,
       signal = signal,
       stdout = stdout_data and table.concat(stdout_data) or nil,
       stderr = stderr_data and table.concat(stderr_data) or nil,
@@ -411,6 +414,7 @@ function M.run(cmd, opts, on_exit)
   local state = {
     done = false,
     cmd = cmd,
+    cwd = opts.cwd or nil,
     timeout = opts.timeout,
     stdin = stdin,
     stdout = stdout,
@@ -428,7 +432,7 @@ function M.run(cmd, opts, on_exit)
   state.handle, state.pid = spawn(cmd[1], {
     args = rgs,
     stdio = { stdin, stdout, stderr },
-    cwd = opts.cwd,
+    cwd = state.cwd,
     --- @diagnostic disable-next-line:assign-type-mismatch
     env = setup_env(opts.env, opts.clear_env),
     detached = opts.detach,
