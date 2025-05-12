@@ -54,6 +54,7 @@ M.CD = {
   single = function(opts, cmd, inputs, codes)
     return function()
       local result = {
+        __input = false,
         __exitcode = 0,
         __signal = 0,
         __cwd = cmd[2] or error("cd requires a target directory"),
