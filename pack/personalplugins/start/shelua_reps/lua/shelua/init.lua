@@ -35,13 +35,14 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
   elseif #input == 1 then
     local v = input[1] or {}
     return function(close)
-      local runargs, towrite
+      local mkopts, towrite
       if v.m then
-        runargs, towrite = v.m.recieve(opts, v.c)
+        mkopts, towrite = v.m.recieve(opts, v.c)
       elseif v.c then
         towrite = v.c()._state.stdout
       else
-        runargs = function(_)
+        mkopts = function(_)
+          opts.cwd = (v.e or {}).__cwd or opts.cwd
           return {
             stdin = close == false and true or v.s,
             env = (v.e or {}).__env,
@@ -53,12 +54,11 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
           towrite = { v.s }
         end
       end
-      local default_args = {
+      local runargs = {
         stdin = true,
         text = true,
       }
-      runargs = runargs and runargs(default_args) or default_args
-      local result = sherun(cmd, runargs)
+      local result = sherun(cmd, mkopts and mkopts(runargs) or runargs)
       if towrite then
         result:write_many(towrite, close)
       end
@@ -67,7 +67,7 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
   elseif #input > 1 then
     return function (close)
       local env = {}
-      local cwd = nil
+      local cwd = opts.cwd
       for _, v in ipairs(input) do
         cwd = (v.e or {}).__cwd or cwd
         for k, val in pairs((v.e or {}).__env or {}) do
@@ -94,6 +94,7 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
           table.insert(towrite, v.s)
         end
       end
+      opts.cwd = runargs.cwd
       local result = sherun(cmd, runargs)
       result:write_many(towrite, close)
       return result
