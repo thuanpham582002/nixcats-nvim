@@ -34,7 +34,7 @@ return function(sh)
       return special.resolve(opts, cmd, input), special
     elseif #input == 1 then
       local v = input[1] or {}
-      return function(close)
+      return function()
         local mkopts, towrite
         if v.m then
           mkopts, towrite = v.m.recieve(opts, v.c)
@@ -58,18 +58,18 @@ return function(sh)
           text = true,
           cwd = opts.cwd or nil,
         }
-        if close ~= false and not towrite then
+        if not towrite then
           runargs.stdin = false
         end
         runargs = mkopts and mkopts(runargs) or runargs
         local result = sherun(cmd, runargs)
         if towrite then
-          result:write_many({ towrite }, close)
+          result:write_many({ towrite })
         end
         return result
       end
     elseif #input > 1 then
-      return function (close)
+      return function ()
         local env = {}
         local cwd
         for _, v in ipairs(input) do
@@ -103,12 +103,12 @@ return function(sh)
           end
         end
         local result = sherun(cmd, runargs)
-        result:write_many(towrite, close)
+        result:write_many(towrite)
         return result
       end
     else
-      return function(close)
-        return sherun(cmd, { stdin = close == false, cwd = opts.cwd or nil, text = true })
+      return function()
+        return sherun(cmd, { cwd = opts.cwd or nil, text = true })
       end
     end
   end

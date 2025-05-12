@@ -6,7 +6,7 @@ local M = {}
 ---@class Shelua.Special
 ---@field name? string
 ---@field single fun(opts, cmd, inputs, codes): string[]|fun():Shelua.SystemCompleted, { env: table<string, string|number>, towrite: any[] }
----@field resolve fun(opts, cmd, inputs): fun(close?: boolean):Shelua.Special.resolved
+---@field resolve fun(opts, cmd, inputs): fun():Shelua.Special.resolved
 ---@field recieve? fun(opts, res: Shelua.Special.resolved): nil|(fun(og: Shelua.SystemOpts):Shelua.SystemOpts), any[]?
 
 local function concat_inputs(v0, input, cwd_override)
@@ -87,7 +87,7 @@ M.CD = {
         stderr = c0.__stderr,
       }, input, cwd)
     else
-      return function(close)
+      return function()
         return {
           wait = function ()
             return {

@@ -56,7 +56,7 @@ end
 --- @field wait fun(self: Shelua.SystemObj, timeout?: integer): Shelua.SystemCompleted
 --- @field kill fun(self: Shelua.SystemObj, signal: integer|string)
 --- @field write fun(self: Shelua.SystemObj, data?: string|string[]|fun())
---- @field write_many fun(self: Shelua.SystemObj, data?: (string|string[]|fun()|uv.uv_stream_t)[], close?: boolean)
+--- @field write_many fun(self: Shelua.SystemObj, data?: (string|string[]|fun()|uv.uv_stream_t)[])
 --- @field is_closing fun(self: Shelua.SystemObj): boolean
 local SystemObj = {}
 
@@ -172,15 +172,12 @@ function SystemObj:write(data)
 end
 
 --- @param data (string[]|string|fun()|uv.uv_stream_t)[]
---- @param close? boolean -- defaults to true
-function SystemObj:write_many(data, close)
+function SystemObj:write_many(data)
   local inputs = type(data) == "table" and data or { data }
   local function process_next(i)
     local input = inputs[i]
     if not input then
-      if close ~= false then
-        self:write(nil)
-      end
+      self:write(nil)
       return
     end
     if type(input) == "userdata" then
