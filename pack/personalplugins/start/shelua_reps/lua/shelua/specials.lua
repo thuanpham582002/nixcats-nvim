@@ -103,11 +103,11 @@ M.CD = {
     end
   end,
   recieve = function (opts, res)
-    local c = res()
+    local c = res():wait()
     return function(prev)
       prev.cwd = c.cwd or prev.cwd
       return prev
-    end, c:wait().stdout
+    end, c.stdout
   end,
 }
 M.cd = M.CD
