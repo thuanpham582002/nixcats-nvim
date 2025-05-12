@@ -141,7 +141,7 @@ M.AND = {
     elseif v0.s then
       local c0 = v0.e or {}
       v0 = {
-        stdout = v0.s,
+        stdout = v0.s or false,
         code = c0.__exitcode or 0,
         signal = c0.__signal or 0,
         stderr = c0.__stderr,
@@ -154,6 +154,7 @@ M.AND = {
       return function()
         return {
           wait = function ()
+            v0.stdout = v0.stdout or false
             return v0
           end
         }
@@ -193,7 +194,7 @@ M.OR = {
     elseif v0.s then
       local c0 = v0.e or {}
       v0 = {
-        stdout = v0.s,
+        stdout = v0.s or false,
         code = c0.__exitcode or 0,
         signal = c0.__signal or 0,
         stderr = c0.__stderr,
@@ -206,6 +207,7 @@ M.OR = {
       return function()
         return {
           wait = function ()
+            v0.stdout = v0.stdout or false
             return v0
           end
         }
