@@ -2,7 +2,6 @@
 local sh = require('sh')
 ---@type Shelua.Opts
 local sh_settings = getmetatable(sh)
-local shelib = require('shelua.lib')
 local sherun = require("shelua.system").run
 ---@type Shelua.Repr
 sh_settings.repr.nvim = {
@@ -22,7 +21,8 @@ sh_settings.repr.nvim = {
   extra_cmd_results = { "__env", "__stderr" },
 }
 sh_settings.shell = "nvim"
-local AND, OR = shelib.mkToken("AND"), shelib.mkToken("OR")
+local function mkToken(n) return setmetatable({}, { __tostring = function() return n end }) end
+local AND, OR = mkToken("AND"), mkToken("OR")
 -- allow AND, OR, and __env. Allows function type __input, escape_args == false doesnt work
 function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
   if cmd[1] == "AND" then

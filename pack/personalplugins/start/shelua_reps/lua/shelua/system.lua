@@ -1,5 +1,4 @@
 local uv = vim and (vim.uv or vim.loop) or require("luv")
-local shelib = require('shelua.lib')
 
 --- @class Shelua.SystemOpts
 --- @field stdin? string|string[]|true
@@ -139,13 +138,70 @@ end
 
 --- @param data string[]|string|fun()|nil
 function SystemObj:write(data)
-  shelib.write(self._state.stdin, data)
+  local stdin = self._state.stdin
+  if not stdin then
+    error(debug.traceback('pipe has not been opened'))
+  end
+
+  if type(data) == 'table' then
+    for _, v in ipairs(data) do
+      stdin:write(v)
+      stdin:write('\n')
+    end
+  elseif type(data) == 'string' then
+    stdin:write(data)
+  elseif type(data) == 'function' then
+    local new = data()
+    while new ~= nil do
+      stdin:write(new)
+      new = data()
+    end
+  elseif data == nil then
+    -- Shutdown the write side of the duplex stream and then close the pipe.
+    -- Note shutdown will wait for all the pending write requests to complete
+    -- TODO(lewis6991): apparently shutdown doesn't behave this way.
+    -- (https://github.com/neovim/neovim/pull/17620#discussion_r820775616)
+    stdin:write('', function()
+      stdin:shutdown(function()
+        close_handle(stdin)
+      end)
+    end)
+  end
 end
 
 --- @param data (string[]|string|fun()|uv.uv_stream_t)[]
 --- @param close? boolean -- defaults to true
 function SystemObj:write_many(data, close)
-  return shelib.write_many(data, self._state.stdin, close)
+  local inputs = type(data) == "table" and data or { data }
+  local function process_next(i)
+    local input = inputs[i]
+    if not input then
+      if close ~= false then
+        self:write(nil)
+      end
+      return
+    end
+    if type(input) == "userdata" then
+      ---@cast input uv.uv_stream_t
+      local buffer = {}
+      input:read_start(function(err, d)
+        assert(not err, err)
+        if d then
+          table.insert(buffer, d)
+        else
+          input:close()
+          for _, chunk in ipairs(buffer) do
+            self:write(chunk)
+          end
+          process_next(i + 1)
+        end
+      end)
+    else
+      self:write(input)
+      process_next(i + 1)
+    end
+  end
+  process_next(1)
 end
 
 --- @return boolean
