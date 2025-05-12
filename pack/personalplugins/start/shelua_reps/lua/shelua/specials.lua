@@ -5,7 +5,7 @@ local M = {}
 
 ---@class Shelua.Special
 ---@field name? string
----@field single fun(opts, cmd, inputs, codes): any[]|fun():Shelua.SystemCompleted, { env: table<string, string|number>, towrite: any[] }
+---@field single fun(opts, cmd, inputs, codes): string[]|fun():Shelua.SystemCompleted, { env: table<string, string|number>, towrite: any[] }
 ---@field resolve fun(opts, cmd, inputs): fun(close?: boolean):Shelua.Special.resolved
 ---@field recieve? fun(opts, res: Shelua.Special.resolved): nil|fun(og: Shelua.SystemOpts):Shelua.SystemOpts, any[]
 
