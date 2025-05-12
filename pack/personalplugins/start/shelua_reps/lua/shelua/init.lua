@@ -21,138 +21,23 @@ sh_settings.repr.nvim = {
   extra_cmd_results = { "__env", "__stderr" },
 }
 sh_settings.shell = "nvim"
-local function mkToken(n) return setmetatable({}, { __tostring = function() return n end }) end
-local AND, OR = mkToken("AND"), mkToken("OR")
+local SPECIAL = require('shelua.specials')
 -- allow AND, OR, and __env. Allows function type __input, escape_args == false doesnt work
 function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
-  if cmd[1] == "AND" then
-    local v0 = input[1]
-    if v0.c then
-      v0 = v0.c():wait()
-    elseif v0.s then
-      local c0 = v0.e or {}
-      v0 = {
-        stdout = v0.s,
-        code = c0.__exitcode or 0,
-        signal = c0.__signal or 0,
-        stderr = c0.__stderr,
-      }
-    else
-      error("NOT ENOUGH ARGS")
+  local special = false
+  for k, def in pairs(SPECIAL) do
+    if cmd[1] == k then
+      special = def
     end
-    if (v0.code or 0) ~= 0 then
-      return function()
-        return {
-          wait = function ()
-            return v0
-          end
-        }
-      end, AND
-    else
-      local full_out, full_err = {}, {}
-      if v0.stdout then table.insert(full_out, v0.stdout) end
-      if v0.stderr then table.insert(full_err, v0.stderr) end
-
-      local last_code, last_signal
-      for i = 2, #input do
-        local v = input[i]
-        local result
-        if v.c then
-          result = v.c():wait()
-        else
-          local ce = v.e or {}
-          result = {
-            stdout = v.s,
-            code = ce.__exitcode or 0,
-            signal = ce.__signal or 0,
-            stderr = ce.__stderr,
-          }
-        end
-        if result.stdout then table.insert(full_out, result.stdout) end
-        if result.stderr then table.insert(full_err, result.stderr) end
-        last_code, last_signal = result.code, result.signal
-      end
-
-      return function()
-        return {
-          wait = function ()
-            return {
-              stdout = table.concat(full_out),
-              stderr = table.concat(full_err),
-              code = last_code or 0,
-              signal = last_signal or 0,
-            }
-          end,
-        }
-      end, AND
-    end
-  elseif cmd[1] == "OR" then
-    local v0 = input[1]
-    if v0.c then
-      v0 = v0.c():wait()
-    elseif v0.s then
-      local c0 = v0.e or {}
-      v0 = {
-        stdout = v0.s,
-        code = c0.__exitcode or 0,
-        signal = c0.__signal or 0,
-        stderr = c0.__stderr,
-      }
-    else
-      error("NOT ENOUGH ARGS")
-    end
-    if (v0.code or 0) == 0 then
-      return function()
-        return {
-          wait = function ()
-            return v0
-          end
-        }
-      end, OR
-    else
-      local full_out, full_err = {}, {}
-      if v0.stdout then table.insert(full_out, v0.stdout) end
-      if v0.stderr then table.insert(full_err, v0.stderr) end
-
-      local last_code, last_signal
-      for i = 2, #input do
-        local v = input[i]
-        local result
-        if v.c then
-          result = v.c():wait()
-        else
-          local ce = v.e or {}
-          result = {
-            stdout = v.s,
-            code = ce.__exitcode or 0,
-            signal = ce.__signal or 0,
-            stderr = ce.__stderr,
-          }
-        end
-        if result.stdout then table.insert(full_out, result.stdout) end
-        if result.stderr then table.insert(full_err, result.stderr) end
-        last_code, last_signal = result.code, result.signal
-      end
-
-      return function()
-        return {
-          wait = function ()
-            return {
-              stdout = table.concat(full_out),
-              stderr = table.concat(full_err),
-              code = last_code or 0,
-              signal = last_signal or 0,
-            }
-          end,
-        }
-      end, OR
-    end
+  end
+  if special then
+    return special.resolve(opts, cmd, input), special
   elseif #input == 1 then
     local v = input[1] or {}
     return function(close)
       local runargs, towrite
-      if v.m == AND or v.m == OR then
-        towrite = v.c():wait().stdout
+      if v.m then
+        runargs, towrite = v.m.recieve(v.c)
       elseif v.c then
         towrite = v.c()._state.stdout
       else
@@ -190,8 +75,8 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
       })
       local towrite = {}
       for _, v in ipairs(input) do
-        if v.m == AND or v.m == OR then
-          table.insert(towrite, v.c():wait().stdout)
+        if v.m then
+          table.insert(towrite, v.m.recieve(v.c))
         elseif v.c then
           table.insert(towrite, v.c()._state.stdout)
         else
@@ -209,28 +94,15 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
 end
 -- allow AND, OR, and __env. Allows function type __input, escape_args == false doesnt work
 function sh_settings.repr.nvim.single_stdin(opts, cmd, inputs, codes)
-  if cmd[1] == "AND" then
-    if not inputs or #inputs < 2 then error("AND requires at least 2 commands") end
-    local c0 = codes[1]
-    local cf = codes[#codes]
-    if (c0.__exitcode or 0) == 0 then
-      cf.__input = table.concat(inputs)
-      return AND, cf
-    else
-      c0.__input = inputs[1]
-      return AND, c0
+  local special = false
+  for k, def in pairs(SPECIAL) do
+    if cmd[1] == k then
+      special = def
+      break
     end
-  elseif cmd[1] == "OR" then
-    if not inputs or #inputs < 2 then error("OR requires at least 2 commands") end
-    local c0 = codes[1]
-    local cf = codes[#codes]
-    if c0.__exitcode == 0 then
-      c0.__input = inputs[1]
-      return OR, c0
-    else
-      cf.__input = table.concat(inputs)
-      return OR, cf
-    end
+  end
+  if special then
+    return special.single(opts, cmd, inputs, codes)
   else
     local env = {}
     local towrite = {}
@@ -252,11 +124,12 @@ local function run_command(opts, cmd, msg)
   local result
   if opts.proper_pipes then
     result = cmd():wait()
-  elseif cmd == AND or cmd == OR then
-    msg.__exitcode = msg.__exitcode or 0
-    msg.__signal = msg.__signal or 0
-    msg.__stderr = msg.__stderr or ""
-    return msg
+  elseif type(cmd) == "function" then
+    result = cmd()
+    result.__exitcode = result.__exitcode or 0
+    result.__signal = result.__signal or 0
+    result.__stderr = result.__stderr or ""
+    return result
   else
     result = sherun(cmd, { env = msg.env, stdin = true, text = true })
     result:write_many(msg.towrite)
