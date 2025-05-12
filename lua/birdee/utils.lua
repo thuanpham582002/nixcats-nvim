@@ -26,7 +26,7 @@ end
 ---@return string? session
 ---@return boolean ok
 function M.authTerminal(sh)
-  sh = sh or require('shelua') { proper_pipes = false, escape_args = false, assert_zero = false, transforms = {}, shell = "nvim" }
+  sh = sh or require('shelua').safe_add_reprs(nil, "uv") { proper_pipes = false, escape_args = false, assert_zero = false, transforms = {}, shell = "uv" }
   local function full_logon()
     local email = vim.fn.inputsecret('Enter email: ')
     local pass = vim.fn.inputsecret('Enter password: ')
@@ -86,7 +86,7 @@ function M.get_auths(entries)
   end
   local final = {}
   if next(to_fetch) ~= nil then
-    local sh = require('shelua') { proper_pipes = false, escape_args = false, assert_zero = false, transforms = {}, shell = "nvim" }
+    local sh = require('shelua').safe_add_reprs(nil, "uv") { proper_pipes = false, escape_args = false, assert_zero = false, transforms = {}, shell = "uv" }
     local session, ok = M.authTerminal(sh)
     if session and ok then
       for name, entry in pairs(to_fetch) do
