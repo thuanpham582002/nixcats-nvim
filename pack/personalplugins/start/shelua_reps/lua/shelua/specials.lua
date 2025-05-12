@@ -74,6 +74,7 @@ M.CD = {
     end
   end,
   resolve = function (opts, cmd, input)
+    print(vim.inspect(cmd))
     local cwd = cmd[2] or error("cd requires a target directory")
     local v0 = input[1] or {}
     if v0.c then
