@@ -35,7 +35,7 @@ end
 ---@param data string[]|string|fun()|nil
 function M.write(pipe, data)
   if not pipe then
-    error('pipe has not been opened')
+    error(debug.traceback('pipe has not been opened'))
   end
 
   if type(data) == 'table' then

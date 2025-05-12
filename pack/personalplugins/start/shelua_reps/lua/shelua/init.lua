@@ -149,34 +149,31 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
     end
   elseif #input == 1 then
     local v = input[1] or {}
-    if v.m == AND or v.m == OR then
-      local result = sherun(cmd, {
-        stdin = true,
-        text = true,
-      })
-      result:write_many(v.c():wait().stdout)
-      return result
-    elseif v.c then
-      return function(close)
-        local result = sherun(cmd, {
-          stdin = true,
-          text = true,
-        })
-        result:write_many(v.c()._state.stdout, close)
-        return result
-      end
-    else
-      return function(close)
-        local result = sherun(cmd, {
+    return function(close)
+      local runargs, towrite
+      if v.m == AND or v.m == OR then
+        towrite = v.c():wait().stdout
+      elseif v.c then
+        towrite = v.c()._state.stdout
+      else
+        runargs = {
           stdin = close == false and true or v.s,
           env = (v.e or {}).__env,
           text = true,
-        })
+        }
         if close == false and v.s then
-          result:write(v.s)
+          towrite = { v.s }
         end
-        return result
       end
+      runargs = runargs or {
+        stdin = true,
+        text = true,
+      }
+      local result = sherun(cmd, runargs)
+      if towrite then
+        result:write_many(towrite, close)
+      end
+      return result
     end
   elseif #input > 1 then
     return function (close)
@@ -236,14 +233,19 @@ function sh_settings.repr.nvim.single_stdin(opts, cmd, inputs, codes)
     end
   else
     local env = {}
-    for _, res in ipairs(codes or {}) do
+    local towrite = {}
+    for i, res in ipairs(codes or {}) do
+      local newin = inputs[i]
+      if newin then
+        table.insert(towrite, newin)
+      end
       if res.__env then
         for k, v in pairs(res.__env) do
           env[k] = v
         end
       end
     end
-    return cmd, { env = env, f = shelib.str_fun_iterator(inputs) }
+    return cmd, { env = env, towrite = towrite }
   end
 end
 local function run_command(opts, cmd, msg)
@@ -256,7 +258,9 @@ local function run_command(opts, cmd, msg)
     msg.__stderr = msg.__stderr or ""
     return msg
   else
-    result = sherun(cmd, { env = msg.env, stdin = msg.f, text = true }):wait()
+    result = sherun(cmd, { env = msg.env, stdin = true, text = true })
+    result:write_many(msg.towrite)
+    result = result:wait()
   end
   return {
     __input = result.stdout,
