@@ -45,8 +45,8 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
           opts.cwd = (v.e or {}).__cwd or opts.cwd
           return {
             stdin = close == false and true or v.s,
-            env = opts.cwd or nil,
-            cwd = (v.e or {}).__cwd,
+            env = (v.e or {}).__env,
+            cwd = opts.cwd or nil,
             text = true,
           }
         end
