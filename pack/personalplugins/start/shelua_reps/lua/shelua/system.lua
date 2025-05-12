@@ -183,16 +183,12 @@ function SystemObj:write_many(data, close)
     end
     if type(input) == "userdata" then
       ---@cast input uv.uv_stream_t
-      local buffer = {}
       input:read_start(function(err, d)
         assert(not err, err)
         if d then
-          table.insert(buffer, d)
+          self:write(d)
         else
           input:close()
-          for _, chunk in ipairs(buffer) do
-            self:write(chunk)
-          end
           process_next(i + 1)
         end
       end)
