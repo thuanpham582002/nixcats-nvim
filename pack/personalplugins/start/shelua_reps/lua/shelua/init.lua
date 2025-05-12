@@ -56,7 +56,8 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
       if close ~= false and not towrite then
         runargs.stdin = false
       end
-      local result = sherun(cmd, mkopts and mkopts(runargs) or runargs)
+      runargs = mkopts and mkopts(runargs) or runargs
+      local result = sherun(cmd, runargs)
       if towrite then
         result:write_many({ towrite }, close)
       end
@@ -65,7 +66,7 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
   elseif #input > 1 then
     return function (close)
       local env = {}
-      local cwd = opts.cwd
+      local cwd
       for _, v in ipairs(input) do
         cwd = (v.e or {}).__cwd or cwd
         for k, val in pairs((v.e or {}).__env or {}) do
@@ -75,7 +76,7 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
       local runargs = {
         stdin = true,
         env = env,
-        cwd = cwd,
+        cwd = cwd or opts.cwd or nil,
         text = true,
       }
       local towrite = {}

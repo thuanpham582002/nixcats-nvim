@@ -81,7 +81,7 @@ M.CD = {
     elseif v0.s then
       local c0 = v0.e or {}
       return concat_inputs({
-        stdout = v0.s,
+        stdout = v0.s or false,
         code = c0.__exitcode or 0,
         signal = c0.__signal or 0,
         stderr = c0.__stderr,
