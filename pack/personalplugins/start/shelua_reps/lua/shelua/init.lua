@@ -18,7 +18,7 @@ sh_settings.repr.nvim = {
       __tostring = function(self) return table.concat(self, " ") end,
     })
   end,
-  extra_cmd_results = { "__env", "__stderr" },
+  extra_cmd_results = { "__env", "__stderr", "__cwd" },
 }
 sh_settings.shell = "nvim"
 local SPECIAL = require('shelua.specials')
@@ -44,6 +44,7 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
         runargs = {
           stdin = close == false and true or v.s,
           env = (v.e or {}).__env,
+          cwd = (v.e or {}).__cwd,
           text = true,
         }
         if close == false and v.s then
@@ -63,26 +64,34 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
   elseif #input > 1 then
     return function (close)
       local env = {}
+      local cwd = nil
       for _, v in ipairs(input) do
+        cwd = (v.e or {}).__cwd or cwd
         for k, val in pairs((v.e or {}).__env or {}) do
           env[k] = val
         end
       end
-      local result = sherun(cmd, {
+      local runargs = {
         stdin = true,
         env = env,
+        cwd = cwd,
         text = true,
-      })
+      }
       local towrite = {}
       for _, v in ipairs(input) do
         if v.m then
-          table.insert(towrite, v.m.recieve(v.c))
+          local f, w = v.m.recieve(v.c)
+          if f then
+            runargs = f(runargs)
+          end
+          table.insert(towrite, w)
         elseif v.c then
           table.insert(towrite, v.c()._state.stdout)
         else
           table.insert(towrite, v.s)
         end
       end
+      local result = sherun(cmd, runargs)
       result:write_many(towrite, close)
       return result
     end
@@ -120,6 +129,7 @@ function sh_settings.repr.nvim.single_stdin(opts, cmd, inputs, codes)
     return cmd, { env = env, towrite = towrite }
   end
 end
+
 local function run_command(opts, cmd, msg)
   local result
   if opts.proper_pipes then
