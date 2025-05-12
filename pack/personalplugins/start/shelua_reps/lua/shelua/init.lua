@@ -42,10 +42,10 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
         towrite = v.c()._state.stdout
       else
         mkopts = function(_)
-          opts.cwd = (v.e or {}).__cwd or opts.cwd
+          opts.cwd = rawget(v.e or {}, "__cwd") or opts.cwd
           return {
             stdin = close == false and true or v.s,
-            env = (v.e or {}).__env,
+            env = rawget(v.e or {}, "__env"),
             cwd = opts.cwd or nil,
             text = true,
           }
@@ -70,8 +70,8 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
       local env = {}
       local cwd = opts.cwd
       for _, v in ipairs(input) do
-        cwd = (v.e or {}).__cwd or cwd
-        for k, val in pairs((v.e or {}).__env or {}) do
+        cwd = rawget(v.e or {}, "__cwd") or cwd
+        for k, val in pairs(rawget(v.e or {}, "__env") or {}) do
           env[k] = val
         end
       end
