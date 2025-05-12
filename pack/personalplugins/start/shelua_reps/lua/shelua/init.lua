@@ -24,7 +24,7 @@ sh_settings.shell = "nvim"
 local SPECIAL = require('shelua.specials')
 -- allow AND, OR, and __env. Allows function type __input, escape_args == false doesnt work
 function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
-  local special = false
+  local special
   for k, def in pairs(SPECIAL) do
     if cmd[1] == k then
       special = def
