@@ -23,7 +23,6 @@ sh_settings.repr.nvim = {
 sh_settings.shell = "nvim"
 local SPECIAL = require('shelua.specials')
 -- allow AND, OR, CD, __cwd, and __env. Allows function type __input, escape_args == false doesnt work
--- TODO: fix CD/cd for proper_pipes = true
 function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
   local special
   for k, def in pairs(SPECIAL) do
