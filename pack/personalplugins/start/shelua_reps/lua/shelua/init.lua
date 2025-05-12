@@ -42,10 +42,10 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
         towrite = v.c()._state.stdout
       else
         mkopts = function(_)
-          opts.cwd = rawget(v.e or {}, "__cwd") or opts.cwd
+          opts.cwd = (v.e or {}).__cwd or opts.cwd
           return {
             stdin = close == false and true or v.s,
-            env = rawget(v.e or {}, "__env"),
+            env = (v.e or {}).__env,
             cwd = opts.cwd or nil,
             text = true,
           }
@@ -70,8 +70,8 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
       local env = {}
       local cwd = opts.cwd
       for _, v in ipairs(input) do
-        cwd = rawget(v.e or {}, "__cwd") or cwd
-        for k, val in pairs(rawget(v.e or {}, "__env") or {}) do
+        cwd = (v.e or {}).__cwd or cwd
+        for k, val in pairs((v.e or {}).__env or {}) do
           env[k] = val
         end
       end
@@ -127,11 +127,11 @@ function sh_settings.repr.nvim.single_stdin(opts, cmd, inputs, codes)
         table.insert(towrite, newin)
       end
       if res.__env then
-        for k, v in pairs(rawget(res, "__env") or {}) do
+        for k, v in pairs(res.__env or {}) do
           env[k] = v
         end
       end
-      if res.__cwd then cwd = rawget(res, "__cwd") end
+      if res.__cwd then cwd = res.__cwd end
     end
     opts.cwd = cwd
     return cmd, { env = env, towrite = towrite, cwd = cwd }
@@ -149,8 +149,10 @@ local function run_command(opts, cmd, msg)
     result.__stderr = result.__stderr or ""
     return result
   else
+    opts.cwd = msg.cwd or opts.cwd
     result = sherun(cmd, {
       env = msg.env,
+      cwd = opts.cwd or nil,
       stdin = msg.towrite and true or false,
       text = true,
     })
@@ -164,7 +166,6 @@ local function run_command(opts, cmd, msg)
     __stderr = result.stderr,
     __exitcode = result.code,
     __signal = result.signal,
-    __env = false
   }
 end
 sh_settings.repr.nvim.post_5_2_run = run_command
