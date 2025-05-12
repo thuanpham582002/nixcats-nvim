@@ -41,20 +41,23 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
       elseif v.c then
         towrite = v.c()._state.stdout
       else
-        runargs = {
-          stdin = close == false and true or v.s,
-          env = (v.e or {}).__env,
-          cwd = (v.e or {}).__cwd,
-          text = true,
-        }
+        runargs = function(_)
+          return {
+            stdin = close == false and true or v.s,
+            env = (v.e or {}).__env,
+            cwd = (v.e or {}).__cwd,
+            text = true,
+          }
+        end
         if close == false and v.s then
           towrite = { v.s }
         end
       end
-      runargs = runargs or {
+      local default_args = {
         stdin = true,
         text = true,
       }
+      runargs = runargs and runargs(default_args) or default_args
       local result = sherun(cmd, runargs)
       if towrite then
         result:write_many(towrite, close)
