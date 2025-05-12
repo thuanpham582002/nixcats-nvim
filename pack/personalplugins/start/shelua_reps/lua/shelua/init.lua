@@ -37,7 +37,7 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
     return function(close)
       local runargs, towrite
       if v.m then
-        runargs, towrite = v.m.recieve(v.c)
+        runargs, towrite = v.m.recieve(opts, v.c)
       elseif v.c then
         towrite = v.c()._state.stdout
       else
@@ -83,7 +83,7 @@ function sh_settings.repr.nvim.concat_cmd(opts, cmd, input)
       local towrite = {}
       for _, v in ipairs(input) do
         if v.m then
-          local f, w = v.m.recieve(v.c)
+          local f, w = v.m.recieve(opts, v.c)
           if f then
             runargs = f(runargs)
           end
