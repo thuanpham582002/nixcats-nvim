@@ -3,34 +3,6 @@ local M = {}
 
 function M.mkToken(n) return setmetatable({}, { __tostring = function() return n end }) end
 
-function M.str_fun_iterator(list)
-  local i = 1
-  local currfn = nil
-  return function()
-    if not list then return nil end
-    while true do
-      if currfn then
-        local val = currfn()
-        if val ~= nil then
-          return val
-        else
-          currfn = nil
-        end
-      else
-        local v = list[i]
-        i = i + 1
-        if type(v) == "function" then
-          currfn = v
-        elseif type(v) == "string" then
-          return v
-        elseif v == nil then
-          return nil
-        end
-      end
-    end
-  end
-end
-
 ---@param pipe uv.uv_stream_t 
 ---@param data string[]|string|fun()|nil
 function M.write(pipe, data)
