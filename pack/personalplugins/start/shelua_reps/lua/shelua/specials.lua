@@ -129,7 +129,7 @@ M.AND = {
       end
     else
       return function()
-        c0.__input = inputs[1]
+        c0.__input = inputs[1] or false
         return c0
       end
     end
@@ -172,7 +172,7 @@ M.OR = {
     local cf = codes[#codes]
     if c0.__exitcode == 0 then
       return function()
-        c0.__input = inputs[1]
+        c0.__input = inputs[1] or false
         return c0
       end
     else
