@@ -3,6 +3,7 @@ M.add_reprs = function (sh, ...)
     ---@cast sh Shelua
     sh = sh or require('sh')
     for _, v in ipairs({...}) do
+      package.loaded['shelua.repr.' .. v] = nil
       sh = require('shelua.repr.' .. v)(sh)
     end
     return sh
