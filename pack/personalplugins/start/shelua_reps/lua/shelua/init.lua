@@ -148,7 +148,7 @@ local function run_command(opts, cmd, msg)
     return result
   else
     result = sherun(cmd, {
-      env = msg.env,
+      env = msg.env or nil,
       cwd = msg.cwd or opts.cwd or nil,
       stdin = msg.towrite and true or false,
       text = true,
