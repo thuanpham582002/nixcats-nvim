@@ -2,7 +2,7 @@
 return function(sh)
   ---@type Shelua.Opts
   local sh_settings = getmetatable(sh)
-  local sherun = require("shelua.repr.uv.system").run
+  local sherun = require('shelua.system').run
   ---@type Shelua.Repr
   sh_settings.repr.uv = {
     escape = function(s) return s end,
