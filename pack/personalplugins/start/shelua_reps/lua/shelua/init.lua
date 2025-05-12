@@ -146,7 +146,6 @@ local function run_command(opts, cmd, msg)
     result = cmd()
     result.__exitcode = result.__exitcode or 0
     result.__signal = result.__signal or 0
-    result.__stderr = result.__stderr or ""
     return result
   else
     opts.cwd = msg.cwd or opts.cwd
