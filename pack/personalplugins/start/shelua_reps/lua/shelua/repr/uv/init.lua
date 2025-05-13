@@ -20,7 +20,6 @@ return function(sh)
     end,
     extra_cmd_results = { "__env", "__stderr", "__cwd" },
   }
-  sh_settings.shell = "uv"
   local SPECIAL = require('shelua.repr.uv.specials')
   -- allow AND, OR, CD, __cwd, and __env. Allows function type __input, escape_args == false doesnt work
   function sh_settings.repr.uv.concat_cmd(opts, cmd, input)
