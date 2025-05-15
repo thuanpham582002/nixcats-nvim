@@ -85,6 +85,9 @@ vim.o.termguicolors = true
 -- how to remove e37 and e162 errors, which force you to force quit if you don't want to save changes
 vim.opt.confirm = true
 
+-- remove empty buffer text
+vim.opt.shortmess:append("I")
+
 -- [[ Disable auto comment on enter ]]
 -- See :help formatoptions
 vim.api.nvim_create_autocmd("FileType", {
