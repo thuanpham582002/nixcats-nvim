@@ -310,22 +310,6 @@
         "type": "github"
       }
     },
-    "makeBinWrap": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1745450129,
-        "narHash": "sha256-JJLCcSZc50eH4NxcBTeTwCznPwsAniSwTWqFvFeY+dE=",
-        "owner": "BirdeeHub",
-        "repo": "testBinWrapper",
-        "rev": "c35836c637d92e6b9b623a80c5544f2ac10de3b1",
-        "type": "github"
-      },
-      "original": {
-        "owner": "BirdeeHub",
-        "repo": "testBinWrapper",
-        "type": "github"
-      }
-    },
     "neorg": {
       "flake": false,
       "locked": {
@@ -777,7 +761,6 @@
     "root": {
       "inputs": {
         "fenix": "fenix",
-        "makeBinWrap": "makeBinWrap",
         "neorg-overlay": "neorg-overlay",
         "neovim-nightly-overlay": "neovim-nightly-overlay",
         "neovim-src": "neovim-src",
