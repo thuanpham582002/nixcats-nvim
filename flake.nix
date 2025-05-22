@@ -16,11 +16,11 @@
     # nixpkgsLocked.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     nixCats.url = "github:BirdeeHub/nixCats-nvim";
     # nixCats.url = "git+file:/home/birdee/Projects/nixCats-nvim";
-    neovim-src = { url = "github:yochem/neovim/exrc-search-parent"; flake = false; };
+    # neovim-src = { url = "github:neovim/neovim"; flake = false; };
     neovim-nightly-overlay = {
       url = "github:nix-community/neovim-nightly-overlay";
-      inputs.neovim-src.follows = "neovim-src";
-      inputs.nixpkgs.follows = "nixpkgs";
+      # inputs.neovim-src.follows = "neovim-src";
+      # inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # makeBinWrap = {
