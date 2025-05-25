@@ -2,7 +2,7 @@
 local sep = package.config:sub(1, 1)
 local fennel_path = nixCats.configDir..sep.."fnl"..sep
 local form = "%s?.fnl;%s?"..sep.."init.fnl;%s"
-local function _fennel_runtime_searcher(name)
+local function fennel_lazy_bootstrap(name)
     local basename = name:gsub('%.', sep)
     local paths = { basename..".fnl", basename..sep.."init.fnl", }
     for _, path in ipairs(paths) do
@@ -10,7 +10,7 @@ local function _fennel_runtime_searcher(name)
         if vim.fn.filereadable(path) == 1 then
             local loaders = package.loaders or package.searchers
             for i = #loaders, 1, -1 do
-                if loaders[i] == _fennel_runtime_searcher then
+                if loaders[i] == fennel_lazy_bootstrap then
                     table.remove(loaders, i)
                 end
             end
@@ -27,4 +27,4 @@ local function _fennel_runtime_searcher(name)
         end
     end
 end
-table.insert(package.loaders or package.searchers, _fennel_runtime_searcher)
+table.insert(package.loaders or package.searchers, fennel_lazy_bootstrap)
