@@ -1,3 +1,4 @@
+local modname = ...
 local catUtils = require('nixCatsUtils')
 local colorschemer = nixCats.extra('colorscheme') -- also schemes lualine
 if not catUtils.isNixCats then
@@ -37,24 +38,20 @@ vim.keymap.set({ 'n', }, "<leader>cpg", function() require("color_picker").rgbGr
 vim.keymap.set({ 'n', }, "<leader>cpd", function() require("color_picker").hsvGradientPicker() end, { desc = "color_picker hsv gradient" })
 vim.keymap.set({ 'n', }, "<leader>cpb", function() require("color_picker").hslGradientPicker() end, { desc = "color_picker hsl gradient"})
 
-local modname = ...
-local function relp(stub)
-  return modname .. "." .. stub
-end
 if nixCats('general') then
-  require(relp 'oil')
+  require(modname:relpath 'oil')
 end
 
 return {
-  { import = relp "snacks", },
-  { import = relp "nestsitter", },
-  { import = relp "blink", },
-  { import = relp "grapple", },
-  { import = relp "lualine", },
-  { import = relp "git", },
-  { import = relp "image", },
-  { import = relp "which-key", },
-  { import = relp "AI", },
+  { import = modname:relpath "snacks", },
+  { import = modname:relpath "nestsitter", },
+  { import = modname:relpath "blink", },
+  { import = modname:relpath "grapple", },
+  { import = modname:relpath "lualine", },
+  { import = modname:relpath "git", },
+  { import = modname:relpath "image", },
+  { import = modname:relpath "which-key", },
+  { import = modname:relpath "AI", },
   {
     "treesj",
     for_cat = "general.core",
