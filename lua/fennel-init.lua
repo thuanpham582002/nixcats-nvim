@@ -2,7 +2,6 @@
 local sep = package.config:sub(1, 1)
 local config_dir = nixCats.configDir or vim.fn.stdpath("config") -- or is unnecessary because we called nixCatsUtils.setup but we have it here anyway
 local fennel_path = config_dir..sep.."fnl"..sep
-local form = "%s?.fnl;%s?"..sep.."init.fnl;%s"
 local function fennel_lazy_bootstrap(name)
     local basename = name:gsub('%.', sep)
     local paths = { basename..".fnl", basename..sep.."init.fnl", }
@@ -18,8 +17,9 @@ local function fennel_lazy_bootstrap(name)
             local ok, fennel = pcall(require, 'fennel')
             if not ok then return end
             _G.fennel = fennel
-            fennel.path = form:format(fennel_path, fennel_path, fennel.path)
-            fennel["macro-path"] = form:format(fennel_path, fennel_path, fennel["macro-path"])
+            local new_fpath = ("%s?.fnl;%s?"..sep.."init.fnl;"):format(fennel_path, fennel_path)
+            fennel.path = new_fpath..fennel.path
+            fennel["macro-path"] = new_fpath..fennel["macro-path"]
             fennel.install()
             return function()
                 package.loaded[name] = nil
