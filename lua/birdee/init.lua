@@ -7,10 +7,12 @@
 --   default_priority = 50,
 --   without_default_handlers = false,
 -- }
+local callfennel = false
 if nixCats('fennel') then
     -- Source: https://neovim.discourse.group/t/how-to-use-fennel-in-runtime-scripts-without-compiling-to-lua/147
     local ok, fennel = pcall(require, 'fennel')
     if ok then
+        callfennel = true
         fennel.install()
         table.insert(package.loaders or package.searchers, function(name)
             local sep = package.config:sub(1, 1)
@@ -43,6 +45,6 @@ require('lze').load {
     { import = modname:relpath "format" },
     { import = modname:relpath "lint" },
 }
-if nixCats('fennel') then
+if callfennel then
     require('fnlcfg')
 end
