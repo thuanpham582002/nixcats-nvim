@@ -61,6 +61,7 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       harper
     ];
     fennel = [
+      fnlfmt
       fennel-ls
     ];
     general = {

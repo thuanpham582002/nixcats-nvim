@@ -24,6 +24,7 @@ return {
         cpp = { "clang_format" },
         cmake = { "cmake_format" },
         elixir = { "mix" },
+        fennel = { "fnlfmt" },
         -- Use a sub-list to run only the first available formatter
         javascript = { { "prettierd", "prettier" } },
       },

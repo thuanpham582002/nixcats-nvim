@@ -33,6 +33,4 @@ require('lze').load {
     { import = MP:relpath "format" },
     { import = MP:relpath "lint" },
 }
-if fennel then
-    require('fnlcfg')
-end
+if fennel then require('fenneltest') end
