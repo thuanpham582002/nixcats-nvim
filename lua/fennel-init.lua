@@ -8,13 +8,13 @@ local function _fennel_runtime_searcher(name)
     for _, path in ipairs(paths) do
         path = fennel_path .. path
         if vim.fn.filereadable(path) == 1 then
-            local ok, fennel = pcall(require, 'fennel')
             local loaders = package.loaders or package.searchers
             for i = #loaders, 1, -1 do
                 if loaders[i] == _fennel_runtime_searcher then
                     table.remove(loaders, i)
                 end
             end
+            local ok, fennel = pcall(require, 'fennel')
             if not ok then return end
             _G.fennel = fennel
             fennel.path = form:format(fennel_path, fennel_path, fennel.path)
