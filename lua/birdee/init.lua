@@ -13,22 +13,11 @@ if nixCats('fennel') then
     if ok then
         _G.fennel = fennel
         fennel.install()
-        table.insert(package.loaders or package.searchers, function(name)
-            local sep = package.config:sub(1, 1)
-            local basename = name:gsub('%.', sep)
-            local paths = {
-                "fnl" .. sep .. basename .. ".fnl",
-                "fnl" .. sep .. basename .. sep .. "init.fnl",
-            }
-            for _, path in ipairs(paths) do
-                local found = vim.api.nvim_get_runtime_file(path, false)
-                if #found > 0 then
-                    return function()
-                        return fennel.dofile(found[1])
-                    end
-                end
-            end
-        end)
+        local sep = package.config:sub(1, 1)
+        local fennel_path = nixCats.configDir .. sep .. "fnl" .. sep
+        local form = "%s?.fnl;%s?" .. sep .. "init.fnl;%s"
+        fennel.path = form:format(fennel_path, fennel_path, fennel.path)
+        fennel["macro-path"] = form:format(fennel_path, fennel_path, fennel["macro-path"])
     end
 end
 local MP = ...

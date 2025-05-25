@@ -644,11 +644,11 @@
     "plugins-lze": {
       "flake": false,
       "locked": {
-        "lastModified": 1746951059,
-        "narHash": "sha256-FGT0rrlqLb0MtfGLVzeualQbfz3kyipZlN1A9K1fr+A=",
+        "lastModified": 1748140721,
+        "narHash": "sha256-EUVhgCnES/UtfN4ld9UK+Im4FEQBO+8hQaCWDGSiof8=",
         "owner": "BirdeeHub",
         "repo": "lze",
-        "rev": "c8f3fb64a2a52a271f3fee4418c66997a959b761",
+        "rev": "eb9ba3f1dda14383e48f2b29eaeefef0760fe4d2",
         "type": "github"
       },
       "original": {
