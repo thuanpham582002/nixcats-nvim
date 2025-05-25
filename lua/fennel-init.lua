@@ -1,7 +1,7 @@
 -- Source: https://neovim.discourse.group/t/how-to-use-fennel-in-runtime-scripts-without-compiling-to-lua/147
 local sep = package.config:sub(1, 1)
-local fennel_path = nixCats.configDir .. sep .. "fnl" .. sep
-local form = "%s?.fnl;%s?" .. sep .. "init.fnl;%s"
+local fennel_path = nixCats.configDir..sep.."fnl"..sep
+local form = "%s?.fnl;%s?"..sep.."init.fnl;%s"
 local function _fennel_runtime_searcher(name)
     local basename = name:gsub('%.', sep)
     local paths = { basename..".fnl", basename..sep.."init.fnl", }
