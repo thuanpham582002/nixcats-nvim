@@ -37,20 +37,24 @@ vim.keymap.set({ 'n', }, "<leader>cpg", function() require("color_picker").rgbGr
 vim.keymap.set({ 'n', }, "<leader>cpd", function() require("color_picker").hsvGradientPicker() end, { desc = "color_picker hsv gradient" })
 vim.keymap.set({ 'n', }, "<leader>cpb", function() require("color_picker").hslGradientPicker() end, { desc = "color_picker hsl gradient"})
 
+local modname = ...
+local function relp(stub)
+  return modname .. "." .. stub
+end
 if nixCats('general') then
-  require(... .. '.oil')
+  require(relp 'oil')
 end
 
 return {
-  { import = ... .. ".snacks", },
-  { import = ... .. ".nestsitter", },
-  { import = ... .. ".blink", },
-  { import = ... .. ".grapple", },
-  { import = ... .. ".lualine", },
-  { import = ... .. ".git", },
-  { import = ... .. ".image", },
-  { import = ... .. ".which-key", },
-  { import = ... .. ".AI", },
+  { import = relp "snacks", },
+  { import = relp "nestsitter", },
+  { import = relp "blink", },
+  { import = relp "grapple", },
+  { import = relp "lualine", },
+  { import = relp "git", },
+  { import = relp "image", },
+  { import = relp "which-key", },
+  { import = relp "AI", },
   {
     "treesj",
     for_cat = "general.core",

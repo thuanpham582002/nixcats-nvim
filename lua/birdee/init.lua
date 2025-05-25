@@ -7,20 +7,24 @@
 --   default_priority = 50,
 --   without_default_handlers = false,
 -- }
+local modname = ...
+local function relp(stub)
+  return modname .. "." .. stub
+end
 if nixCats('fennel') then
-    require(... .. '.fennel-init')
+    require(relp 'fennel-init')
 end
 require('lze').register_handlers {
     require("nixCatsUtils.lzUtils").for_cat,
     require('lzextras').lsp,
 }
-require('lze').h.lsp.set_ft_fallback(require(... .. '.utils').lsp_ft_fallback)
+require('lze').h.lsp.set_ft_fallback(require(relp 'utils').lsp_ft_fallback)
 require('lze').load {
-  { import = ... .. ".plugins" },
-  { import = ... .. ".LSPs" },
-  { import = ... .. ".debug" },
-  { import = ... .. ".format" },
-  { import = ... .. ".lint" },
+  { import = relp "plugins" },
+  { import = relp "LSPs" },
+  { import = relp "debug" },
+  { import = relp "format" },
+  { import = relp "lint" },
 }
 if nixCats('fennel') then
     require('fnlcfg')
