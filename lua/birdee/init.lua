@@ -31,18 +31,18 @@ if nixCats('fennel') then
         end)
     end
 end
-local modname = ...
+local MP = ...
 require('lze').register_handlers {
     require("nixCatsUtils.lzUtils").for_cat,
     require('lzextras').lsp,
 }
-require('lze').h.lsp.set_ft_fallback(require(modname:relpath 'utils').lsp_ft_fallback)
+require('lze').h.lsp.set_ft_fallback(require(MP:relpath 'utils').lsp_ft_fallback)
 require('lze').load {
-    { import = modname:relpath "plugins" },
-    { import = modname:relpath "LSPs" },
-    { import = modname:relpath "debug" },
-    { import = modname:relpath "format" },
-    { import = modname:relpath "lint" },
+    { import = MP:relpath "plugins" },
+    { import = MP:relpath "LSPs" },
+    { import = MP:relpath "debug" },
+    { import = MP:relpath "format" },
+    { import = MP:relpath "lint" },
 }
 if fennel then
     require('fnlcfg')

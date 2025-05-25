@@ -2,7 +2,7 @@ local catUtils = require('nixCatsUtils')
 if catUtils.isNixCats and nixCats('lspDebugMode') then
   vim.lsp.set_log_level("debug")
 end
-local modname = ...
+local MP = ...
 return {
   {
     "mason.nvim",
@@ -23,12 +23,12 @@ return {
     end,
     before = function(_)
       vim.lsp.config('*', {
-        on_attach = require(modname:relpath 'on_attach'),
+        on_attach = require(MP:relpath 'on_attach'),
       })
     end,
   },
-  { import = modname:relpath "web", },
-  { import = modname:relpath "nixlua", },
+  { import = MP:relpath "web", },
+  { import = MP:relpath "nixlua", },
   {
     "clangd_extensions.nvim",
     for_cat = 'C',
