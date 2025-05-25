@@ -3,7 +3,8 @@ local status, fennel = pcall(require, 'fennel')
 if not status then
   return nil
 end
-local function _fennel_runtime_searcher(name)
+fennel.install()
+table.insert(package.loaders or package.searchers, function(name)
   local basename = name:gsub('%.', '/')
   local paths = {
     "fnl/"..basename..".fnl",
@@ -17,8 +18,6 @@ local function _fennel_runtime_searcher(name)
       end
     end
   end
-end
-table.insert(package.loaders or package.searchers, fennel.searcher)
-table.insert(package.loaders or package.searchers, _fennel_runtime_searcher)
+end)
 
 return fennel
