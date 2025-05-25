@@ -5,8 +5,8 @@ local form = "%s?.fnl;%s?" .. sep .. "init.fnl;%s"
 local function _fennel_runtime_searcher(name)
     local basename = name:gsub('%.', sep)
     local paths = { basename..".fnl", basename..sep.."init.fnl", }
-    for i, v in ipairs(paths) do paths[i] = fennel_path .. v end
     for _, path in ipairs(paths) do
+        path = fennel_path .. path
         if vim.fn.filereadable(path) == 1 then
             local ok, fennel = pcall(require, 'fennel')
             local loaders = package.loaders or package.searchers
