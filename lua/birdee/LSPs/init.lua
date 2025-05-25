@@ -78,6 +78,13 @@ return {
     },
   },
   {
+    "fennel_ls",
+    for_cat = "fennel",
+    lsp = {
+      filetypes = { "fennel" },
+    },
+  },
+  {
     "elixirls",
     for_cat = "elixir",
     lsp = {

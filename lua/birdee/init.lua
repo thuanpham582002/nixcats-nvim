@@ -7,6 +7,9 @@
 --   default_priority = 50,
 --   without_default_handlers = false,
 -- }
+if nixCats('fennel') then
+    require('birdee.fennel-init')
+end
 require('lze').register_handlers {
     require("nixCatsUtils.lzUtils").for_cat,
     require('lzextras').lsp,
@@ -19,3 +22,6 @@ require('lze').load {
   { import = "birdee.format" },
   { import = "birdee.lint" },
 }
+if nixCats('fennel') then
+    require('fnlcfg')
+end

@@ -43,7 +43,7 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
 
   # populates $LUA_PATH and $LUA_CPATH
   extraLuaPackages = {
-    # vimagePreview = [ (lp: with lp; [ magick ]) ];
+    fennel = [ (lp: with lp; [ fennel ]) ];
   };
 
   lspsAndRuntimeDeps = with pkgs; {
@@ -59,6 +59,9 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       marksman
       python311Packages.pylatexenc
       harper
+    ];
+    fennel = [
+      fennel-ls
     ];
     general = {
       core = [

@@ -53,6 +53,7 @@ inputs: let
     rust = true;
     SQL = true;
     C = true;
+    fennel = true;
   };
   birdeevim_extra = { pkgs, ... }@misc: {
     colorscheme = "onedark";
