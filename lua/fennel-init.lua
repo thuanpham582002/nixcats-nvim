@@ -1,6 +1,7 @@
 -- Source: https://neovim.discourse.group/t/how-to-use-fennel-in-runtime-scripts-without-compiling-to-lua/147
 local sep = package.config:sub(1, 1)
-local fennel_path = nixCats.configDir..sep.."fnl"..sep
+local config_dir = nixCats.configDir or vim.fn.stdpath("config") -- or is unnecessary because we called nixCatsUtils.setup but we have it here anyway
+local fennel_path = config_dir..sep.."fnl"..sep
 local form = "%s?.fnl;%s?"..sep.."init.fnl;%s"
 local function fennel_lazy_bootstrap(name)
     local basename = name:gsub('%.', sep)
