@@ -8,19 +8,19 @@
 --   without_default_handlers = false,
 -- }
 if nixCats('fennel') then
-    require('birdee.fennel-init')
+    require(... .. '.fennel-init')
 end
 require('lze').register_handlers {
     require("nixCatsUtils.lzUtils").for_cat,
     require('lzextras').lsp,
 }
-require('lze').h.lsp.set_ft_fallback(require('birdee.utils').lsp_ft_fallback)
+require('lze').h.lsp.set_ft_fallback(require(... .. '.utils').lsp_ft_fallback)
 require('lze').load {
-  { import = "birdee.plugins" },
-  { import = "birdee.LSPs" },
-  { import = "birdee.debug" },
-  { import = "birdee.format" },
-  { import = "birdee.lint" },
+  { import = ... .. ".plugins" },
+  { import = ... .. ".LSPs" },
+  { import = ... .. ".debug" },
+  { import = ... .. ".format" },
+  { import = ... .. ".lint" },
 }
 if nixCats('fennel') then
     require('fnlcfg')

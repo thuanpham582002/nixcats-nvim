@@ -38,19 +38,19 @@ vim.keymap.set({ 'n', }, "<leader>cpd", function() require("color_picker").hsvGr
 vim.keymap.set({ 'n', }, "<leader>cpb", function() require("color_picker").hslGradientPicker() end, { desc = "color_picker hsl gradient"})
 
 if nixCats('general') then
-  require('birdee.plugins.oil')
+  require(... .. '.oil')
 end
 
 return {
-  { import = "birdee.plugins.snacks", },
-  { import = "birdee.plugins.nestsitter", },
-  { import = "birdee.plugins.blink", },
-  { import = "birdee.plugins.grapple", },
-  { import = "birdee.plugins.lualine", },
-  { import = "birdee.plugins.git", },
-  { import = "birdee.plugins.image", },
-  { import = "birdee.plugins.which-key", },
-  { import = "birdee.plugins.AI", },
+  { import = ... .. ".snacks", },
+  { import = ... .. ".nestsitter", },
+  { import = ... .. ".blink", },
+  { import = ... .. ".grapple", },
+  { import = ... .. ".lualine", },
+  { import = ... .. ".git", },
+  { import = ... .. ".image", },
+  { import = ... .. ".which-key", },
+  { import = ... .. ".AI", },
   {
     "treesj",
     for_cat = "general.core",
