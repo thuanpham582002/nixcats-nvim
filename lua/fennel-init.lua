@@ -17,7 +17,7 @@ local function fennel_lazy_bootstrap(name)
     local paths = { basename..".fnl", basename..sep.."init.fnl", }
     for _, path in ipairs(paths) do
         path = fennel_path .. path
-        if vim.fn.filereadable(path) == 1 then
+        if vim.uv.fs_stat(path) then
             local loaders = package.loaders or package.searchers
             for i = #loaders, 1, -1 do
                 if loaders[i] == fennel_lazy_bootstrap then
