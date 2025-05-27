@@ -312,4 +312,12 @@ M.fnlFinder = function(loader_opts)
     return M.mkFinder(loader_opts)
 end
 
+M.installFennel = function(pos, opts)
+    if type(pos) == "number" then
+        table.insert(package.loaders, pos, M.fnlFinder(opts))
+    else
+        table.insert(package.loaders, M.fnlFinder(opts))
+    end
+end
+
 return M
