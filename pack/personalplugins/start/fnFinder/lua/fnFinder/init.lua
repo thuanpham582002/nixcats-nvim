@@ -9,8 +9,12 @@ if load == nil then -- 5.1 compat
     end
 end
 
-local uv = (vim or {}).uv or (vim or {}).loop or pcall(require, "luv")
 local function get_file_meta(modpath, meta)
+    local uv = (vim or {}).uv or (vim or {}).loop
+    if not uv then
+        local ok, err = pcall(require, "luv")
+        if ok then uv = err end
+    end
     local err = nil
     if uv then
         local stat
@@ -122,18 +126,31 @@ local function meta_eq(m1, m2)
         and m1.opts_hash == m2.opts_hash
 end
 
+local default_fetch = function(modname, cache_opts)
+    --TODO: get bytecode and meta from file for default implementation
+end
+
 ---@param modname string
 ---@param opts_hash number
 ---@param loader_opts fnFinder.LoaderOpts
 ---@return string? chunk
 ---@return string? modpath
 local function get_cached(modname, opts_hash, loader_opts)
-    -- get bytecode, and meta
-    loader_opts.get_cached = loader_opts.get_cached or function(name, opts)
+    local chunk, meta = (loader_opts.get_cached or default_fetch)(modname, loader_opts.cache_opts or {})
+    if not chunk or not meta then
+        return nil, nil
     end
-    local chunk, meta = loader_opts.get_cached(modname, loader_opts.cache_opts or {})
-    -- check meta against file attributes if auto_invalidate is enabled (the default)
-    -- otherwise just check opts_hash
+    if loader_opts.auto_invalidate then
+        local m2 = {}
+        get_file_meta(meta.modpath, m2)
+        if meta_eq(meta, m2) then
+            return chunk, meta.modpath
+        end
+    else
+        if opts_hash == meta.opts_hash and meta.modpath then
+            return chunk, meta.modpath
+        end
+    end
     return nil, nil
 end
 
@@ -141,7 +158,7 @@ end
 ---@param meta fnFinder.Meta
 ---@param cache_opts? table
 local function cache_chunk(chunk, meta, cache_opts)
-    -- save bytecode, modpath, and meta
+    -- TODO: save bytecode, and meta to file for default implementation
 end
 
 ---@class fnFinder.LoaderOpts
