@@ -21,88 +21,6 @@ if load == nil then -- 5.1 compat
     end
 end
 
----@class fnFinder.FileAttrs
----@return number mtime
----@return number ctime
----@return number size
-
----@param modpath string
----@return fnFinder.FileAttrs?
-local function get_file_meta(modpath)
-    local uv = (vim or {}).uv or (vim or {}).loop
-    if not uv then
-        local ok, err = pcall(require, "luv")
-        if ok then uv = err end
-    end
-    local err = nil
-    local mtime
-    local ctime
-    local size
-    if uv then
-        local stat
-        stat, err = uv.fs_stat(modpath)
-        if stat then
-            mtime = stat.mtime.sec
-            ctime = stat.ctime.sec
-            size = stat.size
-        end
-    else
-        local ok, lfs = pcall(require, "lfs")
-        if ok then
-            mtime, err = lfs.attributes(modpath, "modification")
-            ctime, err = lfs.attributes(modpath, "change")
-            size, err = lfs.attributes(modpath, "size")
-        else
-            err = "fnFinder default fs_lib setting requires uv or lfs"
-        end
-    end
-    if not err and mtime and ctime and size then
-        return { mtime = mtime, ctime = ctime, size = size }
-    else
-        return nil
-    end
-end
-
-local function simple_table_hash(input)
-    local ok_types = {
-        number = true, string = true, boolean = true, ["nil"] = true,
-    }
-    local visited = {}
-    local cerealize -- hehe... ignore the breakfast pun, this hash is only lightly scrambled
-    local function valstr(v)
-        local t = type(v)
-        if ok_types[t] then
-            return tostring(v)
-        elseif t == "table" then
-            if visited[v] then
-                return visited[v]
-            else
-                local val = cerealize(v)
-                visited[v] = val
-                return val
-            end
-        else
-            return t -- type name if non-deterministic
-        end
-    end
-    cerealize = function(tbl)
-        local keys = {}
-        for k in pairs(tbl) do table.insert(keys, k) end
-        table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
-        local acc = ""
-        for _, k in ipairs(keys) do
-            acc = acc .. valstr(k) .. "=" .. valstr(tbl[k]) .. ","
-        end
-        return acc
-    end
-    local res = cerealize(input)
-    local hash = 0
-    for i = 1, #res do
-        hash = (hash * 31 + res:byte(i)) % 2 ^ 32
-    end
-    return hash
-end
-
 -- have searchModule use package.config to process package.path (windows compat)
 local cfg = string.gmatch(package.config, "([^\n]+)")
 local dirsep, pathsep, pathmark = cfg() or '/', cfg() or ';', cfg() or '?'
@@ -148,13 +66,92 @@ local function read_file(filename)
     return nil, file
 end
 
----@class fnFinder.Meta
+local function simple_table_hash(input)
+    local ok_types = {
+        number = true, string = true, boolean = true, ["nil"] = true,
+    }
+    local visited = {}
+    local cerealize -- hehe... ignore the breakfast pun, this hash is only lightly scrambled
+    local function valstr(v)
+        local t = type(v)
+        if ok_types[t] then
+            return tostring(v)
+        elseif t == "table" then
+            if visited[v] then
+                return visited[v]
+            else
+                local val = cerealize(v)
+                visited[v] = val
+                return val
+            end
+        else
+            return t -- type name if non-deterministic
+        end
+    end
+    cerealize = function(tbl)
+        local keys = {}
+        for k in pairs(tbl) do table.insert(keys, k) end
+        table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+        local acc = ""
+        for _, k in ipairs(keys) do
+            acc = acc .. valstr(k) .. "=" .. valstr(tbl[k]) .. ","
+        end
+        return acc
+    end
+    local res = cerealize(input)
+    local hash = 0
+    for i = 1, #res do
+        hash = (hash * 31 + res:byte(i)) % 2 ^ 32
+    end
+    return hash
+end
+
+---@class fnFinder.FileAttrs
+---@return number mtime
+---@return number ctime
+---@return number size
+
+---@param modpath string
+---@return fnFinder.FileAttrs?
+local function get_file_meta(modpath)
+    local uv = (vim or {}).uv or (vim or {}).loop
+    if not uv then
+        local ok, err = pcall(require, "luv")
+        if ok then uv = err end
+    end
+    local err = nil
+    local mtime
+    local ctime
+    local size
+    if uv then
+        local stat
+        stat, err = uv.fs_stat(modpath)
+        if stat then
+            mtime = stat.mtime.sec
+            ctime = stat.ctime.sec
+            size = stat.size
+        end
+    else
+        local ok, lfs = pcall(require, "lfs")
+        if ok then
+            mtime, err = lfs.attributes(modpath, "modification")
+            ctime, err = lfs.attributes(modpath, "change")
+            size, err = lfs.attributes(modpath, "size")
+        else
+            err = "fnFinder default fs_lib setting requires uv or lfs"
+        end
+    end
+    if not err and mtime and ctime and size then
+        return { mtime = mtime, ctime = ctime, size = size }
+    else
+        return nil
+    end
+end
+
+---@class fnFinder.Meta: fnFinder.FileAttrs
 ---@field modname string
 ---@field modpath string
 ---@field opts_hash number
----@field mtime number
----@field ctime number
----@field size number
 
 ---@param modname string
 ---@param cache_opts table
