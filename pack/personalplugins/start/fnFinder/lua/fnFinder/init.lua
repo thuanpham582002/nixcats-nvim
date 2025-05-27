@@ -131,6 +131,7 @@ local function get_cached(modname, opts_hash, loader_opts)
     -- get bytecode, modpath, and meta
     -- check meta against file attributes
     -- if auto-invalidation is enabled (the default)
+    -- otherwise just check opts_hash
     return nil, nil
 end
 
