@@ -268,7 +268,7 @@ M.mkFinder = function(loader_opts)
                 chunk, err = read_file(modpath)
             end
             if modpath and chunk then
-                chunk = _load(chunk, "@" .. modpath, "t", loader_opts.env)
+                chunk, err = _load(chunk, "@" .. modpath, "t", loader_opts.env)
                 if chunk then
                     ---@type fnFinder.Meta?
                     ---@diagnostic disable-next-line: assign-type-mismatch
