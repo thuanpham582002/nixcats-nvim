@@ -1,7 +1,7 @@
 local M
 
 if load == nil then -- 5.1 compat
-    function load(chunk, chunkname, mode, env)
+    function load(chunk, chunkname, _, env)
         local f, err = loadstring(chunk, chunkname)
         if not f then return nil, err end
         if env then setfenv(f, env) end
