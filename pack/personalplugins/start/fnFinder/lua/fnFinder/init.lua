@@ -310,36 +310,34 @@ M.mkFinder = function(loader_opts)
     end
 end
 
-local function fennel_searcher(modname, opts)
-    local ok, fennel = pcall(require, "fennel")
-    opts = opts or {}
-    if opts.set_global then
-        _G.fennel = fennel
-    end
-    if ok and fennel then
-        local pt = type(opts.path)
-        local modpath
-        if pt == "function" then modpath = opts.path(modname, fennel.path)
-        elseif pt == "string" then modpath = M.searchModule(modname, opts.path)
-        else modpath = M.searchModule(modname, fennel.path) end
-        opts.filename = modpath
-        local lua_code
-        local source = read_file(modpath)
-        ok, lua_code = pcall(fennel.compileString, source, opts)
-        if ok then
-            return lua_code, modpath, nil
-        else
-            return nil, nil,
-                "\n\tfnlFinder could not find a valid fennel file for '" ..
-                modname .. "': " .. tostring(lua_code or modpath)
-        end
-    end
-    return nil, nil, "\n\tfnlFinder cannot require('fennel')"
-end
-
 M.fnlFinder = function(loader_opts)
     loader_opts = loader_opts or {}
-    loader_opts.search_path = loader_opts.search_path or fennel_searcher
+    loader_opts.search_path = loader_opts.search_path or function(modname, opts)
+        local ok, fennel = pcall(require, "fennel")
+        opts = opts or {}
+        if opts.set_global then
+            _G.fennel = fennel
+        end
+        if ok and fennel then
+            local pt = type(opts.path)
+            local modpath
+            if pt == "function" then modpath = opts.path(modname, fennel.path)
+            elseif pt == "string" then modpath = M.searchModule(modname, opts.path)
+            else modpath = M.searchModule(modname, fennel.path) end
+            opts.filename = modpath
+            local lua_code
+            local source = read_file(modpath)
+            ok, lua_code = pcall(fennel.compileString, source, opts)
+            if ok then
+                return lua_code, modpath, nil
+            else
+                return nil, nil,
+                    "\n\tfnlFinder could not find a valid fennel file for '" ..
+                    modname .. "': " .. tostring(lua_code or modpath)
+            end
+        end
+        return nil, nil, "\n\tfnlFinder cannot require('fennel')"
+    end
     return M.mkFinder(loader_opts)
 end
 
