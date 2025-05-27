@@ -107,9 +107,9 @@ local function simple_table_hash(input)
 end
 
 ---@class fnFinder.FileAttrs
----@return number mtime
----@return number ctime
----@return number size
+---@field mtime number
+---@field ctime number
+---@field size number
 
 ---@param modpath string
 ---@return fnFinder.FileAttrs?
