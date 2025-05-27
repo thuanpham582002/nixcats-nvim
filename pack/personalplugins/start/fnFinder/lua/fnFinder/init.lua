@@ -1,7 +1,9 @@
 local M
 
+local _load = load
+
 if load == nil then -- 5.1 compat
-    function load(chunk, chunkname, _, env)
+    _load = function(chunk, chunkname, _, env)
         local f, err = loadstring(chunk, chunkname)
         if not f then return nil, err end
         if env then setfenv(f, env) end
@@ -192,7 +194,7 @@ M.mkFinder = function(loader_opts)
             return "\n\tModule not found: '" .. n .. "'" .. (e and (" " .. tostring(e)) or "")
         end
         if modpath and chunk then
-            chunk, err = load(chunk, "@" .. modpath, "b", loader_opts.env)
+            chunk, err = _load(chunk, "@" .. modpath, "b", loader_opts.env)
             return chunk or mkmsg(modname, err)
         else
             local spath = loader_opts.search_path or package.path
@@ -203,7 +205,7 @@ M.mkFinder = function(loader_opts)
                 chunk, err = read_file(modpath)
             end
             if modpath and chunk then
-                chunk = load(chunk, "@" .. modpath, "t", loader_opts.env)
+                chunk = _load(chunk, "@" .. modpath, "t", loader_opts.env)
                 if chunk then
                     ---@type fnFinder.Meta
                     local meta = {
