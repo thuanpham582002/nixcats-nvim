@@ -11,7 +11,7 @@ if load == nil then -- 5.1 compat
     end
 end
 
-local function get_file_meta(modpath, meta)
+local function get_file_meta(modpath, meta, loader_opts)
     local uv = (vim or {}).uv or (vim or {}).loop
     if not uv then
         local ok, err = pcall(require, "luv")
@@ -23,7 +23,7 @@ local function get_file_meta(modpath, meta)
         stat, err = uv.fs_stat(modpath)
         if stat then
             meta.mtime = stat.mtime.sec
-            meta.mtime = stat.ctime.sec
+            meta.ctime = stat.ctime.sec
             meta.size = stat.size
         end
     else
@@ -31,7 +31,7 @@ local function get_file_meta(modpath, meta)
         if ok then
             meta.mtime, err = lfs.attributes(modpath, "modification")
             meta.ctime, err = lfs.attributes(modpath, "change")
-            meta.ctime, err = lfs.attributes(modpath, "size")
+            meta.size, err = lfs.attributes(modpath, "size")
         else
             err = "fnFinder requires uv or lfs"
         end
@@ -178,6 +178,7 @@ end
 ---@field strip? boolean
 ---@field env? table
 ---@field auto_invalidate? boolean
+---@field fs_lib? 
 
 ---@param loader_opts? table
 ---@return fun(modname: string):function|string
