@@ -31,6 +31,9 @@ local function escapepat(str)
     return string.gsub(str, "[^%w]", "%%%1")
 end
 
+---@param modulename string
+---@param pathstring string
+---@return string? modpath
 function M.searchModule(modulename, pathstring)
     local pathsepesc = escapepat(pkgConfig.pathsep)
     local pathsplit = string.format("([^%s]*)%s", pathsepesc, pathsepesc)
@@ -250,6 +253,7 @@ end
 ---@field auto_invalidate? boolean
 ---
 ---Attention: if search_path returns a chunk, it must also return its modpath
+---alternatively, you may fetch the meta class yourself and return a function representing the module.
 ---@field search_path? string|fun(n: string, search_opts: table, opts_hash: number):(chunk: nil|string|fun():(string|any)?, modpath: (string|fnFinder.Meta)?, err: string?)
 ---Attention: if get_cached returns a chunk, it must also return meta
 ---@field get_cached? fun(modname: string, cache_opts: table):(chunk: nil|string|fun():string?, meta: fnFinder.Meta)
@@ -257,7 +261,7 @@ end
 ---@field fs_lib? fun(modname: string):fnFinder.FileAttrs?
 
 ---@param loader_opts? table
----@return fun(modname: string):function|string
+---@return fun(modname: string):function|string?
 M.mkFinder = function(loader_opts)
     loader_opts = loader_opts or {}
     loader_opts.auto_invalidate = loader_opts.auto_invalidate ~= false
@@ -284,20 +288,22 @@ M.mkFinder = function(loader_opts)
             if modpath and chunk then
                 if type(modpath) == "table" then
                     local meta = modpath
-                    local compiled = string.dump(chunk, loader_opts.strip)
-                    local cacher = loader_opts.cache_chunk or cache_chunk
-                    cacher(compiled, meta, loader_opts.cache_opts or {})
+                    local ok, compiled = pcall(string.dump, chunk, loader_opts.strip)
+                    if ok then
+                        local cacher = loader_opts.cache_chunk or cache_chunk
+                        cacher(compiled, meta, loader_opts.cache_opts or {})
+                    end
                     return chunk
                 else
                     chunk, err = _load(chunk, "@" .. modpath, "t", loader_opts.env)
                     if chunk then
+                        local ok, compiled = pcall(string.dump, chunk, loader_opts.strip)
                         local meta = loader_opts.fs_lib and loader_opts.fs_lib(modpath) or get_file_meta(modpath)
-                        if meta then
+                        if ok and compiled and meta then
                             ---@cast meta fnFinder.Meta
                             meta.opts_hash = opts_hash
                             meta.modname = modname
                             meta.modpath = modpath
-                            local compiled = string.dump(chunk, loader_opts.strip)
                             local cacher = loader_opts.cache_chunk or cache_chunk
                             cacher(compiled, meta, loader_opts.cache_opts or {})
                         end
@@ -310,6 +316,8 @@ M.mkFinder = function(loader_opts)
     end
 end
 
+---@param loader_opts? fnFinder.LoaderOpts
+---@return fun(modname: string):function|string?
 M.fnlFinder = function(loader_opts)
     loader_opts = loader_opts or {}
     loader_opts.search_path = loader_opts.search_path or function(modname, opts)
@@ -322,7 +330,7 @@ M.fnlFinder = function(loader_opts)
             local pt = type(opts.path)
             local modpath
             if pt == "function" then modpath = opts.path(modname, fennel.path)
-            elseif pt == "string" then modpath = M.searchModule(modname, opts.path)
+            elseif pt == "string" then modpath = fennel.searchModule(modname, opts.path)
             else modpath = M.searchModule(modname, fennel.path) end
             opts.filename = modpath
             local lua_code
@@ -341,11 +349,13 @@ M.fnlFinder = function(loader_opts)
     return M.mkFinder(loader_opts)
 end
 
-M.installFennel = function(pos, opts)
+---@overload fun(opts: fnFinder.LoaderOpts)
+---@overload fun(pos: number, opts: fnFinder.LoaderOpts)
+M.fnlInstall = function(pos, opts)
     if type(pos) == "number" then
-        table.insert(package.loaders or package.searchers, pos, M.fnlFinder(opts))
+        table.insert(package.loaders or package.searchers, pos, M.fnlFinder(opts or {}))
     else
-        table.insert(package.loaders or package.searchers, M.fnlFinder(opts))
+        table.insert(package.loaders or package.searchers, M.fnlFinder(pos or opts or {}))
     end
 end
 

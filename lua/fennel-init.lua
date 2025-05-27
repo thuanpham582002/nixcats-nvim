@@ -17,7 +17,7 @@ local function getpath(base, ext, n, ep)
     end
     return FF.searchModule(n, table.concat(paths, psep))
 end
-FF.installFennel(nil, {
+FF.fnlInstall(nil, {
     search_opts = {
         path = function(n, ep) return getpath(cfg_dir, "fnl", n, ep) end,
         -- set_global = true
