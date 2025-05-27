@@ -250,10 +250,10 @@ end
 ---@field env? table
 ---@field auto_invalidate? boolean
 ---
----Attention: if get_cached returns a chunk, it must also return meta
----@field get_cached? fun(modname: string, cache_opts: table):(chunk: nil|string|fun():string?, meta: fnFinder.Meta)
 ---Attention: if search_path returns a chunk, it must also return its modpath
 ---@field search_path? string|fun(n: string, search_opts: table):(chunk: nil|string|fun():string?, modpath: string?, err: string?)
+---Attention: if get_cached returns a chunk, it must also return meta
+---@field get_cached? fun(modname: string, cache_opts: table):(chunk: nil|string|fun():string?, meta: fnFinder.Meta)
 ---@field cache_chunk? fun(chunk: string, meta: fnFinder.Meta, cache_opts: table)
 ---@field fs_lib? fun(modname: string):fnFinder.FileAttrs?
 
