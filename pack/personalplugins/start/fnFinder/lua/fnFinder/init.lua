@@ -333,7 +333,7 @@ end
 
 M.fnlFinder = function(loader_opts)
     loader_opts = loader_opts or {}
-    loader_opts.search_path = loader_opts.search_path or M.fennel_searcher
+    loader_opts.search_path = loader_opts.search_path or fennel_searcher
     return M.mkFinder(loader_opts)
 end
 
