@@ -4,6 +4,16 @@ local _load = load
 
 if load == nil then -- 5.1 compat
     _load = function(chunk, chunkname, _, env)
+        if type(chunk) == "function" then
+            local res = chunk()
+            local function i()
+                local v = chunk()
+                res = res .. (v or "")
+                return v
+            end
+            while i() do end
+            chunk = res
+        end
         local f, err = loadstring(chunk, chunkname)
         if not f then return nil, err end
         if env then setfenv(f, env) end
