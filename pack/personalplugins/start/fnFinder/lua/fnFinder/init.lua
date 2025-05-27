@@ -226,7 +226,6 @@ local function fetch_cached(modname, opts_hash, loader_opts)
     if loader_opts.auto_invalidate then
         local m2 = loader_opts.fs_lib and loader_opts.fs_lib(meta.modpath) or get_file_meta(meta.modpath)
         if m2 then
-            ---@diagnostic disable-next-line: cast-type-mismatch
             ---@cast m2 fnFinder.Meta
             m2.modpath = meta.modpath
             m2.modname = modname
@@ -251,7 +250,7 @@ end
 ---@field auto_invalidate? boolean
 ---
 ---Attention: if search_path returns a chunk, it must also return its modpath
----@field search_path? string|fun(n: string, search_opts: table):(chunk: nil|string|fun():string?, modpath: string?, err: string?)
+---@field search_path? string|fun(n: string, search_opts: table, opts_hash: number):(chunk: nil|string|fun():(string|any)?, modpath: (string|fnFinder.Meta)?, err: string?)
 ---Attention: if get_cached returns a chunk, it must also return meta
 ---@field get_cached? fun(modname: string, cache_opts: table):(chunk: nil|string|fun():string?, meta: fnFinder.Meta)
 ---@field cache_chunk? fun(chunk: string, meta: fnFinder.Meta, cache_opts: table)
@@ -277,26 +276,33 @@ M.mkFinder = function(loader_opts)
         else
             local spath = loader_opts.search_path or package.path
             if type(spath) == "function" then
-                chunk, modpath, err = spath(modname, loader_opts.search_opts or {})
+                chunk, modpath, err = spath(modname, loader_opts.search_opts or {}, opts_hash)
             else
                 modpath = M.searchModule(modname, spath)
                 chunk, err = read_file(modpath)
             end
             if modpath and chunk then
-                chunk, err = _load(chunk, "@" .. modpath, "t", loader_opts.env)
-                if chunk then
-                    ---@type fnFinder.Meta?
-                    ---@diagnostic disable-next-line: assign-type-mismatch
-                    local meta = loader_opts.fs_lib and loader_opts.fs_lib(modpath) or get_file_meta(modpath)
-                    if meta then
-                        meta.opts_hash = opts_hash
-                        meta.modname = modname
-                        meta.modpath = modpath
-                        local compiled = string.dump(chunk, loader_opts.strip)
-                        local cacher = loader_opts.cache_chunk or cache_chunk
-                        cacher(compiled, meta, loader_opts.cache_opts or {})
-                    end
+                if type(modpath) == "table" then
+                    local meta = modpath
+                    local compiled = string.dump(chunk, loader_opts.strip)
+                    local cacher = loader_opts.cache_chunk or cache_chunk
+                    cacher(compiled, meta, loader_opts.cache_opts or {})
                     return chunk
+                else
+                    chunk, err = _load(chunk, "@" .. modpath, "t", loader_opts.env)
+                    if chunk then
+                        local meta = loader_opts.fs_lib and loader_opts.fs_lib(modpath) or get_file_meta(modpath)
+                        if meta then
+                            ---@cast meta fnFinder.Meta
+                            meta.opts_hash = opts_hash
+                            meta.modname = modname
+                            meta.modpath = modpath
+                            local compiled = string.dump(chunk, loader_opts.strip)
+                            local cacher = loader_opts.cache_chunk or cache_chunk
+                            cacher(compiled, meta, loader_opts.cache_opts or {})
+                        end
+                        return chunk
+                    end
                 end
             end
         end
