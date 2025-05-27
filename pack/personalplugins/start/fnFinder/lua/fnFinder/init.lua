@@ -128,7 +128,7 @@ end
 
 ---@param modname string
 ---@param cache_opts table
----@return nil|string|fun():string chunk
+---@return nil|string|fun():string? chunk
 ---@return fnFinder.Meta?
 local default_fetch = function(modname, cache_opts)
     --TODO: get bytecode and meta from file for default implementation
@@ -144,7 +144,7 @@ end
 ---@param modname string
 ---@param opts_hash number
 ---@param loader_opts fnFinder.LoaderOpts
----@return nil|string|fun():string chunk
+---@return nil|string|fun():string? chunk
 ---@return string? modpath
 local function fetch_cached(modname, opts_hash, loader_opts)
     local chunk, meta = (loader_opts.get_cached or default_fetch)(modname, loader_opts.cache_opts or {})
