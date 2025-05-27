@@ -9,7 +9,7 @@ if load == nil then -- 5.1 compat
     end
 end
 
-local uv = (vim or {}).uv or pcall(require, "luv")
+local uv = (vim or {}).uv or (vim or {}).loop or pcall(require, "luv")
 local function get_file_meta(modpath, meta)
     local err = nil
     if uv then
