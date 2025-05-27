@@ -125,10 +125,12 @@ end
 ---@param modname string
 ---@param opts_hash number
 ---@param loader_opts fnFinder.LoaderOpts
----@return string?
----@return string?
+---@return string? chunk
+---@return string? modpath
 local function get_cached(modname, opts_hash, loader_opts)
-    -- get bytecode, modpath, and meta
+    -- get bytecode, and meta
+    loader_opts.get_cached = loader_opts.get_cached or function(name, opts)
+    end
     -- check meta against file attributes
     -- if auto-invalidation is enabled (the default)
     -- otherwise just check opts_hash
@@ -145,7 +147,7 @@ end
 ---@class fnFinder.LoaderOpts
 ---@field lang_opts? table
 ---@field cache_opts? table
----@field get_cache? fun(modname: string, cache_opts: table):string, fnFinder.Meta
+---@field get_cached? fun(modname: string, cache_opts: table):string, fnFinder.Meta
 ---@field cache_chunk? fun(modname: string, cache_opts: table):string, fnFinder.Meta
 ---@field search_path? string|fun(n: string, lang_opts: table):string
 ---@field strip? boolean
@@ -188,7 +190,8 @@ M.mkFinder = function(loader_opts)
                     }
                     if get_file_meta(modpath, meta) then
                         local compiled = string.dump(chunk, loader_opts.strip)
-                        cache_chunk(compiled, meta, loader_opts.cache_opts or {})
+                        local cacher = loader_opts.cache_chunk or cache_chunk
+                        cacher(compiled, meta, loader_opts.cache_opts or {})
                     end
                     return chunk
                 end
