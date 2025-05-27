@@ -168,9 +168,11 @@ end
 ---@class fnFinder.LoaderOpts
 ---@field search_opts? table
 ---@field cache_opts? table
----@field get_cached? fun(modname: string, cache_opts: table):nil|string|fun():string?, fnFinder.Meta
+---Attention: if get_cached returns a chunk, it must also return meta
+---@field get_cached? fun(modname: string, cache_opts: table):(chunk: nil|string|fun():string?, meta: fnFinder.Meta)
+---Attention: if search_path returns a chunk, it must also return its modpath
+---@field search_path? string|fun(n: string, search_opts: table):(chunk: nil|string|fun():string?, modpath: string?, err: string?)
 ---@field cache_chunk? fun(chunk: string, meta: fnFinder.Meta, cache_opts: table)
----@field search_path? string|fun(n: string, search_opts: table):string
 ---@field strip? boolean
 ---@field env? table
 ---@field auto_invalidate? boolean
