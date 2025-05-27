@@ -122,23 +122,33 @@ local function meta_eq(m1, m2)
         and m1.opts_hash == m2.opts_hash
 end
 
+---@param modname string
+---@param opts_hash number
+---@param loader_opts fnFinder.LoaderOpts
+---@return string?
+---@return string?
 local function get_cached(modname, opts_hash, loader_opts)
     -- get bytecode, modpath, and meta
     -- check meta against file attributes
     -- if auto-invalidation is enabled (the default)
-    -- must return (chunk, modpath)
     return nil, nil
 end
 
-local function cache_chunk(chunk, meta, loader_opts)
+---@param chunk string
+---@param meta fnFinder.Meta
+---@param cache_opts? table
+local function cache_chunk(chunk, meta, cache_opts)
     -- save bytecode, modpath, and meta
 end
 
 ---@class fnFinder.LoaderOpts
----@field search_path? string|fun(n: string):string
+---@field lang_opts? table
+---@field cache_opts? table
+---@field get_cache? fun(modname: string, cache_opts: table):string, fnFinder.Meta
+---@field cache_chunk? fun(modname: string, cache_opts: table):string, fnFinder.Meta
+---@field search_path? string|fun(n: string, lang_opts: table):string
 ---@field strip? boolean
 ---@field env? table
----@field lang_opts? table
 ---@field auto_invalidate? boolean
 
 ---@param loader_opts? table
@@ -161,7 +171,7 @@ M.mkFinder = function(loader_opts)
         else
             local spath = loader_opts.search_path or package.path
             if type(spath) == "function" then
-                chunk, modpath, err = spath(modname, loader_opts)
+                chunk, modpath, err = spath(modname, loader_opts.lang_opts or {})
             else
                 modpath = M.searchModule(modname, spath)
                 chunk, err = read_file(modpath)
@@ -177,7 +187,7 @@ M.mkFinder = function(loader_opts)
                     }
                     if get_file_meta(modpath, meta) then
                         local compiled = string.dump(chunk, loader_opts.strip)
-                        cache_chunk(compiled, meta, loader_opts)
+                        cache_chunk(compiled, meta, loader_opts.cache_opts or {})
                     end
                     return chunk
                 end
@@ -187,12 +197,12 @@ M.mkFinder = function(loader_opts)
     end
 end
 
-local function fennel_search(modname, loader_opts)
+local function fennel_search(modname, opts)
     local ok, fennel = pcall(require, "fennel")
     if ok and fennel then
         local modpath = M.searchModule(modname, fennel.path)
         local lua_code
-        ok, lua_code = pcall(fennel.compile, modpath, loader_opts.lang_opts or {})
+        ok, lua_code = pcall(fennel.compile, modpath, opts or {})
         if ok then
             return lua_code, modpath, nil
         else
