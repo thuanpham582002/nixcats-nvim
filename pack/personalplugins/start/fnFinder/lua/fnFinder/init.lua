@@ -126,8 +126,19 @@ local function meta_eq(m1, m2)
         and m1.opts_hash == m2.opts_hash
 end
 
+---@param modname string
+---@param cache_opts? table
+---@return string? chunk
+---@return fnFinder.Meta?
 local default_fetch = function(modname, cache_opts)
     --TODO: get bytecode and meta from file for default implementation
+end
+
+---@param chunk string
+---@param meta fnFinder.Meta
+---@param cache_opts? table
+local function cache_chunk(chunk, meta, cache_opts)
+    -- TODO: save bytecode, and meta to file for default implementation
 end
 
 ---@param modname string
@@ -135,7 +146,7 @@ end
 ---@param loader_opts fnFinder.LoaderOpts
 ---@return string? chunk
 ---@return string? modpath
-local function get_cached(modname, opts_hash, loader_opts)
+local function fetch_cached(modname, opts_hash, loader_opts)
     local chunk, meta = (loader_opts.get_cached or default_fetch)(modname, loader_opts.cache_opts or {})
     if not chunk or not meta then
         return nil, nil
@@ -152,13 +163,6 @@ local function get_cached(modname, opts_hash, loader_opts)
         end
     end
     return nil, nil
-end
-
----@param chunk string
----@param meta fnFinder.Meta
----@param cache_opts? table
-local function cache_chunk(chunk, meta, cache_opts)
-    -- TODO: save bytecode, and meta to file for default implementation
 end
 
 ---@class fnFinder.LoaderOpts
@@ -181,7 +185,7 @@ M.mkFinder = function(loader_opts)
         loader_opts = loader_opts,
     })
     return function(modname)
-        local chunk, modpath, err = get_cached(modname, opts_hash, loader_opts)
+        local chunk, modpath, err = fetch_cached(modname, opts_hash, loader_opts)
         local mkmsg = function(n, e)
             return "\n\tModule not found: '" .. n .. "'" .. (e and (" " .. tostring(e)) or "")
         end
