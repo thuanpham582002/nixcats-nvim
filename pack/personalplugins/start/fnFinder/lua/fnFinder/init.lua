@@ -229,7 +229,7 @@ local function fetch_cached(modname, opts_hash, loader_opts)
             ---@diagnostic disable-next-line: cast-type-mismatch
             ---@cast m2 fnFinder.Meta
             m2.modpath = meta.modpath
-            m2.modname = meta.modname
+            m2.modname = modname
             m2.opts_hash = opts_hash
             if meta_eq(meta, m2) then
                 return chunk, meta.modpath
