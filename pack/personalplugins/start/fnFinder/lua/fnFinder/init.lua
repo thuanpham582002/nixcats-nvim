@@ -180,10 +180,10 @@ end
 M.mkFinder = function(loader_opts)
     loader_opts = loader_opts or {}
     loader_opts.auto_invalidate = loader_opts.auto_invalidate ~= false
-    local opts_hash = simple_table_hash({
+    local opts_hash = simple_table_hash {
         VERSION = _VERSION,
         loader_opts = loader_opts,
-    })
+    }
     return function(modname)
         local chunk, modpath, err = fetch_cached(modname, opts_hash, loader_opts)
         local mkmsg = function(n, e)
