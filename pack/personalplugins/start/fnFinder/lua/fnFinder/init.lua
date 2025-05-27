@@ -112,6 +112,14 @@ local function read_file(filename)
     return nil, file
 end
 
+---@class fnFinder.Meta
+---@field modname string
+---@field modpath string
+---@field mtime number
+---@field ctime number
+---@field size number
+---@field opts_hash number
+
 ---@param modname string
 ---@param cache_opts table
 ---@return nil|string|fun():string? chunk
@@ -126,14 +134,6 @@ end
 local function cache_chunk(chunk, meta, cache_opts)
     -- TODO: save bytecode, and meta to file for default implementation
 end
-
----@class fnFinder.Meta
----@field modname string
----@field modpath string
----@field mtime number
----@field ctime number
----@field size number
----@field opts_hash number
 
 local function meta_eq(m1, m2)
     return m1.modpath == m2.modpath and m1.modname == m2.modname and m1.mtime == m2.mtime
