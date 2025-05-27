@@ -190,8 +190,8 @@ M.mkFinder = function(loader_opts)
             return "\n\tModule not found: '" .. n .. "'" .. (e and (" " .. tostring(e)) or "")
         end
         if chunk then
-            chunk = load(chunk, "@" .. modpath, "b", loader_opts.env)
-            return chunk or mkmsg(modname)
+            chunk, err = load(chunk, "@" .. modpath, "b", loader_opts.env)
+            return chunk or mkmsg(modname, err)
         else
             local spath = loader_opts.search_path or package.path
             if type(spath) == "function" then
