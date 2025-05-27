@@ -161,7 +161,7 @@ end
 ---@return nil|string|fun():string? chunk
 ---@return fnFinder.Meta?
 local default_fetch = function(modname, cache_opts)
-    local contents, err = read_file(cache_opts.cache_dir .. '/' .. modname)
+    local contents, err = read_file(cache_opts.cache_dir .. dirsep .. modname)
     if err or not contents then return nil, nil end
     local zero = contents:find('\0', 1, true) -- plain find
     if not zero then return nil, nil end
@@ -188,7 +188,7 @@ end
 local function cache_chunk(chunk, meta, cache_opts)
     local header = { meta.modname, meta.modpath, meta.opts_hash, meta.mtime, meta.ctime, meta.size }
     ---@diagnostic disable-next-line: cast-local-type
-    write_file(cache_opts.cache_dir .. '/' .. meta.modname, table.concat(header, ';') .. '\0' .. chunk)
+    write_file(cache_opts.cache_dir .. dirsep .. meta.modname, table.concat(header, ';') .. '\0' .. chunk)
 end
 
 local function meta_eq(m1, m2)
@@ -246,6 +246,7 @@ end
 M.mkFinder = function(loader_opts)
     loader_opts = loader_opts or {}
     loader_opts.auto_invalidate = loader_opts.auto_invalidate ~= false
+    loader_opts.cache_dir = loader_opts.cache_dir or "/tmp"
     local opts_hash = simple_table_hash {
         VERSION = _VERSION,
         loader_opts = loader_opts,
