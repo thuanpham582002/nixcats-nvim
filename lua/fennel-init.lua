@@ -4,7 +4,7 @@ local config_dir = nixCats.configDir or vim.fn.stdpath("config") -- or is unnece
 local fennel_path = config_dir..sep.."fnl"..sep
 local fnlopts = {
     path = function(fp) return ("%s?.fnl;%s?"..sep.."init.fnl;"):format(fennel_path, fennel_path) .. fp end,
-    set_global = true
+    -- set_global = true
 }
 local function bootstrap()
     require("fnFinder").installFennel(nil, { search_opts = fnlopts })
