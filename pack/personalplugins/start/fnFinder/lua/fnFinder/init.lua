@@ -38,14 +38,14 @@ local function get_file_meta(modpath, meta)
 end
 
 local function simple_table_hash(input)
-    local okt = {
+    local ok_types = {
         number = true, string = true, boolean = true, ["nil"] = true,
     }
     local visited = {}
     local cerealize -- hehe... ignore the breakfast pun, this hash is only lightly scrambled
     local function valstr(v)
         local t = type(v)
-        if okt[t] then
+        if ok_types[t] then
             return tostring(v)
         elseif t == "table" then
             if visited[v] then
