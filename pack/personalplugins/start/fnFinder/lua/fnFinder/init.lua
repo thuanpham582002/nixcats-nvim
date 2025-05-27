@@ -128,6 +128,16 @@ function M.searchModule(modulename, pathstring)
     end
 end
 
+local function write_file(filename, content)
+    local ok, file = pcall(io.open, filename, "w")
+    if ok and file then
+        file:write(content)
+        file:close()
+        return true
+    end
+    return false
+end
+
 local function read_file(filename)
     local ok, file = pcall(io.open, filename, "r")
     if ok and file then
@@ -141,24 +151,44 @@ end
 ---@class fnFinder.Meta
 ---@field modname string
 ---@field modpath string
+---@field opts_hash number
 ---@field mtime number
 ---@field ctime number
 ---@field size number
----@field opts_hash number
 
 ---@param modname string
 ---@param cache_opts table
 ---@return nil|string|fun():string? chunk
 ---@return fnFinder.Meta?
 local default_fetch = function(modname, cache_opts)
-    --TODO: get bytecode and meta from file for default implementation
+    local contents, err = read_file(cache_opts.cache_dir .. '/' .. modname)
+    if err or not contents then return nil, nil end
+    local zero = contents:find('\0', 1, true) -- plain find
+    if not zero then return nil, nil end
+    local header_str = contents:sub(1, zero - 1)
+    local chunk = contents:sub(zero + 1)
+    local fields = {}
+    for field in (header_str .. ";"):gmatch("([^;]*);") do
+        table.insert(fields, field)
+    end
+    if #fields < 6 then return nil, nil end
+    return chunk, {
+        modname = fields[1],
+        modpath = fields[2],
+        opts_hash = tonumber(fields[3]),
+        mtime = tonumber(fields[4]),
+        ctime = tonumber(fields[5]),
+        size = tonumber(fields[6]),
+    }
 end
 
 ---@param chunk string
 ---@param meta fnFinder.Meta
 ---@param cache_opts table
 local function cache_chunk(chunk, meta, cache_opts)
-    -- TODO: save bytecode, and meta to file for default implementation
+    local header = { meta.modname, meta.modpath, meta.opts_hash, meta.mtime, meta.ctime, meta.size }
+    ---@diagnostic disable-next-line: cast-local-type
+    write_file(cache_opts.cache_dir .. '/' .. meta.modname, table.concat(header, ';') .. '\0' .. chunk)
 end
 
 local function meta_eq(m1, m2)
@@ -267,7 +297,9 @@ local function fennel_search(modname, opts)
         if ok then
             return lua_code, modpath, nil
         else
-            return nil, nil, "\n\tfnlFinder could not find a valid fennel file for '" .. modname .. "': " .. tostring(lua_code or modpath)
+            return nil, nil,
+                "\n\tfnlFinder could not find a valid fennel file for '" ..
+                modname .. "': " .. tostring(lua_code or modpath)
         end
     end
     return nil, nil, "\n\tfnlFinder cannot require('fennel')"
