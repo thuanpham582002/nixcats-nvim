@@ -304,7 +304,7 @@ M.mkFinder = function(loader_opts)
     end
 end
 
-function M.fennelSearcher(modname, opts)
+local function fennel_searcher(modname, opts)
     local ok, fennel = pcall(require, "fennel")
     opts = opts or {}
     if opts.set_global then
@@ -333,7 +333,7 @@ end
 
 M.fnlFinder = function(loader_opts)
     loader_opts = loader_opts or {}
-    loader_opts.search_path = loader_opts.search_path or M.fennelSearcher
+    loader_opts.search_path = loader_opts.search_path or M.fennel_searcher
     return M.mkFinder(loader_opts)
 end
 
