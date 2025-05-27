@@ -131,8 +131,8 @@ local function get_cached(modname, opts_hash, loader_opts)
     -- get bytecode, and meta
     loader_opts.get_cached = loader_opts.get_cached or function(name, opts)
     end
-    -- check meta against file attributes
-    -- if auto-invalidation is enabled (the default)
+    local chunk, meta = loader_opts.get_cached(modname, loader_opts.cache_opts or {})
+    -- check meta against file attributes if auto_invalidate is enabled (the default)
     -- otherwise just check opts_hash
     return nil, nil
 end
