@@ -315,11 +315,10 @@ local function fennel_search(modname, opts)
     end
     if ok and fennel then
         local pt = type(opts.path)
-        local spath
-        if pt == "function" then spath = opts.path(fennel.path)
-        elseif pt == "string" then spath = opts.path
-        else spath = fennel.path end
-        local modpath = M.searchModule(modname, spath)
+        local modpath
+        if pt == "function" then modpath = opts.path(modname, fennel.path)
+        elseif pt == "string" then modpath = M.searchModule(modname, opts.path)
+        else modpath = M.searchModule(modname, fennel.path) end
         opts.filename = modpath
         local lua_code
         local source = read_file(modpath)
