@@ -1,4 +1,4 @@
-local M
+local M = {}
 
 local _load = load
 
@@ -246,7 +246,8 @@ end
 M.mkFinder = function(loader_opts)
     loader_opts = loader_opts or {}
     loader_opts.auto_invalidate = loader_opts.auto_invalidate ~= false
-    loader_opts.cache_dir = loader_opts.cache_dir or "/tmp"
+    loader_opts.cache_opts = loader_opts.cache_opts or {}
+    loader_opts.cache_opts.cache_dir = loader_opts.cache_opts.cache_dir or "/tmp"
     local opts_hash = simple_table_hash {
         VERSION = _VERSION,
         loader_opts = loader_opts,
@@ -291,10 +292,21 @@ end
 
 local function fennel_search(modname, opts)
     local ok, fennel = pcall(require, "fennel")
+    opts = opts or {}
+    if opts.set_global then
+        _G.fennel = fennel
+    end
     if ok and fennel then
-        local modpath = M.searchModule(modname, opts.path or fennel.path)
+        local pt = type(opts.path)
+        local spath
+        if pt == "function" then spath = opts.path(fennel.path)
+        elseif pt == "string" then spath = opts.path
+        else spath = fennel.path end
+        local modpath = M.searchModule(modname, spath)
+        opts.filename = modpath
         local lua_code
-        ok, lua_code = pcall(fennel.compile, modpath, opts or {})
+        local source = read_file(modpath)
+        ok, lua_code = pcall(fennel.compileString, source, opts)
         if ok then
             return lua_code, modpath, nil
         else
@@ -314,9 +326,9 @@ end
 
 M.installFennel = function(pos, opts)
     if type(pos) == "number" then
-        table.insert(package.loaders, pos, M.fnlFinder(opts))
+        table.insert(package.loaders or package.searchers, pos, M.fnlFinder(opts))
     else
-        table.insert(package.loaders, M.fnlFinder(opts))
+        table.insert(package.loaders or package.searchers, M.fnlFinder(opts))
     end
 end
 
