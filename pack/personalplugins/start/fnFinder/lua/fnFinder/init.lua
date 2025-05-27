@@ -11,32 +11,46 @@ if load == nil then -- 5.1 compat
     end
 end
 
-local function get_file_meta(modpath, meta, loader_opts)
+---@class fnFinder.FileAttrs
+---@return number mtime
+---@return number ctime
+---@return number size
+
+---@param modpath string
+---@return fnFinder.FileAttrs?
+local function get_file_meta(modpath)
     local uv = (vim or {}).uv or (vim or {}).loop
     if not uv then
         local ok, err = pcall(require, "luv")
         if ok then uv = err end
     end
     local err = nil
+    local mtime
+    local ctime
+    local size
     if uv then
         local stat
         stat, err = uv.fs_stat(modpath)
         if stat then
-            meta.mtime = stat.mtime.sec
-            meta.ctime = stat.ctime.sec
-            meta.size = stat.size
+            mtime = stat.mtime.sec
+            ctime = stat.ctime.sec
+            size = stat.size
         end
     else
         local ok, lfs = pcall(require, "lfs")
         if ok then
-            meta.mtime, err = lfs.attributes(modpath, "modification")
-            meta.ctime, err = lfs.attributes(modpath, "change")
-            meta.size, err = lfs.attributes(modpath, "size")
+            mtime, err = lfs.attributes(modpath, "modification")
+            ctime, err = lfs.attributes(modpath, "change")
+            size, err = lfs.attributes(modpath, "size")
         else
-            err = "fnFinder requires uv or lfs"
+            err = "fnFinder default fs_lib setting requires uv or lfs"
         end
     end
-    return err
+    if not err and mtime and ctime and size then
+        return { mtime = mtime, ctime = ctime, size = size }
+    else
+        return nil
+    end
 end
 
 local function simple_table_hash(input)
@@ -154,10 +168,16 @@ local function fetch_cached(modname, opts_hash, loader_opts)
         return nil, nil
     end
     if loader_opts.auto_invalidate then
-        local m2 = {}
-        get_file_meta(meta.modpath, m2)
-        if meta_eq(meta, m2) then
-            return chunk, meta.modpath
+        local m2 = loader_opts.fs_lib and loader_opts.fs_lib(meta.modpath) or get_file_meta(meta.modpath)
+        if m2 then
+            ---@diagnostic disable-next-line: cast-type-mismatch
+            ---@cast m2 fnFinder.Meta
+            m2.modpath = meta.modpath
+            m2.modname = meta.modname
+            m2.opts_hash = opts_hash
+            if meta_eq(meta, m2) then
+                return chunk, meta.modpath
+            end
         end
     else
         if opts_hash == meta.opts_hash and meta.modpath then
@@ -170,15 +190,16 @@ end
 ---@class fnFinder.LoaderOpts
 ---@field search_opts? table
 ---@field cache_opts? table
+---@field strip? boolean
+---@field env? table
+---@field auto_invalidate? boolean
+---
 ---Attention: if get_cached returns a chunk, it must also return meta
 ---@field get_cached? fun(modname: string, cache_opts: table):(chunk: nil|string|fun():string?, meta: fnFinder.Meta)
 ---Attention: if search_path returns a chunk, it must also return its modpath
 ---@field search_path? string|fun(n: string, search_opts: table):(chunk: nil|string|fun():string?, modpath: string?, err: string?)
 ---@field cache_chunk? fun(chunk: string, meta: fnFinder.Meta, cache_opts: table)
----@field strip? boolean
----@field env? table
----@field auto_invalidate? boolean
----@field fs_lib? 
+---@field fs_lib? fun(modname: string):fnFinder.FileAttrs?
 
 ---@param loader_opts? table
 ---@return fun(modname: string):function|string
@@ -208,13 +229,13 @@ M.mkFinder = function(loader_opts)
             if modpath and chunk then
                 chunk = _load(chunk, "@" .. modpath, "t", loader_opts.env)
                 if chunk then
-                    ---@type fnFinder.Meta
-                    local meta = {
-                        opts_hash = opts_hash,
-                        modname = modname,
-                        modpath = modpath,
-                    }
-                    if get_file_meta(modpath, meta) then
+                    ---@type fnFinder.Meta?
+                    ---@diagnostic disable-next-line: assign-type-mismatch
+                    local meta = loader_opts.fs_lib and loader_opts.fs_lib(modpath) or get_file_meta(modpath)
+                    if meta then
+                        meta.opts_hash = opts_hash
+                        meta.modname = modname
+                        meta.modpath = modpath
                         local compiled = string.dump(chunk, loader_opts.strip)
                         local cacher = loader_opts.cache_chunk or cache_chunk
                         cacher(compiled, meta, loader_opts.cache_opts or {})
