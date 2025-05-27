@@ -292,7 +292,7 @@ end
 local function fennel_search(modname, opts)
     local ok, fennel = pcall(require, "fennel")
     if ok and fennel then
-        local modpath = M.searchModule(modname, fennel.path)
+        local modpath = M.searchModule(modname, opts.path or fennel.path)
         local lua_code
         ok, lua_code = pcall(fennel.compile, modpath, opts or {})
         if ok then
