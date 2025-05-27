@@ -166,7 +166,7 @@ local function fetch_cached(modname, opts_hash, loader_opts)
 end
 
 ---@class fnFinder.LoaderOpts
----@field lang_opts? table
+---@field search_opts? table
 ---@field cache_opts? table
 ---@field get_cached? fun(modname: string, cache_opts: table):nil|string|fun():string?, fnFinder.Meta
 ---@field cache_chunk? fun(chunk: string, meta: fnFinder.Meta, cache_opts: table)
@@ -195,7 +195,7 @@ M.mkFinder = function(loader_opts)
         else
             local spath = loader_opts.search_path or package.path
             if type(spath) == "function" then
-                chunk, modpath, err = spath(modname, loader_opts.lang_opts or {})
+                chunk, modpath, err = spath(modname, loader_opts.search_opts or {})
             else
                 modpath = M.searchModule(modname, spath)
                 chunk, err = read_file(modpath)
