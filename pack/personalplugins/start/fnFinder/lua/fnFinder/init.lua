@@ -170,7 +170,7 @@ end
 ---@field cache_opts? table
 ---@field get_cached? fun(modname: string, cache_opts: table):nil|string|fun():string?, fnFinder.Meta
 ---@field cache_chunk? fun(chunk: string, meta: fnFinder.Meta, cache_opts: table)
----@field search_path? string|fun(n: string, lang_opts: table):string
+---@field search_path? string|fun(n: string, search_opts: table):string
 ---@field strip? boolean
 ---@field env? table
 ---@field auto_invalidate? boolean
