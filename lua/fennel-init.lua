@@ -21,7 +21,10 @@ FF.installFennel(nil, {
     search_opts = {
         path = function(n, ep) return getpath(cfg_dir, "fnl", n, ep) end,
         -- set_global = true
-    }
+    },
+    cache_opts = {
+        cache_dir = vim.fn.stdpath("cache")..sep.."fnFinderCache",
+    },
 })
 -- local function bootstrap()
 -- end
