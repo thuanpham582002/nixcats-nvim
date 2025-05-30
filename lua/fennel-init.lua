@@ -1,4 +1,3 @@
--- Source: https://neovim.discourse.group/t/how-to-use-fennel-in-runtime-scripts-without-compiling-to-lua/147
 local cfg = string.gmatch(package.config, "([^\n]+)")
 local sep, psep, phold = cfg() or '/', cfg() or ';', cfg() or '?'
 local cfg_dir = nixCats.configDir or vim.fn.stdpath("config")
@@ -17,7 +16,7 @@ local function getpath(base, ext, n, ep)
     end
     return FF.searchModule(n, table.concat(paths, psep))
 end
-FF.fnlInstall({
+FF.fnl.install({
     search_opts = {
         path = function(n, ep) return getpath(cfg_dir, "fnl", n, ep) end,
         -- set_global = true
@@ -26,6 +25,7 @@ FF.fnlInstall({
         cache_dir = vim.fn.stdpath("cache")..sep.."fnFinderCache",
     },
 })
+-- Source: https://neovim.discourse.group/t/how-to-use-fennel-in-runtime-scripts-without-compiling-to-lua/147
 -- local function bootstrap()
 -- end
 -- local function fennel_lazy_bootstrap(name)

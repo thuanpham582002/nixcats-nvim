@@ -31,24 +31,6 @@ local function escapepat(str)
     return string.gsub(str, "[^%w]", "%%%1")
 end
 
----@param modulename string
----@param pathstring string
----@return string? modpath
-function M.searchModule(modulename, pathstring)
-    local pathsepesc = escapepat(pkgConfig.pathsep)
-    local pathsplit = string.format("([^%s]*)%s", pathsepesc, pathsepesc)
-    local nodotModule = modulename:gsub("%.", pkgConfig.dirsep)
-    for path in string.gmatch(pathstring .. pkgConfig.pathsep, pathsplit) do
-        local filename = path:gsub(escapepat(pkgConfig.pathmark), nodotModule)
-        local filename2 = path:gsub(escapepat(pkgConfig.pathmark), modulename)
-        local file = io.open(filename) or io.open(filename2)
-        if file then
-            file:close()
-            return filename
-        end
-    end
-end
-
 local function write_file(filename, content)
     local ok, file = pcall(io.open, filename, "w")
     if ok and file then
@@ -260,7 +242,7 @@ end
 ---@field cache_chunk? fun(chunk: string, meta: fnFinder.Meta, cache_opts: table)
 ---@field fs_lib? fun(modname: string):fnFinder.FileAttrs?
 
----@param loader_opts? table
+---@param loader_opts? fnFinder.LoaderOpts
 ---@return fun(modname: string):function|string?
 M.mkFinder = function(loader_opts)
     loader_opts = loader_opts or {}
@@ -280,6 +262,7 @@ M.mkFinder = function(loader_opts)
         else
             local spath = loader_opts.search_path or package.path
             if type(spath) == "function" then
+                ---@diagnostic disable-next-line: cast-local-type
                 chunk, modpath, err = spath(modname, loader_opts.search_opts or {}, opts_hash)
             else
                 modpath = M.searchModule(modname, spath)
@@ -287,6 +270,8 @@ M.mkFinder = function(loader_opts)
             end
             if modpath and chunk then
                 if type(modpath) == "table" then
+                    ---@diagnostic disable-next-line: cast-type-mismatch
+                    ---@cast modpath fnFinder.Meta
                     local meta = modpath
                     local ok, compiled = pcall(string.dump, chunk, loader_opts.strip)
                     if ok then
@@ -295,6 +280,7 @@ M.mkFinder = function(loader_opts)
                     end
                     return chunk
                 else
+                    ---@cast modpath string
                     chunk, err = _load(chunk, "@" .. modpath, "t", loader_opts.env)
                     if chunk then
                         local ok, compiled = pcall(string.dump, chunk, loader_opts.strip)
@@ -316,47 +302,29 @@ M.mkFinder = function(loader_opts)
     end
 end
 
----@param loader_opts? fnFinder.LoaderOpts
----@return fun(modname: string):function|string?
-M.fnlFinder = function(loader_opts)
-    loader_opts = loader_opts or {}
-    loader_opts.search_path = loader_opts.search_path or function(modname, opts)
-        local ok, fennel = pcall(require, "fennel")
-        opts = opts or {}
-        if opts.set_global then
-            _G.fennel = fennel
+---@param modulename string
+---@param pathstring string
+---@return string? modpath
+function M.searchModule(modulename, pathstring)
+    local pathsepesc = escapepat(pkgConfig.pathsep)
+    local pathsplit = string.format("([^%s]*)%s", pathsepesc, pathsepesc)
+    local nodotModule = modulename:gsub("%.", pkgConfig.dirsep)
+    for path in string.gmatch(pathstring .. pkgConfig.pathsep, pathsplit) do
+        local filename = path:gsub(escapepat(pkgConfig.pathmark), nodotModule)
+        local filename2 = path:gsub(escapepat(pkgConfig.pathmark), modulename)
+        local file = io.open(filename) or io.open(filename2)
+        if file then
+            file:close()
+            return filename
         end
-        if ok and fennel then
-            local pt = type(opts.path)
-            local modpath
-            if pt == "function" then modpath = opts.path(modname, fennel.path)
-            elseif pt == "string" then modpath = fennel.searchModule(modname, opts.path)
-            else modpath = M.searchModule(modname, fennel.path) end
-            opts.filename = modpath
-            local lua_code
-            local source = read_file(modpath)
-            ok, lua_code = pcall(fennel.compileString, source, opts)
-            if ok then
-                return lua_code, modpath, nil
-            else
-                return nil, nil,
-                    "\n\tfnlFinder could not find a valid fennel file for '" ..
-                    modname .. "': " .. tostring(lua_code or modpath)
-            end
-        end
-        return nil, nil, "\n\tfnlFinder cannot require('fennel')"
-    end
-    return M.mkFinder(loader_opts)
-end
-
----@overload fun(opts: fnFinder.LoaderOpts)
----@overload fun(pos: number, opts: fnFinder.LoaderOpts)
-M.fnlInstall = function(pos, opts)
-    if type(pos) == "number" then
-        table.insert(package.loaders or package.searchers, pos, M.fnlFinder(opts or {}))
-    else
-        table.insert(package.loaders or package.searchers, M.fnlFinder(pos or opts or {}))
     end
 end
 
-return M
+local require_path = ...
+return setmetatable(M, {
+    __index = function(t, k)
+        local res = require(require_path .. ".configs." .. k)(t)
+        rawset(t, k, res)
+        return res
+    end,
+})
