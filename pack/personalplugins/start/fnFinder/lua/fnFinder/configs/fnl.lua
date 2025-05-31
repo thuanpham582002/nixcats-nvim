@@ -11,13 +11,40 @@ return function(MAIN)
         return nil, file
     end
 
-    local function search_path(modname, opts)
-        local ok, fennel = pcall(require, "fennel")
-        opts = opts or {}
-        if opts.set_global then
-            _G.fennel = fennel
-        end
-        if ok and fennel then
+    ---@class fnFinder.FennelSearchOpts
+    ---@field path? string|fun(modname: string, existing: string):(modpath: string)
+    ---@field macro_path? string|fun(existing: string):(full_path: string)
+    ---@field macro_searchers? (fun(modname: string):(function|string)?)[]|fun(modname: string):(function|string)?
+    ---@field compiler? table -- fennel compiler options
+
+    ---@class fnFinder.FennelOpts : fnFinder.LoaderOpts
+    ---@field search_opts? fnFinder.FennelSearchOpts
+
+    ---@param loader_opts? fnFinder.FennelOpts
+    ---@return fun(modname: string):function|string?
+    M.finder = function(loader_opts)
+        loader_opts = loader_opts or {}
+        loader_opts.search_path = loader_opts.search_path or function(modname, opts)
+            local ok, fennel = pcall(require, "fennel")
+            if not ok or not fennel then
+                return nil, nil, "\n\tfnFinder fennel searcher cannot require('fennel')"
+            end
+            opts = opts or {}
+            if opts.set_global then
+                _G.fennel = fennel
+            end
+            if type(opts.macro_path) == "string" then
+                fennel["macro-path"] = opts.macro_path
+            elseif type(opts.macro_path) == "function" then
+                fennel["macro-path"] = opts.macro_path(fennel["macro-path"])
+            end
+            if type(opts.macro_searchers) == "function" then
+                table.insert(fennel["macro-searchers"], opts.macro_searchers)
+            elseif type(opts.macro_searchers) == "table" then
+                for _, v in ipairs(opts.macro_searchers or {}) do
+                    table.insert(fennel["macro-searchers"], v)
+                end
+            end
             local pt = type(opts.path)
             local modpath
             if pt == "function" then modpath = opts.path(modname, fennel.path)
@@ -25,8 +52,8 @@ return function(MAIN)
             else modpath = MAIN.searchModule(modname, fennel.path) end
             opts.filename = modpath
             local lua_code
-            ok, lua_code = pcall(fennel.compileString, read_file(modpath), opts)
-            if ok then
+            ok, lua_code = pcall(fennel.compileString, read_file(modpath), opts.compiler or {})
+            if ok and lua_code then
                 return lua_code, modpath, nil
             else
                 return nil, nil,
@@ -34,19 +61,11 @@ return function(MAIN)
                     modname .. "': " .. tostring(lua_code or modpath)
             end
         end
-        return nil, nil, "\n\tfnlFinder cannot require('fennel')"
-    end
-
-    ---@param loader_opts? fnFinder.LoaderOpts
-    ---@return fun(modname: string):function|string?
-    M.finder = function(loader_opts)
-        loader_opts = loader_opts or {}
-        loader_opts.search_path = loader_opts.search_path or search_path
         return MAIN.mkFinder(loader_opts)
     end
 
-    ---@overload fun(opts: fnFinder.LoaderOpts)
-    ---@overload fun(pos: number, opts: fnFinder.LoaderOpts)
+    ---@overload fun(opts: fnFinder.FennelOpts)
+    ---@overload fun(pos: number, opts: fnFinder.FennelOpts)
     M.install = function(pos, opts)
         if type(pos) == "number" then
             table.insert(package.loaders or package.searchers, pos, M.finder(opts or {}))

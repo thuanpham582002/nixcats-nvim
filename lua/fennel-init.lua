@@ -1,11 +1,15 @@
-local cfg = string.gmatch(package.config, "([^\n]+)")
-local sep, psep, phold = cfg() or '/', cfg() or ';', cfg() or '?'
+local FF = require("fnFinder")
+local sep, psep, phold = FF.pkgConfig.dirsep, FF.pkgConfig.pathsep, FF.pkgConfig.pathmark
 local cfg_dir = nixCats.configDir or vim.fn.stdpath("config")
 local forms = {
     "%s"..sep.."%s"..sep..phold..".%s",
     "%s"..sep.."%s"..sep..phold..sep.."init.%s",
 }
-local FF = require("fnFinder")
+local macro_paths = {
+    cfg_dir..sep.."fnl"..sep..phold..".fnl",
+    cfg_dir..sep.."fnl"..sep..phold..sep.."init.fnl",
+    cfg_dir..sep.."fnl"..sep..phold..sep.."init-macros.fnl",
+}
 local function getpath(base, ext, n, ep)
     local paths = {}
     for _, form in ipairs(forms) do
@@ -19,6 +23,9 @@ end
 FF.fnl.install({
     search_opts = {
         path = function(n, ep) return getpath(cfg_dir, "fnl", n, ep) end,
+        macro_path = function(ep)
+            return table.concat(macro_paths, psep) .. (ep and psep..ep or "")
+        end,
         -- set_global = true
     },
     cache_opts = {

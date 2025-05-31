@@ -24,12 +24,6 @@ end
 -- have searchModule use package.config to process package.path (windows compat)
 local cfg = string.gmatch(package.config, "([^\n]+)")
 local dirsep, pathsep, pathmark = cfg() or '/', cfg() or ';', cfg() or '?'
-local pkgConfig = { dirsep = dirsep, pathsep = pathsep, pathmark = pathmark }
-
--- Escape a string for safe use in a Lua pattern
-local function escapepat(str)
-    return string.gsub(str, "[^%w]", "%%%1")
-end
 
 local function write_file(filename, content)
     local ok, file = pcall(io.open, filename, "w")
@@ -302,16 +296,23 @@ M.mkFinder = function(loader_opts)
     end
 end
 
+M.pkgConfig = { dirsep = dirsep, pathsep = pathsep, pathmark = pathmark }
+
+-- Escape a string for safe use in a Lua pattern
+function M.escapepat(str)
+    return string.gsub(str, "[^%w]", "%%%1")
+end
+
 ---@param modulename string
 ---@param pathstring string
 ---@return string? modpath
 function M.searchModule(modulename, pathstring)
-    local pathsepesc = escapepat(pkgConfig.pathsep)
+    local pathsepesc = M.escapepat(pathsep)
     local pathsplit = string.format("([^%s]*)%s", pathsepesc, pathsepesc)
-    local nodotModule = modulename:gsub("%.", pkgConfig.dirsep)
-    for path in string.gmatch(pathstring .. pkgConfig.pathsep, pathsplit) do
-        local filename = path:gsub(escapepat(pkgConfig.pathmark), nodotModule)
-        local filename2 = path:gsub(escapepat(pkgConfig.pathmark), modulename)
+    local nodotModule = modulename:gsub("%.", dirsep)
+    for path in string.gmatch(pathstring .. pathsep, pathsplit) do
+        local filename = path:gsub(M.escapepat(pathmark), nodotModule)
+        local filename2 = path:gsub(M.escapepat(pathmark), modulename)
         local file = io.open(filename) or io.open(filename2)
         if file then
             file:close()
