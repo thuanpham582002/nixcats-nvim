@@ -1,2 +1,2 @@
-(local modname ...)
-(print "hello" (vim.inspect modname))
+(import-macros {: thrice-if} :thrice)
+(thrice-if true (print "hello, world"))
