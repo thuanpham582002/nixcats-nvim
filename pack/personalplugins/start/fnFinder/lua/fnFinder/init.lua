@@ -227,7 +227,6 @@ end
 ---@field strip? boolean
 ---@field env? table
 ---@field auto_invalidate? boolean
----
 ---Attention: if search returns a chunk, it must also return its modpath
 ---alternatively, you may fetch the meta class yourself and return a function representing the module.
 ---@field search? string|fun(n: string, search_opts: table, opts_hash: number, env?: table):(chunk: nil|string|fun():(string|any)?, modpath: (string|fnFinder.Meta)?, err: string?)
