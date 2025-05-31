@@ -19,7 +19,9 @@ FF.fnl.install({
                 cfg_dir..sep.."fnl"..sep..phold..sep.."init.fnl",
                 cfg_dir..sep.."fnl"..sep..phold..sep.."init-macros.fnl",
             }
-            if ep then table.insert(macro_paths, ep) end
+            if ep and ep ~= "" then
+                table.insert(macro_paths, ep)
+            end
             return table.concat(macro_paths, psep)
         end,
         -- set_global = true
