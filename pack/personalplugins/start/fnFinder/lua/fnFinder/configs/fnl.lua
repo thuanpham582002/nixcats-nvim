@@ -22,9 +22,9 @@ return function(MAIN)
 
     ---@param loader_opts? fnFinder.FennelOpts
     ---@return fun(modname: string):function|string?
-    M.finder = function(loader_opts)
+    M.mkFinder = function(loader_opts)
         loader_opts = loader_opts or {}
-        loader_opts.search_path = loader_opts.search_path or function(modname, opts)
+        loader_opts.search = loader_opts.search or function(modname, opts)
             local ok, fennel = pcall(require, "fennel")
             if not ok or not fennel then
                 return nil, nil, "\n\tfnFinder fennel searcher cannot require('fennel')"
@@ -68,9 +68,9 @@ return function(MAIN)
     ---@overload fun(pos: number, opts: fnFinder.FennelOpts)
     M.install = function(pos, opts)
         if type(pos) == "number" then
-            table.insert(package.loaders or package.searchers, pos, M.finder(opts or {}))
+            table.insert(package.loaders or package.searchers, pos, M.mkFinder(opts or {}))
         else
-            table.insert(package.loaders or package.searchers, M.finder(pos or opts or {}))
+            table.insert(package.loaders or package.searchers, M.mkFinder(pos or opts or {}))
         end
     end
 

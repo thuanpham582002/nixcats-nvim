@@ -228,9 +228,9 @@ end
 ---@field env? table
 ---@field auto_invalidate? boolean
 ---
----Attention: if search_path returns a chunk, it must also return its modpath
+---Attention: if search returns a chunk, it must also return its modpath
 ---alternatively, you may fetch the meta class yourself and return a function representing the module.
----@field search_path? string|fun(n: string, search_opts: table, opts_hash: number):(chunk: nil|string|fun():(string|any)?, modpath: (string|fnFinder.Meta)?, err: string?)
+---@field search? string|fun(n: string, search_opts: table, opts_hash: number, env?: table):(chunk: nil|string|fun():(string|any)?, modpath: (string|fnFinder.Meta)?, err: string?)
 ---Attention: if get_cached returns a chunk, it must also return meta
 ---@field get_cached? fun(modname: string, cache_opts: table):(chunk: nil|string|fun():string?, meta: fnFinder.Meta)
 ---@field cache_chunk? fun(chunk: string, meta: fnFinder.Meta, cache_opts: table)
@@ -254,10 +254,10 @@ M.mkFinder = function(loader_opts)
             chunk, err = _load(chunk, "@" .. modpath, "b", loader_opts.env)
             return chunk or mkmsg(modname, err)
         else
-            local spath = loader_opts.search_path or package.path
+            local spath = loader_opts.search or package.path
             if type(spath) == "function" then
                 ---@diagnostic disable-next-line: cast-local-type
-                chunk, modpath, err = spath(modname, loader_opts.search_opts or {}, opts_hash)
+                chunk, modpath, err = spath(modname, loader_opts.search_opts or {}, opts_hash, loader_opts.env)
             else
                 modpath = M.searchModule(modname, spath)
                 chunk, err = read_file(modpath)
