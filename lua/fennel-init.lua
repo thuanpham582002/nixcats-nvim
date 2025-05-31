@@ -1,4 +1,4 @@
-local FF = require("fnFinder")
+local FF = require("fn_finder")
 local sep, psep, phold = FF.pkgConfig.dirsep, FF.pkgConfig.pathsep, FF.pkgConfig.pathmark
 local cfg_dir = nixCats.configDir or vim.fn.stdpath("config")
 FF.fnl.install({

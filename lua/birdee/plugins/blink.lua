@@ -120,8 +120,19 @@ return {
             auto_show = true,
           },
         },
+        ---@type blink.cmp.SnippetsConfig
         snippets = {
-          preset = 'luasnip',
+          -- preset = "luasnip",
+          active = function(filter)
+            local snippet = require "luasnip"
+            local blink = require "blink.cmp"
+            if snippet.in_snippet() and not blink.is_visible() then
+              return true
+            else
+              if not snippet.in_snippet() and vim.fn.mode() == "n" then snippet.unlink_current() end
+              return false
+            end
+          end,
         },
         sources = {
           default = require("birdee.utils").insert_many(
