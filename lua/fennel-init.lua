@@ -1,30 +1,26 @@
 local FF = require("fnFinder")
 local sep, psep, phold = FF.pkgConfig.dirsep, FF.pkgConfig.pathsep, FF.pkgConfig.pathmark
 local cfg_dir = nixCats.configDir or vim.fn.stdpath("config")
-local forms = {
-    "%s"..sep.."%s"..sep..phold..".%s",
-    "%s"..sep.."%s"..sep..phold..sep.."init.%s",
-}
-local macro_paths = {
-    cfg_dir..sep.."fnl"..sep..phold..".fnl",
-    cfg_dir..sep.."fnl"..sep..phold..sep.."init.fnl",
-    cfg_dir..sep.."fnl"..sep..phold..sep.."init-macros.fnl",
-}
-local function getpath(base, ext, n, ep)
-    local paths = {}
-    for _, form in ipairs(forms) do
-        table.insert(paths, form:format(base, ext, ext))
-    end
-    if ep and ep ~= "" then
-        table.insert(paths, ep)
-    end
-    return FF.searchModule(n, table.concat(paths, psep))
-end
 FF.fnl.install({
     search_opts = {
-        path = function(n, ep) return getpath(cfg_dir, "fnl", n, ep) end,
+        path = function(n, ep)
+            local paths = {
+                cfg_dir..sep.."fnl"..sep..phold..".fnl",
+                cfg_dir..sep.."fnl"..sep..phold..sep.."init.fnl",
+            }
+            if ep and ep ~= "" then
+                table.insert(paths, ep)
+            end
+            return FF.searchModule(n, table.concat(paths, psep))
+        end,
         macro_path = function(ep)
-            return table.concat(macro_paths, psep) .. (ep and psep..ep or "")
+            local macro_paths = {
+                cfg_dir..sep.."fnl"..sep..phold..".fnl",
+                cfg_dir..sep.."fnl"..sep..phold..sep.."init.fnl",
+                cfg_dir..sep.."fnl"..sep..phold..sep.."init-macros.fnl",
+            }
+            if ep then table.insert(macro_paths, ep) end
+            return table.concat(macro_paths, psep)
         end,
         -- set_global = true
     },
