@@ -1,6 +1,9 @@
 return function(MAIN)
     local M = {}
 
+    local dsep, psep, phold = MAIN.pkgConfig.dirsep, MAIN.pkgConfig.pathsep, MAIN.pkgConfig.pathmark
+    local DEFAULT_FNL_PATH = "." ..dsep..phold..".fnl"..psep.."."..dsep..phold..dsep.."init.fnl"
+
     local function read_file(filename)
         local ok, file = pcall(io.open, filename, "r")
         if ok and file then
@@ -29,7 +32,7 @@ return function(MAIN)
             or function(modname, opts)
                 opts = opts or {}
                 local pt = type(opts.path)
-                local p = (fennel or {}).path or "./?.fnl;./?/init.fnl"
+                local p = (fennel or {}).path or DEFAULT_FNL_PATH
                 local modpath
                 if pt == "function" then
                     modpath = opts.path(modname, p)
