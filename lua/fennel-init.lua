@@ -3,6 +3,7 @@ local sep, psep, phold = FF.pkgConfig.dirsep, FF.pkgConfig.pathsep, FF.pkgConfig
 local cfg_dir = nixCats.configDir or vim.fn.stdpath("config")
 FF.fnl.install({
     search_opts = {
+        -- set_global = true,
         path = function(n, ep)
             local paths = {
                 cfg_dir..sep.."fnl"..sep..phold..".fnl",
@@ -13,18 +14,17 @@ FF.fnl.install({
             end
             return FF.searchModule(n, table.concat(paths, psep))
         end,
-        macro_path = function(ep)
-            local macro_paths = {
+        on_first_search = function(fennel, opts)
+            if opts.set_global then
+                _G.fennel = fennel
+            end
+            fennel["macro-path"] = table.concat({
                 cfg_dir..sep.."fnl"..sep..phold..".fnl",
                 cfg_dir..sep.."fnl"..sep..phold..sep.."init.fnl",
                 cfg_dir..sep.."fnl"..sep..phold..sep.."init-macros.fnl",
-            }
-            if ep and ep ~= "" then
-                table.insert(macro_paths, ep)
-            end
-            return table.concat(macro_paths, psep)
+                fennel["macro-path"]
+            }, psep)
         end,
-        -- set_global = true
     },
     cache_opts = {
         cache_dir = vim.fn.stdpath("cache")..sep.."fnFinderCache",

@@ -13,9 +13,7 @@ return function(MAIN)
 
     ---@class fn_finder.FennelSearchOpts
     ---@field path? string|fun(modname: string, existing: string):(modpath: string)
-    ---@field macro_path? string|fun(existing: string):(full_path: string)
-    ---@field macro_searchers? (fun(modname: string):(function|string)?)[]|fun(modname: string):(function|string)?
-    ---@field set_global? boolean
+    ---@field on_first_search? fun(fennel: table, opts: fn_finder.FennelSearchOpts)
     ---@field compiler? table -- fennel compiler options
 
     ---@class fn_finder.FennelOpts : fn_finder.LoaderOpts
@@ -25,6 +23,7 @@ return function(MAIN)
     ---@return fun(modname: string):function|string?
     M.mkFinder = function(loader_opts)
         loader_opts = loader_opts or {}
+        local triggered = false
         loader_opts.search = loader_opts.search
             or function(modname, opts)
                 local ok, fennel = pcall(require, "fennel")
@@ -32,20 +31,9 @@ return function(MAIN)
                     return nil, nil, "\n\tfn_finder fennel searcher cannot require('fennel')"
                 end
                 opts = opts or {}
-                if opts.set_global then
-                    _G.fennel = fennel
-                end
-                if type(opts.macro_path) == "string" then
-                    fennel["macro-path"] = opts.macro_path
-                elseif type(opts.macro_path) == "function" then
-                    fennel["macro-path"] = opts.macro_path(fennel["macro-path"])
-                end
-                if type(opts.macro_searchers) == "function" then
-                    table.insert(fennel["macro-searchers"], opts.macro_searchers)
-                elseif type(opts.macro_searchers) == "table" then
-                    for _, v in ipairs(opts.macro_searchers or {}) do
-                        table.insert(fennel["macro-searchers"], v)
-                    end
+                if not triggered and opts.on_first_search then
+                    opts.on_first_search(fennel, opts)
+                    triggered = true
                 end
                 local pt = type(opts.path)
                 local modpath
@@ -56,9 +44,10 @@ return function(MAIN)
                 else
                     modpath = MAIN.searchModule(modname, fennel.path)
                 end
-                opts.filename = modpath
+                opts.compiler = opts.compiler or {}
+                opts.compiler.filename = modpath
                 local lua_code
-                ok, lua_code = pcall(fennel.compileString, read_file(modpath), opts.compiler or {})
+                ok, lua_code = pcall(fennel.compileString, read_file(modpath), opts.compiler)
                 if ok and lua_code then
                     return lua_code, modpath, nil
                 else
