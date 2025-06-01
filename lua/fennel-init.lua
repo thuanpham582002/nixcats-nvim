@@ -14,7 +14,7 @@ FF.fnl.install({
             end
             return FF.searchModule(n, table.concat(paths, psep))
         end,
-        on_first_search = function(fennel, opts)
+        on_first_module = function(fennel, opts)
             if opts.set_global then
                 _G.fennel = fennel
             end

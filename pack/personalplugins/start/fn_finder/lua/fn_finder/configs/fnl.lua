@@ -43,14 +43,14 @@ return function(MAIN)
                 end
                 if not triggered and modpath then
                     triggered = true
-                    if type(fennel) == "table" and opts.on_first_search then
+                    if type(fennel) == "table" and opts.on_first_module then
                         opts.on_first_module(fennel, opts)
                     else
                         local ok
                         ok, fennel = pcall(require, "fennel")
                         if not ok then
                             fennel = nil
-                        elseif opts.on_first_search then
+                        elseif opts.on_first_module then
                             opts.on_first_module(fennel, opts)
                         end
                     end
