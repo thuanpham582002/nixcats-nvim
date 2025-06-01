@@ -4,15 +4,16 @@ return function(MAIN, load)
     local dsep, psep, phold = MAIN.pkgConfig.dirsep, MAIN.pkgConfig.pathsep, MAIN.pkgConfig.pathmark
     local DEFAULT_FNL_PATH = "." ..dsep..phold..".fnl"..psep.."."..dsep..phold..dsep.."init.fnl"
 
-    local function rtpfile(modname, patterns)
+    local function rtpfile(dir, modname, patterns)
         modname = modname:gsub('%.', '/')
         patterns = patterns or {}
+        dir = type(dir) == "string" and dir or "lua"
         local modpath
         local i = 1
         while not modpath do
             local pattern = patterns[i]
             if not pattern then break end
-            modpath = vim.api.nvim_get_runtime_file("lua/" .. modname .. pattern, false)[1]
+            modpath = vim.api.nvim_get_runtime_file(dir .. "/" .. modname .. pattern, false)[1]
             i = i + 1
         end
         return modpath
@@ -32,6 +33,7 @@ return function(MAIN, load)
     ---@field path? string|fun(modname: string, existing: string):(modpath: string)
     ---@field on_first_compile? fun(fennel: table, opts: fn_finder.FennelSearchOpts)
     ---@field compiler? table -- fennel compiler options
+    ---@field nvim? boolean|string?
 
     ---@class fn_finder.FennelOpts : fn_finder.LoaderOpts
     ---@field search_opts? fn_finder.FennelSearchOpts
@@ -49,7 +51,7 @@ return function(MAIN, load)
                 local pt = type(opts.path)
                 local modpath
                 if opts.nvim then
-                    modpath = rtpfile(modname, {".fnl","/init.fnl"})
+                    modpath = rtpfile(opts.nvim, modname, {".fnl","/init.fnl"})
                 end
                 if not modpath then
                     local p = (fennel or {}).path or DEFAULT_FNL_PATH
@@ -70,7 +72,7 @@ return function(MAIN, load)
                             if ok then
                                 fennel = fnl
                                 local res
-                                ok, res = pcall(fennel.eval, read_file(mp), { filename = mp, env = "_COMPILER"})
+                                ok, res = pcall(fennel.eval, read_file(mp), { ["module-name"] = n, filename = mp, env = "_COMPILER"})
                                 if ok then
                                     return function() return res end
                                 end
