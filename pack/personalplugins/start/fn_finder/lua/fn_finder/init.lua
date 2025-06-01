@@ -47,7 +47,7 @@ local function read_file(filename)
         file:close()
         return content
     end
-    return nil, "Could not read file '" .. filename .. "'"
+    return nil, "Could not read file '" .. tostring(filename) .. "'"
 end
 
 local function simple_table_hash(input)
