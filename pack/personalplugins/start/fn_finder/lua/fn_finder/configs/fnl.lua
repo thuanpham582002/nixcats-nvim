@@ -24,31 +24,38 @@ return function(MAIN)
     M.mkFinder = function(loader_opts)
         loader_opts = loader_opts or {}
         local triggered = false
-        local fennel
+        local fennel = package.loaded["fennel"] or nil
         loader_opts.search = loader_opts.search
             or function(modname, opts)
                 opts = opts or {}
-                if not triggered then
-                    triggered = true
-                    local ok
-                    ok, fennel = pcall(require, "fennel")
-                    if ok and opts.on_first_search then
-                        opts.on_first_search(fennel, opts)
-                    elseif not ok then
-                        fennel = nil
-                    end
-                end
-                if not fennel then
-                    return nil, nil, "\n\tfn_finder fennel searcher cannot require('fennel')"
-                end
                 local pt = type(opts.path)
+                local p = (fennel or {}).path or "./?.fnl;./?/init.fnl"
                 local modpath
                 if pt == "function" then
-                    modpath = opts.path(modname, fennel.path)
+                    modpath = opts.path(modname, p)
                 elseif pt == "string" then
                     modpath = MAIN.searchModule(modname, opts.path)
                 else
-                    modpath = MAIN.searchModule(modname, fennel.path)
+                    modpath = MAIN.searchModule(modname, p)
+                end
+                if not triggered and modpath then
+                    triggered = true
+                    if type(fennel) == "table" and opts.on_first_search then
+                        opts.on_first_search(fennel, opts)
+                    else
+                        local ok
+                        ok, fennel = pcall(require, "fennel")
+                        if not ok then
+                            fennel = nil
+                        elseif opts.on_first_search then
+                            opts.on_first_search(fennel, opts)
+                        end
+                    end
+                end
+                if not modpath then
+                    return nil, nil, "\n\tfn_finder fennel searcher could not find a fennel file for '" .. tostring(modname) .. "'"
+                elseif not fennel then
+                    return nil, nil, "\n\tfn_finder fennel searcher cannot require('fennel')"
                 end
                 opts.compiler = opts.compiler or {}
                 opts.compiler.filename = modpath
