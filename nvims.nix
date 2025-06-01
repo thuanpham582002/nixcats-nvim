@@ -63,10 +63,10 @@ inputs: let
       gradle-ls = pkgs.vscode-extensions.vscjava.vscode-gradle;
     };
     nixdExtras = {
-      nixpkgs = "import ${pkgs.path} {}";
+      nixpkgs = "import ${builtins.path { path = pkgs.path; }} {}";
       get_configs = utils.n2l.types.function-unsafe.mk {
         args = [ "type" "path" ];
-        body = ''return [[import ${./misc_nix/nixd.nix} ${pkgs.path} "]] .. type .. [[" ]] .. (path or "./.")'';
+        body = ''return [[import ${./misc_nix/nixd.nix} ${builtins.path { path = pkgs.path; }} "]] .. type .. [[" ]] .. (path or "./.")'';
       };
     };
     bitwarden_uuids = {
