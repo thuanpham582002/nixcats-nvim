@@ -59,7 +59,7 @@ return function(MAIN)
                     return nil,
                         nil,
                         "\n\tfn_finder fennel search function could not find a valid fennel file for '"
-                            .. modname
+                            .. tostring(modname)
                             .. "': "
                             .. tostring(lua_code or modpath)
                 end
