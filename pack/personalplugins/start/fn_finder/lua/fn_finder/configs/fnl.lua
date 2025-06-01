@@ -16,7 +16,7 @@ return function(MAIN)
 
     ---@class fn_finder.FennelSearchOpts
     ---@field path? string|fun(modname: string, existing: string):(modpath: string)
-    ---@field on_first_search? fun(fennel: table, opts: fn_finder.FennelSearchOpts)
+    ---@field on_first_module? fun(fennel: table, opts: fn_finder.FennelSearchOpts)
     ---@field compiler? table -- fennel compiler options
 
     ---@class fn_finder.FennelOpts : fn_finder.LoaderOpts
@@ -44,14 +44,14 @@ return function(MAIN)
                 if not triggered and modpath then
                     triggered = true
                     if type(fennel) == "table" and opts.on_first_search then
-                        opts.on_first_search(fennel, opts)
+                        opts.on_first_module(fennel, opts)
                     else
                         local ok
                         ok, fennel = pcall(require, "fennel")
                         if not ok then
                             fennel = nil
                         elseif opts.on_first_search then
-                            opts.on_first_search(fennel, opts)
+                            opts.on_first_module(fennel, opts)
                         end
                     end
                 end
