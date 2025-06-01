@@ -8,7 +8,7 @@ return function(MAIN)
             file:close()
             return content
         end
-        return nil, "Could not read file '" .. filename .. "'"
+        return nil, "Could not read file '" .. tostring(filename) .. "'"
     end
 
     ---@class fn_finder.FennelSearchOpts
@@ -24,16 +24,22 @@ return function(MAIN)
     M.mkFinder = function(loader_opts)
         loader_opts = loader_opts or {}
         local triggered = false
+        local fennel
         loader_opts.search = loader_opts.search
             or function(modname, opts)
-                local ok, fennel = pcall(require, "fennel")
-                if not ok or not fennel then
-                    return nil, nil, "\n\tfn_finder fennel searcher cannot require('fennel')"
-                end
                 opts = opts or {}
-                if not triggered and opts.on_first_search then
-                    opts.on_first_search(fennel, opts)
+                if not triggered then
                     triggered = true
+                    local ok
+                    ok, fennel = pcall(require, "fennel")
+                    if ok and opts.on_first_search then
+                        opts.on_first_search(fennel, opts)
+                    elseif not ok then
+                        fennel = nil
+                    end
+                end
+                if not fennel then
+                    return nil, nil, "\n\tfn_finder fennel searcher cannot require('fennel')"
                 end
                 local pt = type(opts.path)
                 local modpath
@@ -46,8 +52,7 @@ return function(MAIN)
                 end
                 opts.compiler = opts.compiler or {}
                 opts.compiler.filename = modpath
-                local lua_code
-                ok, lua_code = pcall(fennel.compileString, read_file(modpath), opts.compiler)
+                local ok, lua_code = pcall(fennel.compileString, read_file(modpath), opts.compiler)
                 if ok and lua_code then
                     return lua_code, modpath, nil
                 else
