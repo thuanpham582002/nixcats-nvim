@@ -351,7 +351,7 @@ end
 local require_path = ...
 return setmetatable(M, {
     __index = function(t, k)
-        local res = require(require_path .. ".configs." .. k)(t)
+        local res = require(require_path .. ".configs." .. k)(t, _load)
         rawset(t, k, res)
         return res
     end,
