@@ -4,7 +4,7 @@
   (tset :shell :uv)
   (tset :proper_pipes true)
 )
-(var res (.. (vim.inspect sh) "\n"))
+(var res (.. (or nil "TEST\n") (vim.inspect sh) "\n"))
 (thrice-if true (set res (.. res (-> sh
   (: :CD :/home)
   (: :ls :-la)
