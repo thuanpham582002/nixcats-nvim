@@ -1,10 +1,10 @@
 local load_w_after = require("lzextras").loaders.with_after
+local MP = ...
 return {
   {
     "cmp-conjure",
     for_cat = "fennel",
     on_plugin = { "conjure" },
-    -- on_plugin = { "blink.cmp" },
     load = load_w_after,
   },
   {
@@ -12,8 +12,7 @@ return {
     for_cat = "fennel",
     ft = { "clojure", "fennel", "python" },
     before = function ()
-    end,
-    after = function ()
+      local fromfnl = require(MP:relpath 'nvim_client')
     end,
   },
 }
