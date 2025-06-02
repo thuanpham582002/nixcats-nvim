@@ -66,13 +66,13 @@ return function(MAIN, load)
                 if not triggered and modpath then
                     triggered = true
                     local macro_searcher = function(n)
-                        local mp = rtpfile(n, {".fnl","/init.fnl","/init-macros.fnl"})
+                        local mp = rtpfile(opts.nvim, n, {".fnl","/init.fnl","/init-macros.fnl"})
                         if mp then
                             local ok, fnl = pcall(require, "fennel")
                             if ok then
                                 fennel = fnl
                                 local res
-                                ok, res = pcall(fennel.eval, read_file(mp), { ["module-name"] = n, filename = mp, env = "_COMPILER"})
+                                ok, res = pcall(fennel.eval, read_file(mp), { ["module-name"] = n, filename = mp, env = "_COMPILER", requireAsInclude = false, allowedGlobals = nil, })
                                 if ok then
                                     return function() return res end
                                 end
