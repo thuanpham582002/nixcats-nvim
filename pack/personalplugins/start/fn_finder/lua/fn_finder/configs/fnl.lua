@@ -68,11 +68,15 @@ return function(MAIN, load)
                     local macro_searcher = function(n)
                         local mp = rtpfile(opts.nvim, n, {".fnl","/init.fnl","/init-macros.fnl"})
                         if mp then
-                            local ok, fnl = pcall(require, "fennel")
-                            if ok then
-                                fennel = fnl
-                                local res
-                                ok, res = pcall(fennel.eval, read_file(mp), {
+                            if not fennel then
+                                local ok
+                                ok, fennel = pcall(require, "fennel")
+                                if not ok then
+                                    fennel = nil
+                                end
+                            end
+                            if fennel then
+                                local ok, res = pcall(fennel.eval, read_file(mp), {
                                     ["module-name"] = n,
                                     filename = mp,
                                     env = "_COMPILER",
