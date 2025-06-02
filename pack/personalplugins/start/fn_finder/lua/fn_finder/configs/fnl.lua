@@ -1,18 +1,21 @@
-return function(MAIN, load)
+return function(MAIN, _)
     local M = {}
 
-    local dsep, psep, phold = MAIN.pkgConfig.dirsep, MAIN.pkgConfig.pathsep, MAIN.pkgConfig.pathmark
-    local DEFAULT_FNL_PATH = "." ..dsep..phold..".fnl"..psep.."."..dsep..phold..dsep.."init.fnl"
+    local dsep, psep, phold, errpre =
+        MAIN.pkgConfig.dirsep, MAIN.pkgConfig.pathsep, MAIN.pkgConfig.pathmark, MAIN.pkgConfig.errpre
+    local DEFAULT_FNL_PATH = "." .. dsep .. phold .. ".fnl" .. psep .. "." .. dsep .. phold .. dsep .. "init.fnl"
 
     local function rtpfile(dir, modname, patterns)
         dir = type(dir) == "string" and dir or "lua"
-        modname = modname:gsub('%.', '/')
+        modname = modname:gsub("%.", "/")
         patterns = patterns or {}
         local modpath
         local i = 1
         while not modpath do
             local pattern = patterns[i]
-            if not pattern then break end
+            if not pattern then
+                break
+            end
             modpath = vim.api.nvim_get_runtime_file(dir .. "/" .. modname .. pattern, false)[1]
             i = i + 1
         end
@@ -44,10 +47,13 @@ return function(MAIN, load)
         loader_opts = loader_opts or {}
         local triggered = false
         local fennel = package.loaded["fennel"] or nil
-        if type(fennel) ~= "table" then fennel = nil end
+        if type(fennel) ~= "table" then
+            fennel = nil
+        end
         if (loader_opts.search_opts or {}).nvim then
             loader_opts.cache_opts = loader_opts.cache_opts or {}
-            loader_opts.cache_opts.cache_dir = loader_opts.cache_opts.cache_dir or (vim.fn.stdpath("cache")..dsep.."fn_finder_cache")
+            loader_opts.cache_opts.cache_dir = loader_opts.cache_opts.cache_dir
+                or (vim.fn.stdpath("cache") .. dsep .. "fn_finder_cache")
         end
         loader_opts.search = loader_opts.search
             or function(modname, opts)
@@ -55,7 +61,7 @@ return function(MAIN, load)
                 local pt = type(opts.path)
                 local modpath
                 if opts.nvim then
-                    modpath = rtpfile(opts.nvim, modname, {".fnl","/init.fnl"})
+                    modpath = rtpfile(opts.nvim, modname, { ".fnl", "/init.fnl" })
                 end
                 if not modpath then
                     local p = (fennel or {}).path or DEFAULT_FNL_PATH
@@ -70,7 +76,7 @@ return function(MAIN, load)
                 if not triggered and modpath then
                     triggered = true
                     local macro_searcher = function(n)
-                        local mp = rtpfile(opts.nvim, n, {".fnl","/init.fnl","/init-macros.fnl"})
+                        local mp = rtpfile(opts.nvim, n, { ".fnl", "/init.fnl", "/init-macros.fnl" })
                         if mp then
                             if not fennel then
                                 local ok
@@ -87,13 +93,19 @@ return function(MAIN, load)
                                     requireAsInclude = false,
                                 })
                                 if ok then
-                                    return function() return res end
+                                    return function()
+                                        return res
+                                    end
                                 end
-                                return "\t\nCould not load fennel macro module '" .. tostring(n) .. "' " .. tostring(res or mp)
+                                return errpre
+                                    .. "Could not load fennel macro module '"
+                                    .. tostring(n)
+                                    .. "' "
+                                    .. tostring(res or mp)
                             end
-                            return "\t\nCould not load fennel to call macro module '" .. tostring(n) .. "'"
+                            return errpre .. "Could not load fennel to call macro module '" .. tostring(n) .. "'"
                         else
-                            return "\t\nCould not find macro for module name '" .. tostring(n) .. "'"
+                            return errpre .. "Could not find macro for module name '" .. tostring(n) .. "'"
                         end
                     end
                     if type(fennel) == "table" then
@@ -119,9 +131,14 @@ return function(MAIN, load)
                     end
                 end
                 if not modpath then
-                    return nil, nil, "\n\tfn_finder fennel searcher could not find a fennel file for '" .. tostring(modname) .. "'"
+                    return nil,
+                        nil,
+                        errpre
+                            .. "fn_finder fennel searcher could not find a fennel file for '"
+                            .. tostring(modname)
+                            .. "'"
                 elseif not fennel then
-                    return nil, nil, "\n\tfn_finder fennel searcher cannot require('fennel')"
+                    return nil, nil, errpre .. "fn_finder fennel searcher cannot require('fennel')"
                 end
                 opts.compiler = opts.compiler or {}
                 opts.compiler.filename = modpath
@@ -131,7 +148,8 @@ return function(MAIN, load)
                 else
                     return nil,
                         nil,
-                        "\n\tfn_finder fennel search function could not find a valid fennel file for '"
+                        errpre
+                            .. "fn_finder fennel search function could not find a valid fennel file for '"
                             .. tostring(modname)
                             .. "': "
                             .. tostring(lua_code or modpath)
