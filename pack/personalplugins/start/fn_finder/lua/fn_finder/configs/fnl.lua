@@ -72,7 +72,12 @@ return function(MAIN, load)
                             if ok then
                                 fennel = fnl
                                 local res
-                                ok, res = pcall(fennel.eval, read_file(mp), { ["module-name"] = n, filename = mp, env = "_COMPILER", requireAsInclude = false, allowedGlobals = nil, })
+                                ok, res = pcall(fennel.eval, read_file(mp), {
+                                    ["module-name"] = n,
+                                    filename = mp,
+                                    env = "_COMPILER",
+                                    requireAsInclude = false,
+                                })
                                 if ok then
                                     return function() return res end
                                 end
