@@ -1,3 +1,5 @@
 (import-macros {: thrice-if} :thrice)
-(thrice-if true (print "hello, world"))
-(print (vim.inspect (require :blah)))
+(var res "")
+(thrice-if true (set res (.. res (vim.inspect (require :blah)))))
+(set res (.. res (vim.inspect ...)))
+res
