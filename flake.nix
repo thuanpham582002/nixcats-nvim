@@ -52,6 +52,11 @@
       url = "github:BirdeeHub/shelua";
       flake = false;
     };
+    plugins-fn_finder = {
+      url = "github:BirdeeHub/fn_finder";
+      # url = "git+file:/home/birdee/Projects/fn_finder";
+      flake = false;
+    };
     "plugins-hlargs" = {
       url = "github:m-demare/hlargs.nvim";
       flake = false;

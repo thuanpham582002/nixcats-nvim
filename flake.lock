@@ -625,6 +625,22 @@
         "type": "github"
       }
     },
+    "plugins-fn_finder": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1748832416,
+        "narHash": "sha256-bSXE0XDy5GcZXwp0CfHOh/Ob7t7naTWHDCv1xgJ2SHQ=",
+        "owner": "BirdeeHub",
+        "repo": "fn_finder",
+        "rev": "970661bc3b6b5a8abb44773091bfe0da16f91f74",
+        "type": "github"
+      },
+      "original": {
+        "owner": "BirdeeHub",
+        "repo": "fn_finder",
+        "type": "github"
+      }
+    },
     "plugins-hlargs": {
       "flake": false,
       "locked": {
@@ -777,6 +793,7 @@
         "nix-appimage": "nix-appimage",
         "nixCats": "nixCats",
         "nixpkgs": "nixpkgs_7",
+        "plugins-fn_finder": "plugins-fn_finder",
         "plugins-hlargs": "plugins-hlargs",
         "plugins-lze": "plugins-lze",
         "plugins-lzextras": "plugins-lzextras",

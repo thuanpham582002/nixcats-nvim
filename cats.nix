@@ -196,6 +196,9 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
     lua = [
       luvit-meta
     ];
+    fennel = [
+      pkgs.neovimPlugins.fn_finder
+    ];
     rust = [
       pkgs.neovimPlugins.rustaceanvim
     ];
