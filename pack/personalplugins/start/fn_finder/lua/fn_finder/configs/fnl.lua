@@ -5,9 +5,9 @@ return function(MAIN, load)
     local DEFAULT_FNL_PATH = "." ..dsep..phold..".fnl"..psep.."."..dsep..phold..dsep.."init.fnl"
 
     local function rtpfile(dir, modname, patterns)
+        dir = type(dir) == "string" and dir or "lua"
         modname = modname:gsub('%.', '/')
         patterns = patterns or {}
-        dir = type(dir) == "string" and dir or "lua"
         local modpath
         local i = 1
         while not modpath do
@@ -45,6 +45,10 @@ return function(MAIN, load)
         local triggered = false
         local fennel = package.loaded["fennel"] or nil
         if type(fennel) ~= "table" then fennel = nil end
+        if (loader_opts.search_opts or {}).nvim then
+            loader_opts.cache_opts = loader_opts.cache_opts or {}
+            loader_opts.cache_opts.cache_dir = loader_opts.cache_opts.cache_dir or (vim.fn.stdpath("cache")..dsep.."fn_finder_cache")
+        end
         loader_opts.search = loader_opts.search
             or function(modname, opts)
                 opts = opts or {}

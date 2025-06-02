@@ -25,11 +25,7 @@ vim.o.exrc = true
 require('nixCatsUtils').setup { non_nix_value = true }
 if vim.g.vscode == nil then
     if nixCats('fennel') then
-        local FF = require("fn_finder")
-        FF.fnl.install({
-            search_opts = { nvim = true },
-            cache_opts = { cache_dir = vim.fn.stdpath("cache")..FF.pkgConfig.dirsep.."fnFinderCache", },
-        })
+        require("fn_finder").fnl.install { search_opts = { nvim = true }, }
     end
     require('birdee')
 end
