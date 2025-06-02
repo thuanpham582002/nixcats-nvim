@@ -46,6 +46,7 @@ return {
   { import = MP:relpath "snacks", },
   { import = MP:relpath "nestsitter", },
   { import = MP:relpath "blink", },
+  { import = MP:relpath "conjure", },
   { import = MP:relpath "grapple", },
   { import = MP:relpath "lualine", },
   { import = MP:relpath "git", },

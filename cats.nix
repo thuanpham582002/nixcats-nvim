@@ -229,6 +229,10 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
     go = [
       nvim-dap-go
     ];
+    fennel = [
+      conjure
+      cmp-conjure
+    ];
     java = [
       nvim-jdtls
     ];

@@ -9,7 +9,7 @@ return {
   {
     "blink.compat",
     for_cat = "general.blink",
-    dep_of = { "cmp-cmdline" },
+    dep_of = { "cmp-cmdline", "cmp-conjure" },
   },
   {
     "luasnip",
