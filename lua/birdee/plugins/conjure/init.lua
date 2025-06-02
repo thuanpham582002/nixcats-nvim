@@ -12,7 +12,7 @@ return {
     for_cat = "fennel",
     ft = { "clojure", "fennel", "python" },
     before = function ()
-      local fromfnl = require(MP:relpath 'nvim_client')
+      package.preload["conjure.client.fennel.nvim"] = function() return require(MP:relpath 'nvim_client') end
     end,
   },
 }
