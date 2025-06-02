@@ -6,9 +6,13 @@
 )
 (var res (.. (vim.inspect sh) "\n"))
 (thrice-if true (set res (.. res (-> sh
-   (: :echo "Hello fennel")
-   (: :CD :/home/birdee/birdeeSystems)
-   (: :sed (sh.pwd) :s/Hello/Goodbye/g)
-))))
+  (: :CD :/home)
+  (: :ls :-la)
+  (: :cat
+    (-> sh (: :CD :/home/birdee) (: :pwd))
+    (sh.echo "Hello fennel")
+  )
+  (: :sed :s/Hello/Goodbye/g)
+) "\n")))
 (set res (.. res "\n" (vim.inspect (require :blah)) "\n" (vim.inspect ...)))
 res
