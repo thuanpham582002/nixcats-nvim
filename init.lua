@@ -31,6 +31,7 @@ vim.o.exrc = true
 require('nixCatsUtils').setup { non_nix_value = true }
 if vim.g.vscode == nil then
     if nixCats('fennel') then
+        -- trivia: <c-k>*l is λ
         require("fn_finder").fnl.install { search_opts = { nvim = true }, }
     end
     require('birdee')
