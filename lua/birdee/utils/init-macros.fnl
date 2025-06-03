@@ -5,7 +5,7 @@
     (or (= t :string) (= t :number) (= t :boolean)
         (and (sym? x) (not (multi-sym? x))))))
 
-(fn | [val ...]
+(fn -|> [val ...]
   "Lua index method chain val(\"a\"):val2(\"b\"):val3(\"c\")
 Like -> except it inserts the method as well.
 Take the first value insert it into the second form as its first argument.
@@ -18,7 +18,7 @@ The value of the second form is spliced into the first arg of the third, etc."
       (set x elt)))
   x)
 
-(fn ?| [val ?e ...]
+(fn -?|> [val ?e ...]
   "Nil-safe thread-first macro.
 Same as -> except will short-circuit with nil when it encounters a nil value."
   (if (= nil ?e)
@@ -26,11 +26,11 @@ Same as -> except will short-circuit with nil when it encounters a nil value."
       (not (idempotent-expr? val))
       ;; try again, but with an eval-safe val
       `(let [tmp# ,val]
-        (?| tmp# ,?e ,...))
+        (-?|> tmp# ,?e ,...))
       (let [call (if (list? ?e) ?e (list ?e))]
         (table.insert call 1 val)
         (table.insert call 1 (sym ":"))
         `(if (not= nil ,val)
-             ,(?| call ...)))))
+             ,(-?|> call ...)))))
 
-{: | : ?| : idempotent-expr?}
+{: -|> : -?|> : idempotent-expr?}

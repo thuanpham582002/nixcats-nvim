@@ -1,3 +1,5 @@
-{
+[ {
   :testk "testv"
-}
+} {
+  :tk :tv
+} ]

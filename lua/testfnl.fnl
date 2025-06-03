@@ -1,22 +1,22 @@
-(import-macros {: | : ?| : idempotent-expr?} :birdee.utils)
+(import-macros {: -|> : -?|> : idempotent-expr?} :birdee.utils)
 (import-macros {: thrice-if : check-margs} :thrice)
 (local sh (doto
   ((. (require :shelua) :add_reprs) ((require :sh)) "uv")
   (tset :shell :uv)
   (tset :proper_pipes true)
 ))
-(var res (| (sh.CD :/home)
+(var res (-|> (sh.CD :/home)
   (:ls :-la)
   (:cat
-    (| (sh.CD :/home/birdee) (:pwd))
+    (-|> (sh.CD :/home/birdee) (:pwd))
     (sh.echo "Hello fennel")
   )
   (:sed :s/Hello/Goodbye/g)
 ))
-(set res (.. res "\n" (?| (sh.CD :/home)
+(set res (.. res "\n" (-?|> (sh.CD :/home)
   (:ls :-la)
   (:cat
-    (?| sh (:CD :/home/birdee) (:pwd))
+    (-?|> sh (:CD :/home/birdee) (:pwd))
     (sh.echo "Hello fennel")
   )
   (:sed :s/Hello/Goodbye/g)
@@ -24,4 +24,8 @@
   "\n" (vim.inspect (table.pack ...))
 ))
 (thrice-if true (set res (.. res "\n" (vim.inspect (check-margs)))))
+(set res (.. res "\n ITER TEST \n"))
+(each [i v (ipairs [8 38 28 2 2 1 4 nil 12345 12345 12345])]
+  (set res (.. res "\n" (vim.inspect i) "\n" (vim.inspect v)))
+)
 res
