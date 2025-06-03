@@ -1,18 +1,23 @@
-(import-macros {: thrice-if} :thrice)
-(local sh ((. (require :shelua) :add_reprs) nil "uv"))
-(doto sh
+(import-macros {: | : ?|} :birdee.fossil.threader)
+(local sh (doto
+  ((. (require :shelua) :add_reprs) ((require :sh)) "uv")
   (tset :shell :uv)
   (tset :proper_pipes true)
-)
-(var res (.. (or nil "TEST\n") (vim.inspect sh) "\n"))
-(thrice-if true (set res (.. res (-> sh
-  (: :CD :/home)
-  (: :ls :-la)
-  (: :cat
-    (-> sh (: :CD :/home/birdee) (: :pwd))
+))
+(var res (| (sh.CD :/home)
+  (:ls :-la)
+  (:cat
+    (| (sh.CD :/home/birdee) (:pwd))
     (sh.echo "Hello fennel")
   )
-  (: :sed :s/Hello/Goodbye/g)
-) "\n")))
-(set res (.. res "\n" (vim.inspect (require :blah)) "\n" (vim.inspect ...)))
+  (:sed :s/Hello/Goodbye/g)
+))
+(set res (.. res "\n" (?| (sh.CD :/home)
+  (:ls :-la)
+  (:cat
+    (?| sh (:CD :/home/birdee) (:pwd))
+    (sh.echo "Hello fennel")
+  )
+  (:sed :s/Hello/Goodbye/g)
+) "\n" (vim.inspect (require :blah)) "\n" (vim.inspect ...)))
 res
