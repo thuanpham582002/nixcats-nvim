@@ -20,6 +20,8 @@
     (sh.echo "Hello fennel")
   )
   (:sed :s/Hello/Goodbye/g)
-) "\n" (vim.inspect (require :blah)) "\n" (vim.inspect (table.pack ...))))
+) "\n" (vim.inspect (require :blah))
+  "\n" (vim.inspect (table.pack ...))
+))
 (thrice-if true (set res (.. res "\n" (vim.inspect (check-margs)))))
 res
