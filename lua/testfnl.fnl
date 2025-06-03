@@ -1,4 +1,4 @@
-(import-macros {: | : ?|} :birdee.fossil.threader)
+(import-macros {: | : ?| : idempotent-expr?} :birdee.utils)
 (import-macros {: thrice-if : check-margs} :thrice)
 (local sh (doto
   ((. (require :shelua) :add_reprs) ((require :sh)) "uv")

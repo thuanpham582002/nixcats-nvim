@@ -33,4 +33,4 @@ Same as -> except will short-circuit with nil when it encounters a nil value."
         `(if (not= nil ,val)
              ,(?| call ...)))))
 
-{: | : ?|}
+{: | : ?| : idempotent-expr?}
