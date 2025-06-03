@@ -43,7 +43,7 @@ return {
           ['<C-n>'] = { 'scroll_documentation_down', 'fallback' },
           ['<Tab>'] = { 'snippet_forward', 'fallback' },
           ['<S-Tab>'] = { 'snippet_backward', 'fallback' },
-          ['<C-k>'] = { 'show_signature', 'hide_signature', 'fallback' },
+          ['<C-s>'] = { 'show_signature', 'hide_signature', 'fallback_to_mappings', 'fallback' },
         },
         cmdline = {
           enabled = true,
