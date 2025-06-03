@@ -5,4 +5,8 @@
         `(if ,condition (do ,result ,(step (- i 1))))))
   (step 3))
 
-{: thrice-if}
+(local margs [...])
+
+(fn check-margs [] margs)
+
+{: thrice-if : check-margs}

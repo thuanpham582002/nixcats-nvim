@@ -18,6 +18,12 @@ string.relpath = function(str, sub, n)
     return #result == 1 and result[1] or table.concat(result, ".")
 end
 
+if not table.pack then
+  table.pack = function(...)
+    return { n = select("#", ...), ... }
+  end
+end
+
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 vim.loader.enable()

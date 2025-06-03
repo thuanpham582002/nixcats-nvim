@@ -1,4 +1,5 @@
 (import-macros {: | : ?|} :birdee.fossil.threader)
+(import-macros {: thrice-if : check-margs} :thrice)
 (local sh (doto
   ((. (require :shelua) :add_reprs) ((require :sh)) "uv")
   (tset :shell :uv)
@@ -19,5 +20,6 @@
     (sh.echo "Hello fennel")
   )
   (:sed :s/Hello/Goodbye/g)
-) "\n" (vim.inspect (require :blah)) "\n" (vim.inspect ...)))
+) "\n" (vim.inspect (require :blah)) "\n" (vim.inspect (table.pack ...))))
+(set res (.. res "\n" (vim.inspect (check-margs))))
 res
