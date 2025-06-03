@@ -628,11 +628,11 @@
     "plugins-fn_finder": {
       "flake": false,
       "locked": {
-        "lastModified": 1748928819,
-        "narHash": "sha256-H9ar145qHsT4UVPY6DkUlG1ZEm0P1YXx7wCcUqtvBqU=",
+        "lastModified": 1748974724,
+        "narHash": "sha256-tP89eAFCAQ9lRT+tDoaZsMwNoJYWBlZ9/ZFmwf0JomY=",
         "owner": "BirdeeHub",
         "repo": "fn_finder",
-        "rev": "0cb554624eaa6cc320c22d84013c111361eee44d",
+        "rev": "b5242edf7ff63d5f1713c7d43f6ec9666faa108e",
         "type": "github"
       },
       "original": {
