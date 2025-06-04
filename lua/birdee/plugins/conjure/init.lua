@@ -12,7 +12,8 @@ return {
     for_cat = "fennel",
     ft = { "clojure", "fennel", "python" },
     before = function ()
-      vim.g["conjure#filetype#fennel"] = "conjure.client.fennel.nfnl"
+      package.preload["conjure.client.fennel.nvim"] = function() return require(MP:relpath 'nvim_client') end
+      vim.g["conjure#filetype#fennel"] = "conjure.client.fennel.nvim"
     end,
   },
 }
