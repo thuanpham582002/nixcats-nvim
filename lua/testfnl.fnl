@@ -26,6 +26,6 @@
 (thrice-if true (set res (.. res "\n" (vim.inspect (check-margs)))))
 (set res (.. res "\n ITER TEST \n"))
 (each [i v (ipairs [8 38 28 2 2 1 4 nil 12345 12345 12345])]
-  (set res (.. res "\n" (vim.inspect i) "\n" (vim.inspect v)))
+  (set res (.. res "\n" (vim.inspect i) " : " (vim.inspect v)))
 )
 res
