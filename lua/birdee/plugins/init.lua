@@ -30,6 +30,52 @@ if nixCats('other') then
   })
 end
 
+if nixCats "general" then
+  local keymap = require('lzextras').keymap {
+    "dial.nvim",
+    after = function(_)
+      local augend = require("dial.augend")
+      require("dial.config").augends:register_group{
+        default = {
+          augend.integer.alias.decimal,
+          augend.integer.alias.hex,
+          augend.date.alias["%Y/%m/%d"],
+          augend.date.alias["%Y-%m-%d"],
+          augend.date.alias["%m/%d"],
+          augend.date.alias["%H:%M"],
+          augend.constant.alias.ja_weekday_full,
+          augend.constant.alias.bool,
+          augend.semver.alias.semver,
+        },
+      }
+    end
+  }
+  keymap.set("n", "<C-a>", function()
+      require("dial.map").manipulate("increment", "normal")
+  end, { desc = "Increment" })
+  keymap.set("n", "<C-x>", function()
+      require("dial.map").manipulate("decrement", "normal")
+  end, { desc = "Decrement" })
+  keymap.set("n", "g<C-a>", function()
+      require("dial.map").manipulate("increment", "gnormal")
+  end, { desc = "Increment" })
+  keymap.set("n", "g<C-x>", function()
+      require("dial.map").manipulate("decrement", "gnormal")
+  end, { desc = "Decrement" })
+  keymap.set("v", "<C-a>", function()
+      require("dial.map").manipulate("increment", "visual")
+  end, { desc = "Increment a number" })
+  keymap.set("v", "<C-x>", function()
+      require("dial.map").manipulate("decrement", "visual")
+  end, { desc = "Increment a number" })
+  keymap.set("v", "g<C-a>", function()
+      require("dial.map").manipulate("increment", "gvisual")
+  end, { desc = "Increment a number" })
+  keymap.set("v", "g<C-x>", function()
+      require("dial.map").manipulate("decrement", "gvisual")
+  end, { desc = "Increment a number" })
+end
+
 -- NOTE: This is already lazy. It doesnt require it until you use the keybinding
 vim.keymap.set({ 'n', }, "<leader>cpc", function() require("color_picker").rgbPicker() end, { desc = "color_picker rgb" })
 vim.keymap.set({ 'n', }, "<leader>cph", function() require("color_picker").hsvPicker() end, { desc = "color_picker hsv" })

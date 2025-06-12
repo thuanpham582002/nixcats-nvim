@@ -187,6 +187,7 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       plenary-nvim
       mini-nvim
       pkgs.neovimPlugins.snacks-nvim
+      dial-nvim
     ];
     other = [
       nvim-spectre
