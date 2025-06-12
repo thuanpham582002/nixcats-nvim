@@ -156,7 +156,7 @@ return {
   },
   {
     "dial.nvim",
-    for_cat = "general",
+    for_cat = "general.core",
     keys = {
       { "<C-a>", function() require("dial.map").manipulate("increment", "normal") end, mode = "n", desc = "Increment" },
       { "<C-x>", function() require("dial.map").manipulate("decrement", "normal") end, mode = "n", desc = "Decrement" },

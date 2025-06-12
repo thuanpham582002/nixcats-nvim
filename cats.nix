@@ -187,7 +187,6 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       plenary-nvim
       mini-nvim
       pkgs.neovimPlugins.snacks-nvim
-      dial-nvim
     ];
     other = [
       nvim-spectre
@@ -294,6 +293,7 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
         undotree
         nvim-surround
         treesj
+        dial-nvim
         vim-sleuth
       ];
     };
