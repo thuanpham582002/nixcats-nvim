@@ -122,7 +122,7 @@ return {
         },
         ---@type blink.cmp.SnippetsConfig
         snippets = {
-          -- preset = "luasnip",
+          preset = "luasnip",
           active = function(filter)
             local snippet = require "luasnip"
             local blink = require "blink.cmp"
