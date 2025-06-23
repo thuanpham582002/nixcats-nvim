@@ -23,6 +23,11 @@
       # inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    kotlin-lsp = {
+      url = "https://download-cdn.jetbrains.com/kotlin-lsp/0.252.17811/kotlin-0.252.17811.zip";
+      flake = false;
+    };
+
     # makeBinWrap = {
     #   url = "github:BirdeeHub/testBinWrapper";
     # #   url = "git+file:/home/birdee/Projects/testBinWrapper";

@@ -97,7 +97,14 @@ return {
     "jdtls",
     for_cat = 'java',
     lsp = {
-      filetypes = { 'java', 'kotlin' },
+      filetypes = { 'java', },
+    }
+  },
+  {
+    "kotlin_lsp",
+    for_cat = 'kotlin',
+    lsp = {
+      filetypes = { 'kotlin' },
     }
   },
   {
@@ -161,22 +168,22 @@ return {
       },
     },
   },
-  {
-    "kotlin_language_server",
-    for_cat = 'kotlin',
-    lsp = {
-      filetypes = { 'kotlin' },
-      -- root_pattern = {"settings.gradle", "settings.gradle.kts", 'gradlew', 'mvnw'},
-      settings = {
-        kotlin = {
-          formatters = {
-            ignoreComments = true,
-          },
-          signatureHelp = { enabled = true },
-          workspace = { checkThirdParty = true },
-          telemetry = { enabled = false },
-        },
-      },
-    }
-  },
+  -- {
+  --   "kotlin_language_server",
+  --   for_cat = 'kotlin',
+  --   lsp = {
+  --     filetypes = { 'kotlin' },
+  --     -- root_pattern = {"settings.gradle", "settings.gradle.kts", 'gradlew', 'mvnw'},
+  --     settings = {
+  --       kotlin = {
+  --         formatters = {
+  --           ignoreComments = true,
+  --         },
+  --         signatureHelp = { enabled = true },
+  --         workspace = { checkThirdParty = true },
+  --         telemetry = { enabled = false },
+  --       },
+  --     },
+  --   }
+  -- },
 }

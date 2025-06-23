@@ -16,6 +16,7 @@ inputs: let
   inherit (inputs.nixCats) utils;
   overlaySet = {
 
+    kotlin-lsp = import ./kotlin-lsp.nix;
     # locked = import ./locked.nix;
     # internalvim = import ./build;
     # lua-git2 = import ./lua-git2.nix;

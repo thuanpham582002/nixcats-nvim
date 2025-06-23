@@ -80,7 +80,8 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       jdt-language-server
     ];
     kotlin = [
-      kotlin-language-server
+      kotlin-lsp
+      # kotlin-language-server
       ktlint
     ];
     go = [
