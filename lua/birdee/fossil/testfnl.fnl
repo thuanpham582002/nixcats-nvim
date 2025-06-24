@@ -1,5 +1,5 @@
 (import-macros {: -|> : -?|> : idempotent-expr?} :birdee.utils)
-(import-macros {: thrice-if : check-margs} :thrice)
+(import-macros {: thrice-if : check-margs} :birdee.fossil.thrice)
 (local sh (doto
   ((. (require :shelua) :add_reprs) ((require :sh)) "uv")
   (tset :shell :uv)
@@ -20,7 +20,7 @@
     (sh.echo "Hello fennel")
   )
   (:sed :s/Hello/Goodbye/g)
-) "\n" (vim.inspect (require :blah))
+) "\n" (vim.inspect (require :birdee.fossil.blah))
   "\n" (vim.inspect (table.pack ...))
 ))
 (thrice-if true (set res (.. res "\n" (vim.inspect (check-margs)))))
