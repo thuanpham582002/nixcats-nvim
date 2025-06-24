@@ -20,3 +20,7 @@ require('lze').load {
     { import = MP:relpath "format" },
     { import = MP:relpath "lint" },
 }
+local session_file = "SAVE.sess"
+if vim.fn.filereadable(session_file) == 1 then
+  vim.cmd("source " .. vim.fn.fnameescape(session_file))
+end
