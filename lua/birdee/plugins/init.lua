@@ -41,7 +41,7 @@ if nixCats('general') then
   -- No need to copy this inside `setup()`. Will be used automatically.
   require("mini.sessions").setup {
     -- Whether to read default session if Neovim opened without file arguments
-    autoread = false,
+    autoread = true,
 
     -- Whether to write currently read session before leaving it
     autowrite = true,
