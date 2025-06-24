@@ -29,34 +29,6 @@ if nixCats('other') then
     desc = "Search on current file"
   })
 end
--- No need to copy this inside `setup()`. Will be used automatically.
-require("mini.sessions").setup {
-  -- Whether to read default session if Neovim opened without file arguments
-  autoread = false,
-
-  -- Whether to write currently read session before leaving it
-  autowrite = true,
-
-  -- Directory where global sessions are stored (use `''` to disable)
-  directory = vim.fn.stdpath('data') .. "/sessions",
-
-  -- File for local session (use `''` to disable)
-  file = 'Session.vim',
-
-  -- Whether to force possibly harmful actions (meaning depends on function)
-  force = { read = false, write = true, delete = false },
-
-  -- Hook functions for actions. Default `nil` means 'do nothing'.
-  hooks = {
-    -- Before successful action
-    pre = { read = nil, write = nil, delete = nil },
-    -- After successful action
-    post = { read = nil, write = nil, delete = nil },
-  },
-
-  -- Whether to print session path after action
-  verbose = { read = false, write = true, delete = true },
-}
 -- NOTE: This is already lazy. It doesnt require it until you use the keybinding
 vim.keymap.set({ 'n', }, "<leader>cpc", function() require("color_picker").rgbPicker() end, { desc = "color_picker rgb" })
 vim.keymap.set({ 'n', }, "<leader>cph", function() require("color_picker").hsvPicker() end, { desc = "color_picker hsv" })
@@ -66,6 +38,34 @@ vim.keymap.set({ 'n', }, "<leader>cpd", function() require("color_picker").hsvGr
 vim.keymap.set({ 'n', }, "<leader>cpb", function() require("color_picker").hslGradientPicker() end, { desc = "color_picker hsl gradient"})
 
 if nixCats('general') then
+  -- No need to copy this inside `setup()`. Will be used automatically.
+  require("mini.sessions").setup {
+    -- Whether to read default session if Neovim opened without file arguments
+    autoread = false,
+
+    -- Whether to write currently read session before leaving it
+    autowrite = true,
+
+    -- Directory where global sessions are stored (use `''` to disable)
+    directory = vim.fn.stdpath('data') .. "/sessions",
+
+    -- File for local session (use `''` to disable)
+    file = 'Session.vim',
+
+    -- Whether to force possibly harmful actions (meaning depends on function)
+    force = { read = false, write = true, delete = false },
+
+    -- Hook functions for actions. Default `nil` means 'do nothing'.
+    hooks = {
+      -- Before successful action
+      pre = { read = nil, write = nil, delete = nil },
+      -- After successful action
+      post = { read = nil, write = nil, delete = nil },
+    },
+
+    -- Whether to print session path after action
+    verbose = { read = false, write = true, delete = true },
+  }
   require(MP:relpath 'oil')
 end
 
