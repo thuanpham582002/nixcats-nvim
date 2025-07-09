@@ -23,10 +23,10 @@
       # inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    kotlin-lsp = {
-      url = "https://download-cdn.jetbrains.com/kotlin-lsp/0.252.17811/kotlin-0.252.17811.zip";
-      flake = false;
-    };
+    # kotlin-lsp = {
+    #   url = "https://download-cdn.jetbrains.com/kotlin-lsp/0.252.17811/kotlin-0.252.17811.zip";
+    #   flake = false;
+    # };
 
     # makeBinWrap = {
     #   url = "github:BirdeeHub/testBinWrapper";
@@ -64,6 +64,10 @@
     };
     "plugins-hlargs" = {
       url = "github:m-demare/hlargs.nvim";
+      flake = false;
+    };
+    "plugins-nvim-aider" = {
+      url = "github:GeorgesAlkhouri/nvim-aider";
       flake = false;
     };
     "plugins-nvim-lspconfig" = {

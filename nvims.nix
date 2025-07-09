@@ -34,6 +34,7 @@ inputs: let
   };
   birdeevim_categories = { pkgs, ... }@misc: {
     AI.windsurf = true;
+    AI.aider = true;
     vimagePreview = true;
     lspDebugMode = false;
     other = true;

@@ -73,15 +73,20 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
         lazygit
       ];
     };
-    AI = [
-      bitwarden-cli
-    ];
+    AI = {
+      default = [
+        bitwarden-cli
+      ];
+      aider = [
+        aider-chat-full
+      ];
+    };
     java = [
       jdt-language-server
     ];
     kotlin = [
-      kotlin-lsp
-      # kotlin-language-server
+      # kotlin-lsp
+      kotlin-language-server
       ktlint
     ];
     go = [
@@ -244,6 +249,9 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
     AI = {
       default = [
         codecompanion-nvim
+      ];
+      aider = [
+        pkgs.neovimPlugins.nvim-aider
       ];
       minuet = [
         minuet-ai-nvim
