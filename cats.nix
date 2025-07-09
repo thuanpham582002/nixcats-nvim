@@ -79,6 +79,7 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       ];
       aider = [
         aider-chat-full
+        python313Packages.google-generativeai
       ];
     };
     java = [

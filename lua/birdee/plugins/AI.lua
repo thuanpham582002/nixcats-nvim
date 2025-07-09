@@ -195,7 +195,7 @@ return {
     after = function()
       require("nvim_aider").setup({
         -- Command that executes Aider
-        aider_cmd = "aider --model gemini",
+        aider_cmd = "aider --model gemini-2.5-flash",
         -- Command line arguments passed to aider
         args = {
           "--no-auto-commits",
