@@ -38,6 +38,7 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       # pylsp-rope
       # yapf
       # autopep8
+      py.google-generativeai
     ]);
   };
 
@@ -78,8 +79,7 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
         bitwarden-cli
       ];
       aider = [
-        aider-chat-full
-        python313Packages.google-generativeai
+        aider-wrapped
       ];
     };
     java = [
