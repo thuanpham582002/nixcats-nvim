@@ -89,14 +89,8 @@ vim.opt.confirm = true
 -- remove empty buffer text
 vim.opt.shortmess:append("I")
 
--- [[ Disable auto comment on enter ]]
--- See :help formatoptions
-vim.api.nvim_create_autocmd("FileType", {
-  desc = "remove formatoptions",
-  callback = function()
-    vim.opt.formatoptions:remove({ "c", "r", "o" })
-  end,
-})
+vim.g.netrw_liststyle = 0
+vim.g.netrw_banner = 0
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -109,13 +103,34 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   pattern = '*',
 })
 
-vim.g.netrw_liststyle = 0
-vim.g.netrw_banner = 0
+local augroup = vim.api.nvim_create_augroup("UserConfig", {})
+
+-- [[ Disable auto comment on enter ]]
+-- See :help formatoptions
+vim.api.nvim_create_autocmd("FileType", {
+  desc = "remove formatoptions",
+  group = augroup,
+  callback = function()
+    vim.opt.formatoptions:remove({ "c", "r", "o" })
+  end,
+})
 
 vim.api.nvim_create_autocmd('FileType', {
+  group = augroup,
   pattern = 'help',
   callback = function()
     vim.bo.bufhidden = 'unload'
     vim.cmd.wincmd('L')
+  end,
+})
+
+-- Create directories when saving files
+vim.api.nvim_create_autocmd("BufWritePre", {
+  group = augroup,
+  callback = function()
+    local dir = vim.fn.expand('<afile>:p:h')
+    if vim.fn.isdirectory(dir) == 0 then
+      vim.fn.mkdir(dir, 'p')
+    end
   end,
 })
