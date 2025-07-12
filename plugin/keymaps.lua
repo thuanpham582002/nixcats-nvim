@@ -4,6 +4,8 @@
 -- See `:help vim.keymap.set()`
 vim.api.nvim_set_keymap('', '<M-h>', '<Esc>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('t', '<M-h>', '<C-\\><C-n>', { noremap = true, silent = true, desc = "escape terminal mode" })
+-- vim.keymap.set("n", , ":m .+1<CR>==", { desc = 'Moves Line Down' })
+-- vim.keymap.set("n", , ":m .-2<CR>==", { desc = 'Moves Line Up' })
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = 'Moves Line Down' })
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = 'Moves Line Up' })
 -- vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = 'Scroll Down' })
@@ -15,6 +17,9 @@ vim.keymap.set("n", "<leader><leader>[", "<cmd>bprev<CR>", { desc = 'Previous bu
 vim.keymap.set("n", "<leader><leader>]", "<cmd>bnext<CR>", { desc = 'Next buffer' })
 vim.keymap.set("n", "<leader><leader>l", "<cmd>b#<CR>", { desc = 'Last buffer' })
 vim.keymap.set("n", "<leader><leader>d", "<cmd>bdelete<CR>", { desc = 'delete buffer' })
+
+vim.keymap.set("v", "<", "<gv", { desc = 'Indent left and reselect' })
+vim.keymap.set("v", ">", ">gv", { desc = 'Indent right and reselect' })
 
 -- see help sticky keys on windows
 vim.cmd([[command! W w]])
