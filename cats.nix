@@ -32,13 +32,13 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       py.python-lsp-server
       # py.python-lsp-black
       py.pytest
-      py.pylint
+      # py.pylint
       # python-lsp-ruff
       # pyls-flake8
       # pylsp-rope
       # yapf
       # autopep8
-      py.google-generativeai
+      # py.google-generativeai
     ]);
   };
 
@@ -78,8 +78,8 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       default = [
         bitwarden-cli
       ];
-      aider = [
-        aider-wrapped
+      opencode = [
+        opencode
       ];
     };
     java = [
@@ -250,9 +250,6 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
     AI = {
       default = [
         codecompanion-nvim
-      ];
-      aider = [
-        pkgs.neovimPlugins.nvim-aider
       ];
       minuet = [
         minuet-ai-nvim
