@@ -737,6 +737,22 @@
         "type": "github"
       }
     },
+    "plugins-opencode-nvim": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1752904323,
+        "narHash": "sha256-wlet4ADO6td17Kf8T5tZ/Dtfe6PJBRmJeNqMSF/jNPs=",
+        "owner": "NickvanDyke",
+        "repo": "opencode.nvim",
+        "rev": "8925974499bc396d7c8875e741e9e2eff8748bc7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NickvanDyke",
+        "repo": "opencode.nvim",
+        "type": "github"
+      }
+    },
     "plugins-rustaceanvim": {
       "flake": false,
       "locked": {
@@ -816,6 +832,7 @@
         "plugins-nvim-aider": "plugins-nvim-aider",
         "plugins-nvim-lspconfig": "plugins-nvim-lspconfig",
         "plugins-nvim-luaref": "plugins-nvim-luaref",
+        "plugins-opencode-nvim": "plugins-opencode-nvim",
         "plugins-rustaceanvim": "plugins-rustaceanvim",
         "plugins-shelua": "plugins-shelua",
         "plugins-snacks.nvim": "plugins-snacks.nvim",

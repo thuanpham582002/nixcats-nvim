@@ -14,7 +14,7 @@ return function(_, bufnr)
   end
 
   map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
-  map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
+  map('<leader>la', vim.lsp.buf.code_action, '[L]sp [A]ction')
 
   -- See `:help K` for why this keymap
   map('K', vim.lsp.buf.hover, 'Hover Documentation')

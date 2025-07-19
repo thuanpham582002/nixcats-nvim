@@ -248,11 +248,14 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       lazydev-nvim
     ];
     AI = {
-      default = [
+      companion = [
         codecompanion-nvim
       ];
       minuet = [
         minuet-ai-nvim
+      ];
+      opencode = [
+        pkgs.neovimPlugins.opencode-nvim
       ];
       windsurf = [
         windsurf-nvim

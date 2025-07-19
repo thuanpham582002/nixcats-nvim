@@ -87,6 +87,10 @@
       url = "github:BirdeeHub/snacks.nvim";
       flake = false;
     };
+    "plugins-opencode-nvim" = {
+      url = "github:NickvanDyke/opencode.nvim";
+      flake = false;
+    };
   };
 
   # see :help nixCats.flake.outputs

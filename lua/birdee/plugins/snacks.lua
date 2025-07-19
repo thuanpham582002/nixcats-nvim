@@ -20,7 +20,7 @@ return {
     "snacks.nvim",
     for_cat = "general",
     event = { 'DeferredUIEnter' },
-    dep_of = { "nvim-aider" },
+    dep_of = { "nvim-aider", "opencode.nvim" },
     load = function()end,
     keys = {
       {'<c-\\>', function() Snacks.terminal() end, mode = {'n'}, desc = 'open snacks terminal' },

@@ -11,9 +11,9 @@ return {
       require('which-key').setup({})
       local leaderCmsg
       if nixCats('AI') then
-        leaderCmsg = "[C]ode (and [C]ody)"
+        leaderCmsg = "[c]olor [p]icker (and [c]lippy)"
       else
-        leaderCmsg = "[C]ode"
+        leaderCmsg = "[c]olor [p]icker"
       end
       require('which-key').add {
         { "<leader><leader>", group = "buffer commands" },
