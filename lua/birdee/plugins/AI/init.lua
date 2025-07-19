@@ -35,7 +35,7 @@ return {
           end,
         },
         gemini = {
-          enable = isNixCats and bitwardenAuths.gemini and (nixCats("AI.minuet") or nixCats("AI.aider")) or false,
+          enable = isNixCats and bitwardenAuths.gemini and (nixCats("AI.minuet") or nixCats("AI.aider") or nixCats("AI.opencode")) or false,
           cache = true,
           bw_id = bitwardenAuths.gemini,
           localpath = (os.getenv("HOME") or "~") .. "/.secrets/gemini",
