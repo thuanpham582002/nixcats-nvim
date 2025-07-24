@@ -55,6 +55,7 @@ inputs: let
     SQL = true;
     C = true;
     fennel = true;
+    zig = true;
   };
   birdeevim_extra = { pkgs, ... }@misc: {
     colorscheme = "onedark";

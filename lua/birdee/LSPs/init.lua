@@ -101,6 +101,13 @@ return {
     }
   },
   {
+    "zls",
+    for_cat = 'zig',
+    lsp = {
+      filetypes = { 'zig', 'zir' },
+    }
+  },
+  {
     "gradle_ls",
     enabled = nixCats('java') or nixCats('kotlin') or false,
     lsp = {

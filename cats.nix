@@ -85,6 +85,11 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
     java = [
       jdt-language-server
     ];
+    zig = [
+      zls
+      zig
+      zig-shell-completions
+    ];
     kotlin = [
       # kotlin-lsp
       kotlin-language-server
