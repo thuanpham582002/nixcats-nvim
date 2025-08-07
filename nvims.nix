@@ -8,6 +8,15 @@ inputs: let
     useBinaryWrapper = true;
     hosts.node.enable = true;
     hosts.python3.enable = true;
+    hosts.python3.path = depfn: {
+      value = ((pkgs.python3.withPackages (p: depfn p ++ [p.pynvim])).overrideAttrs {
+        doCheck = false;
+        doInstallCheck = false;
+        pytestCheckPhase = "";
+        installCheckPhase = "";
+      }).interpreter;
+      args = [ "--unset" "PYTHONPATH" ];
+    };
     hosts.perl.enable = false;
     hosts.ruby.enable = true;
     hosts.ruby.path = let

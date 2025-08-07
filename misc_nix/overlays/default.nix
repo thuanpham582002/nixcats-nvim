@@ -21,6 +21,7 @@ inputs: let
     # locked = import ./locked.nix;
     # internalvim = import ./build;
     # lua-git2 = import ./lua-git2.nix;
+    opencode = import ./opencode.nix;
 
   };
   extra = [

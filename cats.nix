@@ -26,12 +26,32 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
   python3.libraries = {
     python = (py:[
       # NOTE: check disabled globally for nvim because they take SO LONG OMG
-      py.debugpy
-      py.pylsp-mypy
-      py.pyls-isort
-      py.python-lsp-server
+      (py.debugpy.overrideAttrs {
+        doCheck = false;
+        doInstallCheck = false;
+        pytestCheckPhase = "";
+        installCheckPhase = "";
+      })
+      (py.pylsp-mypy.overrideAttrs {
+        doCheck = false;
+        doInstallCheck = false;
+        pytestCheckPhase = "";
+        installCheckPhase = "";
+      })
+      (py.pyls-isort.overrideAttrs {
+        doCheck = false;
+        doInstallCheck = false;
+        pytestCheckPhase = "";
+        installCheckPhase = "";
+      })
+      # py.python-lsp-server
       # py.python-lsp-black
-      py.pytest
+      (py.pytest.overrideAttrs {
+        doCheck = false;
+        doInstallCheck = false;
+        pytestCheckPhase = "";
+        installCheckPhase = "";
+      })
       # py.pylint
       # python-lsp-ruff
       # pyls-flake8
@@ -157,9 +177,24 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
     ];
     python = with python311Packages; [
       # jedi-language-server
-      python-lsp-server
-      debugpy
-      pytest
+      (python-lsp-server.overrideAttrs {
+        doCheck = false;
+        doInstallCheck = false;
+        pytestCheckPhase = "";
+        installCheckPhase = "";
+      })
+      (debugpy.overrideAttrs {
+        doCheck = false;
+        doInstallCheck = false;
+        pytestCheckPhase = "";
+        installCheckPhase = "";
+      })
+      (pytest.overrideAttrs {
+        doCheck = false;
+        doInstallCheck = false;
+        pytestCheckPhase = "";
+        installCheckPhase = "";
+      })
       # pylint
       # python-lsp-ruff
       # pyls-flake8
