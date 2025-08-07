@@ -23,6 +23,9 @@ importName: inputs: final: prev: let
               "models": {
                 "gpt-oss:20b": {
                   "name": "gpt-oss:20b"
+                },
+                "qwen3:14b": {
+                  "name": "qwen3:14b"
                 }
               }
             }
