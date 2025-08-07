@@ -1,6 +1,7 @@
 return {
   'opencode-nvim',
   for_cat = { cat = 'AI.opencode', default = false },
+  on_plugin = { "blink.cmp" },
   keys = {
     -- opencode.nvim exposes a general, flexible API — customize it to your workflow!
     -- But here are some examples to get you started :)
@@ -18,6 +19,7 @@ return {
   after = function()
     ---@type opencode.Config
     require('opencode').setup {
+      -- auto_register_cmp_sources = { "opencode", "buffer" },
       auto_reload = false,  -- Automatically reload buffers edited by opencode
       auto_focus = false,   -- Focus the opencode window after prompting 
       command = "opencode", -- Command to launch opencode

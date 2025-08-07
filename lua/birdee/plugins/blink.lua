@@ -101,6 +101,9 @@ return {
                     if ctx.item.source_id == 'minuet' or ctx.item.source_id == 'windsurf' then
                       return "AI"
                     end
+                    if ctx.item.source_id == 'opencode' then
+                      return "opencode"
+                    end
                     return ctx.kind
                   end,
                   highlight = function(ctx) return ctx.kind_hl end,
@@ -138,7 +141,8 @@ return {
           default = require("birdee.utils").insert_many(
             { 'lsp', 'path', 'snippets', 'buffer', 'omni' },
             nixCats('AI.minuet') and 'minuet' or nil,
-            nixCats('AI.windsurf') and 'windsurf' or nil
+            nixCats('AI.windsurf') and 'windsurf' or nil,
+            nixCats('AI.opencode') and 'opencode' or nil
           ),
           per_filetype = {
             codecompanion = { "codecompanion" },
@@ -153,6 +157,13 @@ return {
             snippets = {
               score_offset = 40,
             },
+            opencode = nixCats('AI.opencode') and {
+              name = 'opencode',
+              module = 'opencode.cmp.blink',
+              async = true,
+              timeout_ms = 3000, -- minuet.config.request_timeout * 1000,
+              score_offset = 50,
+            } or nil,
             minuet = nixCats('AI.minuet') and {
               name = 'minuet',
               module = 'minuet.blink',
