@@ -27,6 +27,9 @@ importName: inputs: final: prev: let
                 "qwen3:14b": {
                   "name": "qwen3:14b"
                 }
+                "qwen3:8b": {
+                  "name": "qwen3:8b"
+                }
               }
             }
           }
