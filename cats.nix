@@ -155,6 +155,12 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
     lua = [
       lua-language-server
     ];
+    typst = [
+      typst
+      typst-live
+      tinymist
+      websocat
+    ];
     nix = [
       nix-doc
       nil
@@ -283,6 +289,9 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
     ];
     java = [
       nvim-jdtls
+    ];
+    typst = [
+      typst-preview-nvim
     ];
     neonixdev = [
       lazydev-nvim

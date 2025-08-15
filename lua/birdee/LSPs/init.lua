@@ -94,6 +94,13 @@ return {
     }
   },
   {
+    "tinymist",
+    for_cat = 'typst',
+    lsp = {
+      filetypes = { 'typst', },
+    }
+  },
+  {
     "jdtls",
     for_cat = 'java',
     lsp = {
