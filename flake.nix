@@ -16,7 +16,7 @@
     # nixpkgsLocked.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     nixCats.url = "github:BirdeeHub/nixCats-nvim";
     # nixCats.url = "git+file:/home/birdee/Projects/nixCats-nvim";
-    # neovim-src = { url = "github:BirdeeHub/neovim/BRANCHNAME"; flake = false; };
+    # neovim-src = { url = "github:BirdeeHub/neovim/pack_add_spec_passthru"; flake = false; };
     neovim-nightly-overlay = {
       url = "github:nix-community/neovim-nightly-overlay";
       # inputs.neovim-src.follows = "neovim-src";
