@@ -29,7 +29,7 @@ return {
           signatureHelp = { enabled = true },
           diagnostics = {
             globals = { "nixCats", "vim", "make_test" },
-            disable = { 'missing-fields' },
+            disable = { },
           },
           workspace = {
             checkThirdParty = false,
