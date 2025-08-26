@@ -211,4 +211,258 @@ return {
       },
     },
   },
+
+  -- Obsidian.nvim - Note management system (TEMPORARILY DISABLED - Build issues)
+  --[[ {
+    "obsidian.nvim",
+    for_cat = "markdown",
+    ft = "markdown",
+    cmd = {
+      "ObsidianOpen",
+      "ObsidianNew", 
+      "ObsidianQuickSwitch",
+      "ObsidianFollowLink",
+      "ObsidianBacklinks",
+      "ObsidianTags",
+      "ObsidianToday",
+      "ObsidianYesterday",
+      "ObsidianTomorrow",
+      "ObsidianDailies",
+      "ObsidianTemplate",
+      "ObsidianSearch",
+      "ObsidianLink",
+      "ObsidianLinkNew",
+      "ObsidianLinks",
+      "ObsidianExtractNote",
+      "ObsidianWorkspace",
+      "ObsidianPasteImg",
+      "ObsidianRename",
+      "ObsidianToggleCheckbox",
+      "ObsidianNewFromTemplate",
+    },
+    keys = {
+      { "<leader>oo", "<cmd>ObsidianQuickSwitch<cr>", desc = "🔍 Open/Switch Note", ft = "markdown" },
+      { "<leader>on", "<cmd>ObsidianNew<cr>", desc = "📝 New Note", ft = "markdown" },
+      { "<leader>oN", "<cmd>ObsidianNewFromTemplate<cr>", desc = "📋 New Note from Template", ft = "markdown" },
+      { "<leader>os", "<cmd>ObsidianSearch<cr>", desc = "🔎 Search Notes", ft = "markdown" },
+      { "<leader>oS", "<cmd>ObsidianLinks<cr>", desc = "📎 Show All Links", ft = "markdown" },
+      { "<leader>ot", "<cmd>ObsidianToday<cr>", desc = "📅 Today's Note", ft = "markdown" },
+      { "<leader>oy", "<cmd>ObsidianYesterday<cr>", desc = "⏮️ Yesterday's Note", ft = "markdown" },
+      { "<leader>oT", "<cmd>ObsidianTomorrow<cr>", desc = "⏭️ Tomorrow's Note", ft = "markdown" },
+      { "<leader>od", "<cmd>ObsidianDailies<cr>", desc = "📆 Daily Notes", ft = "markdown" },
+      { "<leader>ol", "<cmd>ObsidianLink<cr>", desc = "🔗 Insert Link", mode = {"n", "v"}, ft = "markdown" },
+      { "<leader>oL", "<cmd>ObsidianLinkNew<cr>", desc = "📝 Link to New Note", mode = {"n", "v"}, ft = "markdown" },
+      { "<leader>ob", "<cmd>ObsidianBacklinks<cr>", desc = "🔗 Show Backlinks", ft = "markdown" },
+      { "<leader>og", "<cmd>ObsidianTags<cr>", desc = "🏷️ Browse Tags", ft = "markdown" },
+      { "<leader>oT", "<cmd>ObsidianTemplate<cr>", desc = "📄 Insert Template", ft = "markdown" },
+      { "<leader>or", "<cmd>ObsidianRename<cr>", desc = "✏️ Rename Note", ft = "markdown" },
+      { "<leader>ox", "<cmd>ObsidianToggleCheckbox<cr>", desc = "☑️ Toggle Checkbox", ft = "markdown" },
+      { "<leader>oe", "<cmd>ObsidianExtractNote<cr>", desc = "📤 Extract to New Note", mode = "v", ft = "markdown" },
+      { "<leader>op", "<cmd>ObsidianPasteImg<cr>", desc = "🖼️ Paste Image", ft = "markdown" },
+      { "<leader>ow", "<cmd>ObsidianWorkspace<cr>", desc = "🏢 Switch Workspace", ft = "markdown" },
+      { "gf", "<cmd>ObsidianFollowLink<cr>", desc = "➡️ Follow Link", ft = "markdown" },
+      { "<bs>", "<cmd>ObsidianBacklinks<cr>", desc = "⬅️ Show Backlinks", ft = "markdown" },
+    },
+    after = function()
+      require("obsidian").setup({
+        workspaces = {
+          {
+            name = "personal",
+            path = vim.fn.expand("~/Documents/Obsidian/Personal"),
+          },
+          {
+            name = "work", 
+            path = vim.fn.expand("~/Documents/Obsidian/Work"),
+          },
+          {
+            name = "notes",
+            path = vim.fn.expand("~/Documents/Obsidian/Notes"),
+          },
+          {
+            name = "vault",
+            path = vim.fn.expand("~/vault"), -- Generic vault location
+          },
+        },
+
+        -- Completion configuration for blink.cmp
+        completion = {
+          nvim_cmp = false, -- Disable nvim-cmp since we use blink.cmp
+          min_chars = 1,
+        },
+
+        -- Picker configuration - use snacks.pick
+        picker = {
+          name = "snacks.pick",
+          note_mappings = {
+            new = "<C-n>",
+            insert_link = "<C-l>",
+          },
+          tag_mappings = {
+            tag_note = "<C-t>",
+            insert_tag = "<C-g>",
+          },
+        },
+
+        -- Daily notes configuration
+        daily_notes = {
+          folder = "dailies",
+          date_format = "%Y-%m-%d",
+          alias_format = "%B %-d, %Y",
+          template = "daily-template.md",
+        },
+
+        -- Templates configuration  
+        templates = {
+          subdir = "templates",
+          date_format = "%Y-%m-%d",
+          time_format = "%H:%M",
+          substitutions = {
+            yesterday = function()
+              return os.date("%Y-%m-%d", os.time() - 86400)
+            end,
+            today = function()
+              return os.date("%Y-%m-%d")
+            end,
+            tomorrow = function()
+              return os.date("%Y-%m-%d", os.time() + 86400)
+            end,
+            time24 = function()
+              return os.date("%H:%M:%S")
+            end,
+            datetime = function()
+              return os.date("%Y-%m-%d %H:%M:%S")
+            end,
+            year = function()
+              return os.date("%Y")
+            end,
+            month = function()
+              return os.date("%B")
+            end,
+            week = function()
+              return os.date("%U")
+            end,
+            isoweek = function()
+              return os.date("%V")
+            end,
+            title = function()
+              return vim.fn.input("Title: ")
+            end,
+          },
+        },
+
+        -- Note ID generation
+        note_id_func = function(title)
+          -- Create note IDs from title
+          if title ~= nil then
+            return title:gsub(" ", "-"):gsub("[^A-Za-z0-9-]", ""):lower()
+          else
+            -- If no title, use timestamp
+            return tostring(os.time())
+          end
+        end,
+
+        -- Wiki links configuration
+        wiki_link_func = "use_alias_only",
+
+        -- Markdown link configuration
+        markdown_link_func = function(opts)
+          return string.format("[%s](%s)", opts.label, opts.path)
+        end,
+
+        -- Note frontmatter configuration
+        note_frontmatter_func = function(note)
+          local out = { id = note.id, aliases = note.aliases, tags = note.tags }
+          
+          if note.metadata ~= nil and not vim.tbl_isempty(note.metadata) then
+            for k, v in pairs(note.metadata) do
+              out[k] = v
+            end
+          end
+
+          return out
+        end,
+
+        -- Checkbox configuration
+        checkbox = {
+          order = { " ", "x", ">", "~", "!" },
+          char = {
+            [" "] = "󰄱",
+            ["x"] = "",
+            [">"] = "",
+            ["~"] = "󰰱",
+            ["!"] = "",
+          },
+          color = {
+            [" "] = "#f78c6c",
+            ["x"] = "#89ddff",
+            [">"] = "#f78c6c",
+            ["~"] = "#ff5370",
+            ["!"] = "#d73128",
+          },
+        },
+
+        -- UI settings
+        ui = {
+          enable = true,
+          update_debounce = 200,
+          bullets = { char = "•", hl_group = "ObsidianBullet" },
+          external_link_icon = { char = "", hl_group = "ObsidianExtLinkIcon" },
+          reference_text = { hl_group = "ObsidianRefText" },
+          highlight_text = { hl_group = "ObsidianHighlightText" },
+          tags = { hl_group = "ObsidianTag" },
+          block_ids = { hl_group = "ObsidianBlockID" },
+          hl_groups = {
+            ObsidianTodo = { bold = true, fg = "#f78c6c" },
+            ObsidianDone = { bold = true, fg = "#89ddff" },
+            ObsidianRightArrow = { bold = true, fg = "#f78c6c" },
+            ObsidianTilde = { bold = true, fg = "#ff5370" },
+            ObsidianImportant = { bold = true, fg = "#d73128" },
+            ObsidianBullet = { bold = true, fg = "#89ddff" },
+            ObsidianRefText = { underline = true, fg = "#c792ea" },
+            ObsidianExtLinkIcon = { fg = "#c792ea" },
+            ObsidianTag = { italic = true, fg = "#89ddff" },
+            ObsidianBlockID = { italic = true, fg = "#89ddff" },
+            ObsidianHighlightText = { bg = "#75662e" },
+          },
+        },
+
+        -- Image handling
+        attachments = {
+          img_folder = "assets/imgs",
+          img_text_func = function(client, path)
+            path = client:vault_relative_path(path) or path
+            return string.format("![%s](%s)", path.name, path)
+          end,
+        },
+
+        -- Search configuration
+        finder = "snacks.nvim",
+        finder_mappings = {
+          new = "<C-n>",
+          insert_link = "<C-l>",
+        },
+
+        -- Sorting
+        sort_by = "modified",
+        sort_reversed = true,
+
+        -- Open strategy
+        open_notes_in = "current",
+
+        -- Follow URL configuration  
+        follow_url_func = function(url)
+          vim.fn.jobstart({"open", url})
+        end,
+      })
+      
+      -- Auto-conceal settings for markdown files
+      vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+        pattern = "*.md",
+        callback = function()
+          vim.opt_local.conceallevel = 2
+          vim.opt_local.concealcursor = "nc" -- Visual mode navigation friendly
+        end,
+      })
+    end,
+  }, ]]
 }

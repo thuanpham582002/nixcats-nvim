@@ -11,8 +11,8 @@
 ├─────────────────────────────────────────────┤
 │ ✅ Completed:    25/59 (42%)               │
 │ 🔄 In Progress:   0/59 (0%)                │
-│ 📋 Planned:      34/59 (58%)               │
-│ ❌ Blocked:       0/59 (0%)                │
+│ 🚧 Blocked:       1/59 (2%)                │
+│ 📋 Planned:      33/59 (56%)               │
 └─────────────────────────────────────────────┘
 ```
 
@@ -20,6 +20,9 @@
 - **🔴 HIGH**: Critical functionality, needed immediately
 - **🟡 MEDIUM**: Useful features, nice to have
 - **🟢 LOW**: Enhancement features, can wait
+
+## 🚧 Blocked Issues
+- **🚧 obsidian.nvim**: Build fails due to missing fzf dependency in nixpkgs. The plugin requires `obsidian.pickers._fzf` module which is not properly packaged. Configuration is ready but plugin is temporarily disabled.
 
 ## 📋 Migration Categories
 
@@ -29,9 +32,9 @@
 | [ ] | 🔴 HIGH | `copilot.lua` | `vimPlugins.copilot-lua` | `AI.copilot` | GitHub Copilot integration |
 | [ ] | 🔴 HIGH | `blink-copilot` | `vimPlugins.blink-copilot` | `AI.copilot` | Blink.cmp integration for Copilot |
 | ✅ | 🔴 HIGH | `claudecode.nvim` | Custom build | `AI.claudecode` | Claude Code integration - IMPLEMENTED |
-| [ ] | 🔴 HIGH | `obsidian.nvim` | `vimPlugins.obsidian-nvim` | `markdown` | Note management system |
+| 🚧 | 🔴 HIGH | `obsidian.nvim` | `vimPlugins.obsidian-nvim` | `markdown` | Note management system - BLOCKED (build fails) |
 
-**Progress**: 1/4 completed
+**Progress**: 1/4 completed (1 blocked)
 
 ---
 

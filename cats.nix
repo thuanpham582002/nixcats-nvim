@@ -347,6 +347,7 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
     markdown = [
       render-markdown-nvim
       markdown-preview-nvim
+      # obsidian-nvim  # TEMPORARILY DISABLED - Build fails due to missing fzf dependency
     ];
     general = with pkgs.neovimPlugins; {
       blink = with pkgs.vimPlugins; [
