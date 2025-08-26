@@ -304,39 +304,63 @@ categories = {
 - Match language name: `python`, `rust`, `markdown`
 - Loading: `ft = "language"` or related events
 
-### Migration Workflow Template
+### File Organization Pattern (✅ VERIFIED)
 
-Based on successful noice.nvim migration:
+**nixCats + LZE File Structure Pattern**:
 
-**Step 1: Add to cats.nix**
-```nix
-optionalPlugins.categoryName = [ plugin-name ];
-```
-
-**Step 2: Configure inline in init.lua**  
+**Step 1: Create separate plugin file**
 ```lua
-{
-  "plugin-name",
-  for_cat = "categoryName",
-  on_require = { "plugin-name" },  -- For utilities
-  -- OR
-  event = "DeferredUIEnter",       -- For UI plugins
-  after = function()
-    require("plugin-name").setup({ ... })
-  end,
+-- lua/birdee/plugins/ui.lua
+local MP = ...  -- ✅ REQUIRED: Receive MP parameter from parent
+
+return {
+  -- Plugin specs here
+  {
+    "noice.nvim",
+    for_cat = "other",
+    on_require = { "noice" },
+    after = function()
+      require("noice").setup({ ... })
+    end,
+    keys = { ... },
+  },
 }
 ```
 
-**Step 3: Test loading**
-```bash
-nix build '.#birdeevim' --show-trace
-nix run '.#birdeevim' -- --headless -c ":lua print(pcall(require, 'plugin-name')); quit"
+**Step 2: Import in main plugins file**
+```lua
+-- lua/birdee/plugins/init.lua  
+return {
+  { import = MP:relpath "ui" },  -- ✅ CORRECT: Single module import
+  -- Other imports...
+}
 ```
 
-**Step 4: Test functionality** 
+**Step 3: Git add new files (CRITICAL)**
 ```bash
-nix run '.#birdeevim' -- --headless -c ":lua require('plugin-name').setup({}); print('✅ setup ok'); quit"  
+git add lua/birdee/plugins/ui.lua  # ✅ REQUIRED: nixCats only copies git files
 ```
+
+**Step 4: Test loading**
+```bash
+nix build '.#birdeevim' --show-trace
+nix run '.#birdeevim' -- -c ":lua if pcall(require, 'noice') then print('✅ Plugin loaded') else print('❌ Failed') end; vim.cmd('quit')"
+```
+
+### nixCats + LZE Core Rules
+
+**✅ CORRECT Patterns**:
+- File must be in git (`git add` required)
+- Use `local MP = ...` to receive parameter
+- Return table of plugin specs
+- Import with `{ import = MP:relpath "filename" }`
+- LZE imports single modules, not directories
+
+**❌ WRONG Patterns (REMOVED)**:
+- `{ import = MP:relpath "ui.index" }` - Incorrect path format
+- Creating `/ui/index.lua` structure - LZE doesn't import directories
+- Missing `git add` step - Files won't be in build
+- Using lazy.nvim patterns - Different loading system
 
 ### Troubleshooting Common Issues
 
