@@ -44,6 +44,7 @@ inputs: let
   birdeevim_categories = { pkgs, ... }@misc: {
     AI.windsurf = true;
     AI.opencode = true;
+    AI.claudecode = true;
     vimagePreview = true;
     lspDebugMode = false;
     other = true;
@@ -68,7 +69,7 @@ inputs: let
     typst = true;
   };
   birdeevim_extra = { pkgs, ... }@misc: {
-    colorscheme = "onedark";
+    colorscheme = "tokyonight";
     javaExtras = {
       java-test = pkgs.vscode-extensions.vscjava.vscode-java-test;
       java-debug-adapter = pkgs.vscode-extensions.vscjava.vscode-java-debug;

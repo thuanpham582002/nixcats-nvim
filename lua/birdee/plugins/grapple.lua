@@ -10,9 +10,7 @@ return {
     -- colorscheme = "",
     after = function (_)
       local function grapple_default_select(path)
-        if vim.startswith(path, "oil://") then
-          require("oil").open(path)
-        elseif vim.startswith(path, "https://") then
+        if vim.startswith(path, "https://") then
           vim.ui.open(path)
         elseif vim.startswith(path, "tmux://") then
           -- remove tmux:// prefix

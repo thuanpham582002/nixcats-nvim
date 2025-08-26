@@ -96,7 +96,7 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
     };
     AI = {
       default = [
-        bitwarden-cli
+        # bitwarden-cli  # Disabled due to broken package
       ];
       opencode = [
         opencode
@@ -210,7 +210,7 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
     ];
     C = [
       clang-tools
-      valgrind
+      # valgrind  # Disabled due to broken package on macOS
       cmake-language-server
       cpplint
       cmake
@@ -231,7 +231,6 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
     general = [
       pkgs.neovimPlugins.lze
       pkgs.neovimPlugins.lzextras
-      oil-nvim
       vim-repeat
       pkgs.neovimPlugins.nvim-luaref
       nvim-nio
@@ -309,6 +308,22 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       windsurf = [
         windsurf-nvim
       ];
+      claudecode = [
+        (pkgs.vimUtils.buildVimPlugin {
+          pname = "claudecode.nvim";
+          version = "2024-12-19";
+          src = pkgs.fetchFromGitHub {
+            owner = "coder";
+            repo = "claudecode.nvim";
+            rev = "main";
+            hash = "sha256-b4jCKIqowkVuWhI9jxthluZISBOnIc8eOIgkw5++HRY=";
+          };
+          meta = {
+            description = "Claude Code integration for Neovim";
+            homepage = "https://github.com/coder/claudecode.nvim";
+          };
+        })
+      ];
     };
     debug = [
       nvim-dap
@@ -324,6 +339,10 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       vim-startuptime
       pkgs.neovimPlugins.hlargs
       pkgs.neovimPlugins.visual-whitespace
+      noice-nvim
+      edgy-nvim
+      smart-splits-nvim
+      persistence-nvim
     ];
     markdown = [
       render-markdown-nvim
@@ -342,6 +361,8 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
         nvim-treesitter.withAllGrammars
         vim-rhubarb
         vim-fugitive
+        diffview-nvim
+        lspsaga-nvim
         pkgs.neovimPlugins.nvim-lspconfig
         lualine-lsp-progress
         lualine-nvim

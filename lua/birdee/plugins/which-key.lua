@@ -18,6 +18,7 @@ return {
       require('which-key').add {
         { "<leader><leader>", group = "buffer commands" },
         { "<leader><leader>_", hidden = true },
+        { "<leader>E", desc = "File Explorer (Snacks)" },
         { "<leader>F", group = "[F]ormat" },
         { "<leader>F_", hidden = true },
         { "<leader>c", group = leaderCmsg },
@@ -40,6 +41,8 @@ return {
         { "<leader>w_", hidden = true },
         { "<leader>t", group = "[T]oggle" },
         { "<leader>t_", hidden = true },
+        { "<leader>a", group = "[A]I Assistant" },
+        { "<leader>a_", hidden = true },
       }
     end,
   },

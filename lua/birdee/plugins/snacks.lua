@@ -24,6 +24,7 @@ return {
     load = function()end,
     keys = {
       {'<c-\\>', function() Snacks.terminal() end, mode = {'n'}, desc = 'open snacks terminal' },
+      {"<leader>E", function() Snacks.explorer() end, mode = {"n"}, desc = 'File Explorer (Snacks)' },
       {"<leader>_", function() Snacks.lazygit.open() end, mode = {"n"}, desc = 'LazyGit' },
       {"<leader>gc", function() Snacks.lazygit.log() end, mode = {"n"}, desc = 'Lazy[G]it [C]ommit log' },
       {"<leader>gl", function() Snacks.gitbrowse.open() end, mode = {"n"}, desc = '[G]oto git [L]ink' },
@@ -82,33 +83,96 @@ return {
       -- for some reason, they are still required
       -- when you do { enabled = false }
       Snacks.setup({
-        -- dashboard = {},
-        -- debug = {},
-        -- bufdelete = {},
-        -- dim = {},
-        -- explorer = {},
-        -- quickfile = {},
-        -- bigfile = {},
-        -- input = {},
-        -- scratch = {},
-        -- layout = {},
-        -- zen = {},
-        -- scroll = {},
-        -- notifier = {},
-        -- notify = {},
-        -- win = {},
-        -- picker = {},
-        -- profiler = {},
-        -- toggle = {},
-        -- rename = {},
-        -- words = {},
-
-        picker = {},
-        gitbrowse = {},
-        lazygit = {},
-        git = {},
-        terminal = {},
-        scope = {},
+        -- dashboard = { enabled = false }, -- Disabled to avoid lazy.stats conflicts
+        debug = { enabled = true },
+        bufdelete = { enabled = true },
+        dim = { enabled = true },
+        explorer = {
+          enabled = true,
+          show_hidden = false,
+          follow_symlinks = true,
+          icons = { enabled = true },
+          keys = {
+            close = "q",
+            edit = "<cr>",
+            split = "s", 
+            vsplit = "v",
+            tab = "t",
+            parent = "h",
+            expand = "l",
+            toggle_hidden = ".",
+            toggle_gitignore = "g",
+            refresh = "R",
+            help = "?",
+          },
+        },
+        quickfile = { enabled = true },
+        bigfile = { enabled = true },
+        input = { enabled = true },
+        scratch = { enabled = true },
+        layout = { enabled = true },
+        zen = { enabled = true },
+        scroll = { 
+          enabled = true,
+          animate = {
+            duration = { step = 15, total = 250 },
+            easing = "linear",
+          },
+        },
+        notifier = { 
+          enabled = true,
+          timeout = 3000,
+        },
+        notify = { enabled = true },
+        win = { enabled = true },
+        picker = {
+          enabled = true,
+          win = {
+            input = {
+              keys = {
+                -- Smart navigation keys
+                ["<C-h>"] = function()
+                  if vim.env.TMUX then
+                    vim.fn.system("tmux select-pane -L")
+                  end
+                end,
+                ["<C-j>"] = "move_down",
+                ["<C-k>"] = "move_up", 
+                ["<C-l>"] = function()
+                  if vim.env.TMUX then
+                    vim.fn.system("tmux select-pane -R")
+                  end
+                end,
+              },
+            },
+          },
+        },
+        profiler = { enabled = true },
+        toggle = { enabled = true },
+        rename = { enabled = true },
+        words = { 
+          enabled = true,
+          debounce = 100,
+        },
+        gitbrowse = { enabled = true },
+        lazygit = { 
+          enabled = true,
+          configure = true,
+        },
+        git = { enabled = true },
+        terminal = {
+          enabled = true,
+          win = {
+            style = "terminal",
+            keys = {
+              nav_h = "<C-h>",
+              nav_j = "<C-j>", 
+              nav_k = "<C-k>",
+              nav_l = "<C-l>",
+            },
+          },
+        },
+        scope = { enabled = true },
         indent = {
           scope = {
             hl = 'Hlargs',
