@@ -78,10 +78,6 @@ return {
       { "<leader>ws", pickpick("lsp_workspace_symbols"), desc = "LSP Workspace Symbols" },
     },
     after = function(_)
-      -- NOTE: It is faster when you comment them out
-      -- rather than disabling them.
-      -- for some reason, they are still required
-      -- when you do { enabled = false }
       Snacks.setup({
         -- dashboard = { enabled = false }, -- Disabled to avoid lazy.stats conflicts
         debug = { enabled = true },
@@ -127,6 +123,107 @@ return {
         win = { enabled = true },
         picker = {
           enabled = true,
+          win = {
+            input = {
+              keys = {
+                -- Override Alt+hjkl for smart-splits resize in input window
+                ["<M-h>"] = function()
+                  require('smart-splits').resize_left()
+                end,
+                ["<M-j>"] = function()
+                  require('smart-splits').resize_down()
+                end,
+                ["<M-k>"] = function()
+                  require('smart-splits').resize_up()
+                end,
+                ["<M-l>"] = function()
+                  require('smart-splits').resize_right()
+                end,
+              },
+            },
+            list = {
+              keys = {
+                -- Smart passthrough: try internal navigation first, then smart-splits
+                ["<C-h>"] = function()
+                  -- Workaround for smart-splits tmux issue #342
+                  if vim.env.TMUX then
+                    vim.fn.system("tmux select-pane -L")
+                  else
+                    require('smart-splits').move_cursor_left()
+                  end
+                end,
+                
+                ["<C-j>"] = function()
+                  local picker = require("snacks.picker").current
+                  if not picker then
+                    require('smart-splits').move_cursor_down()
+                    return
+                  end
+                  
+                  local list = picker.list
+                  if list and list:can_move(1) then
+                    vim.api.nvim_input('<Down>')
+                  else
+                    require('smart-splits').move_cursor_down()
+                  end
+                end,
+                
+                ["<C-k>"] = function()
+                  local picker = require("snacks.picker").current
+                  if not picker then
+                    require('smart-splits').move_cursor_up()
+                    return
+                  end
+                  
+                  local list = picker.list  
+                  if list and list:can_move(-1) then
+                    vim.api.nvim_input('<Up>')
+                  else
+                    require('smart-splits').move_cursor_up()
+                  end
+                end,
+                
+                ["<C-l>"] = function()
+                  local picker = require("snacks.picker").current
+                  if not picker then
+                    vim.notify("🔍 No picker - using smart-splits", vim.log.levels.INFO)
+                    require('smart-splits').move_cursor_right()
+                    return
+                  end
+                  
+                  local list = picker.list
+                  if list and list.cursor then
+                    local current_item = list:get_cursor_item()
+                    vim.notify("📂 Current item: " .. vim.inspect(current_item), vim.log.levels.INFO)
+                    if current_item and current_item.kind == "dir" then
+                      vim.notify("📁 Entering directory", vim.log.levels.INFO)
+                      vim.api.nvim_input('<CR>')
+                    else
+                      vim.notify("➡️ Moving right with smart-splits", vim.log.levels.INFO)
+                      require('smart-splits').move_cursor_right()
+                    end
+                  else
+                    vim.notify("🚫 No list/cursor - fallback smart-splits", vim.log.levels.INFO)
+                    require('smart-splits').move_cursor_right()
+                  end
+                end,
+
+                -- Override Alt+hjkl for smart-splits resize
+                ["<M-h>"] = function()
+                  require('smart-splits').resize_left()
+                end,
+                ["<M-j>"] = function()
+                  require('smart-splits').resize_down()
+                end,
+                ["<M-k>"] = function()
+                  require('smart-splits').resize_up()
+                end,
+                ["<M-l>"] = function()
+                  require('smart-splits').resize_right()
+                end,
+              },
+            },
+          },
           win = {
             input = {
               keys = {

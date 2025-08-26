@@ -20,3 +20,6 @@ require('lze').load {
     { import = MP:relpath "format" },
     { import = MP:relpath "lint" },
 }
+
+-- Load snacks keymaps after plugins
+require('birdee.snacks-keymaps')
