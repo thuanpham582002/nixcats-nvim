@@ -74,6 +74,11 @@ return {
       { "gy", pickpick("lsp_type_definitions"), desc = "Goto T[y]pe Definition" },
       { "<leader>ds", pickpick("lsp_symbols"), desc = "LSP Symbols" },
       { "<leader>ws", pickpick("lsp_workspace_symbols"), desc = "LSP Workspace Symbols" },
+      
+      -- Make snacks picker default for common operations  
+      { "<C-p>", pickpick("files"), desc = "Find Files (Ctrl+P)" },
+      { "<C-f>", pickpick("grep"), desc = "Live Grep (Ctrl+F)" },
+      { "<C-b>", pickpick("buffers"), desc = "Switch Buffer (Ctrl+B)" },
     },
     after = function(_)
       vim.notify("🔧 Snacks after function called!", vim.log.levels.WARN)
@@ -348,6 +353,57 @@ return {
         },
       })
       
+      -- Make snacks picker the default for vim.ui.select operations
+      vim.notify("🎯 Setting snacks picker as default picker...", vim.log.levels.INFO)
+      
+      -- Override vim.ui.select to use snacks picker
+      vim.ui.select = function(items, opts, on_choice)
+        opts = opts or {}
+        local snacks_opts = {
+          prompt = opts.prompt or "Select:",
+          format_item = opts.format_item,
+        }
+        
+        -- Convert items to snacks picker format
+        local snacks_items = {}
+        for i, item in ipairs(items) do
+          table.insert(snacks_items, {
+            text = opts.format_item and opts.format_item(item) or tostring(item),
+            item = item,
+            idx = i,
+          })
+        end
+        
+        -- Use snacks picker
+        Snacks.picker.pick({
+          items = snacks_items,
+          prompt = snacks_opts.prompt,
+          win = { style = "select" },
+          format = function(item)
+            return item.text
+          end,
+          on_submit = function(item)
+            if item then
+              on_choice(item.item, item.idx)
+            else
+              on_choice(nil, nil)
+            end
+          end,
+        })
+      end
+      
+      -- Override vim.ui.input to use snacks input (optional)
+      vim.ui.input = function(opts, on_confirm)
+        opts = opts or {}
+        Snacks.input({
+          prompt = opts.prompt or "Input:",
+          default = opts.default,
+          completion = opts.completion,
+        }, on_confirm)
+      end
+      
+      vim.notify("✅ Snacks picker set as default UI!", vim.log.levels.INFO)
+
       -- Set up simple global navigation (snacks picker has its own config above)
       vim.notify("🗺️ Setting up global smart-splits navigation...", vim.log.levels.INFO)
       

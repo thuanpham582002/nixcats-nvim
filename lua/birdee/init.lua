@@ -21,5 +21,27 @@ require('lze').load {
     { import = MP:relpath "lint" },
 }
 
+-- Override netrw to use snacks explorer when opening directories
+vim.api.nvim_create_autocmd("VimEnter", {
+  callback = function()
+    -- Check if we opened a directory
+    local arg = vim.fn.argv(0)
+    if arg and vim.fn.isdirectory(arg) == 1 then
+      -- Close the netrw buffer
+      vim.cmd('bdelete')
+      -- Open snacks explorer instead
+      vim.schedule(function()
+        require('snacks').explorer({
+          win = { style = "explorer" }
+        })
+      end)
+    end
+  end,
+})
+
+-- Disable netrw to prevent conflicts
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
 -- Load snacks keymaps after plugins
 -- require('birdee.snacks-keymaps') -- Removed - keymaps now managed in snacks.lua
