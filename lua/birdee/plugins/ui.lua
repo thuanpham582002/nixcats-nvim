@@ -139,8 +139,10 @@ return {
   {
     "smart-splits.nvim",
     for_cat = "other",
-    on_require = { "smart-splits" },
+    -- Force load immediately for tmux integration (no lazy loading)
     after = function()
+      vim.notify("🚀 Loading smart-splits plugin...", vim.log.levels.INFO)
+      
       require('smart-splits').setup({
         -- Enable tmux integration for seamless navigation
         tmux_integration = true,
@@ -197,6 +199,8 @@ return {
         -- Log level for debugging
         log_level = 'info',
       })
+      
+      vim.notify("✅ Smart-splits setup complete! Tmux integration: " .. tostring(require('smart-splits').config.tmux_integration), vim.log.levels.INFO)
     end,
     
     keys = {

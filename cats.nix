@@ -231,6 +231,7 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
     general = [
       pkgs.neovimPlugins.lze
       pkgs.neovimPlugins.lzextras
+      smart-splits-nvim  # Force load for tmux integration
       vim-repeat
       pkgs.neovimPlugins.nvim-luaref
       nvim-nio
@@ -341,7 +342,6 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       pkgs.neovimPlugins.visual-whitespace
       noice-nvim
       edgy-nvim
-      smart-splits-nvim
       persistence-nvim
     ];
     markdown = [
