@@ -22,4 +22,4 @@ require('lze').load {
 }
 
 -- Load snacks keymaps after plugins
-require('birdee.snacks-keymaps')
+-- require('birdee.snacks-keymaps') -- Removed - keymaps now managed in snacks.lua

@@ -200,15 +200,18 @@ return {
         log_level = 'info',
       })
       
-      vim.notify("✅ Smart-splits setup complete! Tmux integration: " .. tostring(require('smart-splits').config.tmux_integration), vim.log.levels.INFO)
+      -- Check config safely
+      local ok, config = pcall(function() return require('smart-splits').config end)
+      if ok and config then
+        vim.notify("✅ Smart-splits setup complete! Tmux integration: " .. tostring(config.tmux_integration), vim.log.levels.INFO)
+      else
+        vim.notify("✅ Smart-splits setup complete!", vim.log.levels.INFO)
+      end
     end,
     
     keys = {
-      -- Basic navigation (normal and terminal modes only)
-      { "<C-h>", function() require('smart-splits').move_cursor_left() end, desc = "← Move Left", mode = { "n", "t" } },
-      { "<C-j>", function() require('smart-splits').move_cursor_down() end, desc = "↓ Move Down", mode = { "n", "t" } },
-      { "<C-k>", function() require('smart-splits').move_cursor_up() end, desc = "↑ Move Up", mode = { "n", "t" } },
-      { "<C-l>", function() require('smart-splits').move_cursor_right() end, desc = "→ Move Right", mode = { "n", "t" } },
+      -- Basic navigation removed - handled by snacks config to avoid conflicts
+      -- { "<C-h>", "<C-j>", "<C-k>", "<C-l>" } moved to snacks.lua for unified management
       
       -- Resize Mode (Enter/Exit)
       {

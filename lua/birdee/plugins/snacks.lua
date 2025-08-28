@@ -19,9 +19,7 @@ return {
   {
     "snacks.nvim",
     for_cat = "general",
-    event = { 'DeferredUIEnter' },
-    dep_of = { "nvim-aider", "opencode.nvim" },
-    load = function()end,
+    -- Force immediate loading for config application
     keys = {
       {'<c-\\>', function() Snacks.terminal() end, mode = {'n'}, desc = 'open snacks terminal' },
       {"<leader>E", function() Snacks.explorer() end, mode = {"n"}, desc = 'File Explorer (Snacks)' },
@@ -78,6 +76,7 @@ return {
       { "<leader>ws", pickpick("lsp_workspace_symbols"), desc = "LSP Workspace Symbols" },
     },
     after = function(_)
+      vim.notify("🔧 Snacks after function called!", vim.log.levels.WARN)
       Snacks.setup({
         -- dashboard = { enabled = false }, -- Disabled to avoid lazy.stats conflicts
         debug = { enabled = true },
@@ -121,39 +120,92 @@ return {
         },
         notify = { enabled = true },
         win = { enabled = true },
+        -- Image viewing support for obsidian.nvim
+        image = {
+          enabled = true,
+          resolve = function(path, src)
+            -- Check if we're in an obsidian vault
+            local has_obsidian, obsidian = pcall(require, "obsidian.api")
+            if has_obsidian and obsidian.path_is_note(path) then
+              return obsidian.resolve_image_path(src)
+            end
+            return src
+          end,
+        },
+        
+        -- ===============================================
+        -- SNACKS EXPLORER CONFIGURATION
+        -- ===============================================
+        explorer = {
+          enabled = true,
+          show_hidden = false,        -- Hidden files không hiển thị mặc định
+          follow_symlinks = true,     -- Follow symbolic links
+          icons = {
+            enabled = true,           -- Enable file icons
+          },
+          keys = {
+            close = "q",
+            edit = "<cr>",
+            split = "s", 
+            vsplit = "v",
+            tab = "t",
+            parent = "h",
+            expand = "l",
+            toggle_hidden = ".",      -- Toggle hidden files với dấu chấm
+            toggle_gitignore = "g",   -- Toggle gitignore files
+            refresh = "R",
+            help = "?",
+          },
+          -- File filters
+          filters = {
+            dotfiles = false,         -- Don't filter dotfiles by default
+            gitignored = false,       -- Don't filter gitignored files by default
+          },
+        },
+        
         picker = {
           enabled = true,
           win = {
             input = {
               keys = {
-                -- Override Alt+hjkl for smart-splits resize in input window
+                -- Override Alt+hjkl for smart-splits resize in input window too
                 ["<M-h>"] = function()
+                  vim.notify("🔧 Picker Input <M-h> resize left!", vim.log.levels.DEBUG)
                   require('smart-splits').resize_left()
                 end,
                 ["<M-j>"] = function()
+                  vim.notify("🔧 Picker Input <M-j> resize down!", vim.log.levels.DEBUG)
                   require('smart-splits').resize_down()
                 end,
                 ["<M-k>"] = function()
+                  vim.notify("🔧 Picker Input <M-k> resize up!", vim.log.levels.DEBUG)
                   require('smart-splits').resize_up()
                 end,
                 ["<M-l>"] = function()
+                  vim.notify("🔧 Picker Input <M-l> resize right!", vim.log.levels.DEBUG)
                   require('smart-splits').resize_right()
                 end,
               },
             },
             list = {
               keys = {
-                -- Smart passthrough: try internal navigation first, then smart-splits
+                -- Smart passthrough: try internal navigation first, then tmux if at boundary
                 ["<C-h>"] = function()
+                  vim.notify("🔍 List Override <C-h> triggered!", vim.log.levels.WARN)
+                  
+                  -- Default behavior: move panel/pane (tmux or smart-splits)
                   -- Workaround for smart-splits tmux issue #342
                   if vim.env.TMUX then
+                    vim.notify("📺 TMUX detected, switching pane left", vim.log.levels.INFO)
                     vim.fn.system("tmux select-pane -L")
                   else
+                    vim.notify("❌ Not in TMUX, trying smart-splits", vim.log.levels.INFO)
                     require('smart-splits').move_cursor_left()
                   end
                 end,
                 
                 ["<C-j>"] = function()
+                  vim.notify("🔍 List Override <C-j> triggered!", vim.log.levels.DEBUG)
                   local picker = require("snacks.picker").current
                   if not picker then
                     require('smart-splits').move_cursor_down()
@@ -162,13 +214,17 @@ return {
                   
                   local list = picker.list
                   if list and list:can_move(1) then
+                    -- Can move down in list
                     vim.api.nvim_input('<Down>')
                   else
+                    -- At bottom boundary, pass to smart-splits
+                    vim.notify("📍 At bottom boundary, using smart-splits down", vim.log.levels.DEBUG)
                     require('smart-splits').move_cursor_down()
                   end
                 end,
                 
                 ["<C-k>"] = function()
+                  vim.notify("🔍 List Override <C-k> triggered!", vim.log.levels.DEBUG)
                   local picker = require("snacks.picker").current
                   if not picker then
                     require('smart-splits').move_cursor_up()
@@ -177,68 +233,71 @@ return {
                   
                   local list = picker.list  
                   if list and list:can_move(-1) then
+                    -- Can move up in list
                     vim.api.nvim_input('<Up>')
                   else
+                    -- At top boundary, pass to smart-splits
+                    vim.notify("📍 At top boundary, using smart-splits up", vim.log.levels.DEBUG)
                     require('smart-splits').move_cursor_up()
                   end
                 end,
                 
                 ["<C-l>"] = function()
-                  local picker = require("snacks.picker").current
-                  if not picker then
-                    vim.notify("🔍 No picker - using smart-splits", vim.log.levels.INFO)
-                    require('smart-splits').move_cursor_right()
-                    return
-                  end
+                  vim.notify("🔍 List Override <C-l> triggered!", vim.log.levels.WARN)
                   
-                  local list = picker.list
-                  if list and list.cursor then
-                    local current_item = list:get_cursor_item()
-                    vim.notify("📂 Current item: " .. vim.inspect(current_item), vim.log.levels.INFO)
-                    if current_item and current_item.kind == "dir" then
-                      vim.notify("📁 Entering directory", vim.log.levels.INFO)
-                      vim.api.nvim_input('<CR>')
+                  -- Check if we have multiple windows first
+                  local current_win = vim.fn.winnr()
+                  local total_wins = vim.fn.winnr('$')
+                  
+                  if total_wins > 1 then
+                    -- Multiple windows: try vim window navigation
+                    if current_win < total_wins then
+                      vim.notify("🪟 Moving to next window (right)", vim.log.levels.INFO)
+                      vim.cmd('wincmd l')  -- Move right
                     else
-                      vim.notify("➡️ Moving right with smart-splits", vim.log.levels.INFO)
-                      require('smart-splits').move_cursor_right()
+                      vim.notify("🔄 Wrapping to first window", vim.log.levels.INFO)  
+                      vim.cmd('wincmd w')  -- Next window (wrap around)
                     end
                   else
-                    vim.notify("🚫 No list/cursor - fallback smart-splits", vim.log.levels.INFO)
-                    require('smart-splits').move_cursor_right()
+                    -- Single window: check for directory entry or use tmux/smart-splits
+                    local picker = require("snacks.picker").current
+                    if picker and picker.list then
+                      local current_item = picker.list:get_cursor_item()
+                      if current_item and current_item.kind == "dir" then
+                        -- Enter directory
+                        vim.notify("📂 Entering directory: " .. (current_item.text or ""), vim.log.levels.INFO)
+                        vim.api.nvim_input('<CR>')
+                        return
+                      end
+                    end
+                    
+                    -- No directory to enter, use tmux/smart-splits
+                    if vim.env.TMUX then
+                      vim.notify("📺 Single window + TMUX: switching pane right", vim.log.levels.INFO)
+                      vim.fn.system("tmux select-pane -R")
+                    else
+                      vim.notify("❌ Single window, no TMUX: trying smart-splits", vim.log.levels.INFO)
+                      require('smart-splits').move_cursor_right()
+                    end
                   end
                 end,
 
-                -- Override Alt+hjkl for smart-splits resize
+                -- Override Alt+hjkl for smart-splits resize (Snacks defaults to toggle_hidden/etc)
                 ["<M-h>"] = function()
+                  vim.notify("🔧 List <M-h> resize left!", vim.log.levels.DEBUG)
                   require('smart-splits').resize_left()
                 end,
                 ["<M-j>"] = function()
+                  vim.notify("🔧 List <M-j> resize down!", vim.log.levels.DEBUG)
                   require('smart-splits').resize_down()
                 end,
                 ["<M-k>"] = function()
+                  vim.notify("🔧 List <M-k> resize up!", vim.log.levels.DEBUG)
                   require('smart-splits').resize_up()
                 end,
                 ["<M-l>"] = function()
+                  vim.notify("🔧 List <M-l> resize right!", vim.log.levels.DEBUG)
                   require('smart-splits').resize_right()
-                end,
-              },
-            },
-          },
-          win = {
-            input = {
-              keys = {
-                -- Smart navigation keys
-                ["<C-h>"] = function()
-                  if vim.env.TMUX then
-                    vim.fn.system("tmux select-pane -L")
-                  end
-                end,
-                ["<C-j>"] = "move_down",
-                ["<C-k>"] = "move_up", 
-                ["<C-l>"] = function()
-                  if vim.env.TMUX then
-                    vim.fn.system("tmux select-pane -R")
-                  end
                 end,
               },
             },
@@ -261,12 +320,7 @@ return {
           enabled = true,
           win = {
             style = "terminal",
-            keys = {
-              nav_h = "<C-h>",
-              nav_j = "<C-j>", 
-              nav_k = "<C-k>",
-              nav_l = "<C-l>",
-            },
+            -- Navigation handled by context-aware global keymaps
           },
         },
         scope = { enabled = true },
@@ -293,6 +347,153 @@ return {
           refresh = 50, -- refresh at most every 50ms
         },
       })
+      
+      -- Set up simple global navigation (snacks picker has its own config above)
+      vim.notify("🗺️ Setting up global smart-splits navigation...", vim.log.levels.INFO)
+      
+      vim.keymap.set({ 'n', 't' }, '<C-h>', function() 
+        vim.notify("🌍 Global <C-h> triggered!", vim.log.levels.DEBUG)
+        require('smart-splits').move_cursor_left() 
+      end, { desc = "← Move Left (Global)" })
+      
+      vim.keymap.set({ 'n', 't' }, '<C-j>', function() 
+        vim.notify("🌍 Global <C-j> triggered!", vim.log.levels.DEBUG)
+        require('smart-splits').move_cursor_down() 
+      end, { desc = "↓ Move Down (Global)" })
+      
+      vim.keymap.set({ 'n', 't' }, '<C-k>', function() 
+        vim.notify("🌍 Global <C-k> triggered!", vim.log.levels.DEBUG)
+        require('smart-splits').move_cursor_up() 
+      end, { desc = "↑ Move Up (Global)" })
+      
+      vim.keymap.set({ 'n', 't' }, '<C-l>', function() 
+        vim.notify("🌍 Global <C-l> triggered!", vim.log.levels.DEBUG)
+        require('smart-splits').move_cursor_right() 
+      end, { desc = "→ Move Right (Global)" })
+      
+      -- Old override logic removed - now handled by context-aware navigation
+    end,
+    
+    -- Add cursor persistence logic from dotfiles
+    init = function()
+      -- Simple cursor position persistence for project-scoped state  
+      local function get_state_file()
+        local cwd = vim.fn.getcwd()
+        local hash = vim.fn.sha256(cwd)
+        return vim.fn.stdpath("cache") .. "/snacks-cursor-" .. hash:sub(1, 8) .. ".json"
+      end
+      
+      -- State tracking (no debounce)
+      local restore_completed = false
+      local initial_cursor_pos = nil
+      
+      local function save_cursor()
+        -- Only save if restore has completed
+        if not restore_completed then
+          return -- Don't save until restore is done
+        end
+        
+        local cursor_pos = vim.fn.getcurpos()
+        
+        -- Don't save if position hasn't changed from restored position
+        if initial_cursor_pos and cursor_pos[2] and initial_cursor_pos[2] and
+           cursor_pos[2] == initial_cursor_pos[2] then
+          return -- Same as restored, no need to save
+        end
+        
+        local state_file = get_state_file()
+        local state = { cursor = cursor_pos, timestamp = os.time() }
+        
+        local ok, json = pcall(vim.json.encode, state)
+        if ok then
+          local file = io.open(state_file, "w")
+          if file then
+            file:write(json)
+            file:close()
+          end
+        end
+      end
+      
+      local function restore_cursor()
+        restore_completed = false -- Reset state
+        
+        local state_file = get_state_file()
+        local file = io.open(state_file, "r")
+        if file then
+          local content = file:read("*a")
+          file:close()
+          
+          local ok, state = pcall(vim.json.decode, content)
+          if ok and state and state.cursor then
+            vim.schedule(function()
+              vim.defer_fn(function()
+                if vim.bo.filetype:match("^snacks_picker") then
+                  vim.fn.setpos(".", state.cursor)
+                  initial_cursor_pos = state.cursor -- Remember restored position
+                  
+                  -- Mark restore as completed after restore is done
+                  vim.defer_fn(function()
+                    restore_completed = true
+                  end, 50) -- Short delay to let restore settle
+                end
+              end, 100)
+            end)
+          else
+            -- No saved state, allow saving immediately
+            restore_completed = true
+          end
+        else
+          -- No state file, allow saving immediately  
+          restore_completed = true
+        end
+      end
+      
+      local group = vim.api.nvim_create_augroup("SnacksExplorerCursor", { clear = true })
+      
+      -- Restore cursor when opening Snacks picker  
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = { "snacks_picker_list", "snacks_picker_input" },
+        group = group,
+        callback = function()
+          restore_cursor()
+          
+          -- Save cursor periodically during use
+          local save_timer = nil
+          vim.api.nvim_create_autocmd("CursorHold", {
+            buffer = vim.api.nvim_get_current_buf(),
+            callback = function()
+              if save_timer then
+                vim.fn.timer_stop(save_timer)
+              end
+              save_timer = vim.fn.timer_start(500, save_cursor)
+            end,
+          })
+        end,
+      })
+      
+      -- Save on exit
+      vim.api.nvim_create_autocmd("VimLeavePre", {
+        group = group,
+        callback = save_cursor,
+      })
+      
+      -- Debug command
+      vim.api.nvim_create_user_command("SnacksDebug", function()
+        local state_file = get_state_file()
+        print("📁 Project: " .. vim.fn.getcwd())
+        print("💾 State file: " .. state_file)
+        print("📊 Built-in history: ~/.local/share/nvim/snacks/picker_explorer.history")
+        
+        -- Show current state
+        local file = io.open(state_file, "r")
+        if file then
+          local content = file:read("*a")
+          file:close()
+          print("✅ Cursor state: " .. content)
+        else
+          print("❌ No cursor state found")
+        end
+      end, {})
     end,
   }
 }
