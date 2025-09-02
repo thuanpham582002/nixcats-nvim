@@ -18,7 +18,7 @@ return function(_, bufnr)
 
   -- See `:help K` for why this keymap
   map('K', vim.lsp.buf.hover, 'Hover Documentation')
-  map('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
+  map('<C-s>', vim.lsp.buf.signature_help, 'Signature Documentation')
 
   -- Lesser used LSP functionality
   map('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')

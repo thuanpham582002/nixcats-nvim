@@ -88,3 +88,67 @@ vim.keymap.set({ "n", "v", "x" }, '<leader>p', '"+p', { noremap = true, silent =
 vim.keymap.set('i', '<C-p>', '<C-r><C-p>+',
   { noremap = true, silent = true, desc = 'Paste from clipboard from within insert mode' })
 -- vim.keymap.set("x", "<leader>P", '"_dP', { noremap = true, silent = true, desc = 'Paste over selection without erasing unnamed register' })
+
+-- ============================================================================
+-- GLOBAL NAVIGATION KEYMAPS - <C-hjkl> for window/pane navigation
+-- This is the ONLY place where <C-hjkl> should be defined
+-- ============================================================================
+
+vim.notify("🗺️ Setting up global <C-hjkl> navigation keymaps...", vim.log.levels.INFO)
+
+-- Global <C-hjkl> navigation with smart-splits integration
+vim.keymap.set({ 'n', 't' }, '<C-h>', function() 
+  vim.notify("🌍 Global <C-h> triggered! Mode: " .. vim.fn.mode(), vim.log.levels.WARN)
+  
+  -- Try smart-splits first
+  local ok, smart_splits = pcall(require, 'smart-splits')
+  if ok then
+    vim.notify("✅ Using smart-splits for left navigation", vim.log.levels.INFO)
+    smart_splits.move_cursor_left()
+  else
+    -- Fallback to native vim navigation
+    vim.notify("⚠️ Smart-splits not available, using vim navigation", vim.log.levels.WARN)
+    vim.cmd('wincmd h')
+  end
+end, { desc = "← Move Left (Global)" })
+
+vim.keymap.set({ 'n', 't' }, '<C-j>', function() 
+  vim.notify("🌍 Global <C-j> triggered! Mode: " .. vim.fn.mode(), vim.log.levels.WARN)
+  
+  local ok, smart_splits = pcall(require, 'smart-splits')
+  if ok then
+    vim.notify("✅ Using smart-splits for down navigation", vim.log.levels.INFO)
+    smart_splits.move_cursor_down()
+  else
+    vim.notify("⚠️ Smart-splits not available, using vim navigation", vim.log.levels.WARN)
+    vim.cmd('wincmd j')
+  end
+end, { desc = "↓ Move Down (Global)" })
+
+vim.keymap.set({ 'n', 't' }, '<C-k>', function() 
+  vim.notify("🌍 Global <C-k> triggered! Mode: " .. vim.fn.mode(), vim.log.levels.WARN)
+  
+  local ok, smart_splits = pcall(require, 'smart-splits')
+  if ok then
+    vim.notify("✅ Using smart-splits for up navigation", vim.log.levels.INFO)
+    smart_splits.move_cursor_up()
+  else
+    vim.notify("⚠️ Smart-splits not available, using vim navigation", vim.log.levels.WARN)
+    vim.cmd('wincmd k')
+  end
+end, { desc = "↑ Move Up (Global)" })
+
+vim.keymap.set({ 'n', 't' }, '<C-l>', function() 
+  vim.notify("🌍 Global <C-l> triggered! Mode: " .. vim.fn.mode(), vim.log.levels.WARN)
+  
+  local ok, smart_splits = pcall(require, 'smart-splits')
+  if ok then
+    vim.notify("✅ Using smart-splits for right navigation", vim.log.levels.INFO)
+    smart_splits.move_cursor_right()
+  else
+    vim.notify("⚠️ Smart-splits not available, using vim navigation", vim.log.levels.WARN)
+    vim.cmd('wincmd l')
+  end
+end, { desc = "→ Move Right (Global)" })
+
+vim.notify("✅ Global <C-hjkl> navigation keymaps loaded!", vim.log.levels.INFO)
