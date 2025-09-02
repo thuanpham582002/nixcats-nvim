@@ -144,8 +144,8 @@ return {
       vim.notify("🚀 Loading smart-splits plugin...", vim.log.levels.INFO)
       
       require('smart-splits').setup({
-        -- Enable tmux integration for seamless navigation
-        tmux_integration = true,
+        -- Enable tmux integration for seamless navigation (new API)
+        multiplexer_integration = 'tmux',
         
         -- Behavior when hitting edge of screen (wrap for tmux integration)
         at_edge = 'wrap', -- wrap | split | stop
@@ -178,13 +178,11 @@ return {
           'prompt',
         },
         
-        -- Ignored file types  
+        -- Ignored file types (removed snacks for tmux navigation)
         ignored_filetypes = {
           'NvimTree',
-          'neo-tree',
+          'neo-tree', 
           'oil',
-          'snacks_picker_list',
-          'snacks_picker',
         },
         
         -- Don't wrap when cursor is at edge
@@ -198,12 +196,15 @@ return {
         
         -- Log level for debugging
         log_level = 'info',
+        
+        -- Disable multiplexer nav when zoomed
+        disable_multiplexer_nav_when_zoomed = false,
       })
       
       -- Check config safely
       local ok, config = pcall(function() return require('smart-splits').config end)
       if ok and config then
-        vim.notify("✅ Smart-splits setup complete! Tmux integration: " .. tostring(config.tmux_integration), vim.log.levels.INFO)
+        vim.notify("✅ Smart-splits setup complete! Multiplexer integration: " .. tostring(config.multiplexer_integration), vim.log.levels.INFO)
       else
         vim.notify("✅ Smart-splits setup complete!", vim.log.levels.INFO)
       end

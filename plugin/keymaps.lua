@@ -98,55 +98,45 @@ vim.notify("🗺️ Setting up global <C-hjkl> navigation keymaps...", vim.log.l
 
 -- Global <C-hjkl> navigation with smart-splits integration
 vim.keymap.set({ 'n', 't' }, '<C-h>', function() 
-  vim.notify("🌍 Global <C-h> triggered! Mode: " .. vim.fn.mode(), vim.log.levels.WARN)
+  -- Special handling for snacks picker - direct tmux command
+  local is_snacks_picker = vim.bo.filetype:match('snacks_picker')
+  if is_snacks_picker then
+    vim.fn.system("tmux select-pane -L")
+    return
+  end
   
-  -- Try smart-splits first
+  -- Try smart-splits for normal buffers
   local ok, smart_splits = pcall(require, 'smart-splits')
   if ok then
-    vim.notify("✅ Using smart-splits for left navigation", vim.log.levels.INFO)
     smart_splits.move_cursor_left()
   else
-    -- Fallback to native vim navigation
-    vim.notify("⚠️ Smart-splits not available, using vim navigation", vim.log.levels.WARN)
     vim.cmd('wincmd h')
   end
 end, { desc = "← Move Left (Global)" })
 
 vim.keymap.set({ 'n', 't' }, '<C-j>', function() 
-  vim.notify("🌍 Global <C-j> triggered! Mode: " .. vim.fn.mode(), vim.log.levels.WARN)
-  
   local ok, smart_splits = pcall(require, 'smart-splits')
   if ok then
-    vim.notify("✅ Using smart-splits for down navigation", vim.log.levels.INFO)
     smart_splits.move_cursor_down()
   else
-    vim.notify("⚠️ Smart-splits not available, using vim navigation", vim.log.levels.WARN)
     vim.cmd('wincmd j')
   end
 end, { desc = "↓ Move Down (Global)" })
 
 vim.keymap.set({ 'n', 't' }, '<C-k>', function() 
-  vim.notify("🌍 Global <C-k> triggered! Mode: " .. vim.fn.mode(), vim.log.levels.WARN)
-  
   local ok, smart_splits = pcall(require, 'smart-splits')
   if ok then
-    vim.notify("✅ Using smart-splits for up navigation", vim.log.levels.INFO)
     smart_splits.move_cursor_up()
   else
-    vim.notify("⚠️ Smart-splits not available, using vim navigation", vim.log.levels.WARN)
     vim.cmd('wincmd k')
   end
 end, { desc = "↑ Move Up (Global)" })
 
 vim.keymap.set({ 'n', 't' }, '<C-l>', function() 
-  vim.notify("🌍 Global <C-l> triggered! Mode: " .. vim.fn.mode(), vim.log.levels.WARN)
-  
   local ok, smart_splits = pcall(require, 'smart-splits')
   if ok then
-    vim.notify("✅ Using smart-splits for right navigation", vim.log.levels.INFO)
     smart_splits.move_cursor_right()
   else
-    vim.notify("⚠️ Smart-splits not available, using vim navigation", vim.log.levels.WARN)
     vim.cmd('wincmd l')
   end
 end, { desc = "→ Move Right (Global)" })
