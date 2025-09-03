@@ -94,6 +94,7 @@ in {
       aliases = [ "vi" "nvim" ];
     };
     categories =  birdeevim_categories args // {
+      tabCompletionKeys = true;
     };
     extra = birdeevim_extra args // {
     };
