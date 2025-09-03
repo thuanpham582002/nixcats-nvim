@@ -136,6 +136,7 @@ vim.keymap.set({ 'n', 't' }, '<C-l>', function()
   local ok, smart_splits = pcall(require, 'smart-splits')
   if ok then
     smart_splits.move_cursor_right()
+    vim.notify("Navigate right", vim.log.levels.INFO)
   else
     vim.cmd('wincmd l')
   end

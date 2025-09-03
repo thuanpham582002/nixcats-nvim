@@ -35,6 +35,7 @@ snacks.setup({
     show_hidden = false,
     follow_symlinks = true,
     icons = { enabled = true },
+    replace_netrw = true,
     keys = {
       close = "q",
       edit = "<cr>",
@@ -83,7 +84,133 @@ snacks.setup({
     },
   },
   
-  dashboard = { enabled = false },
+  -- Toggle keymaps with which-key integration
+  toggle = {
+    enabled = true,
+    which_key = true,
+    notify = true,
+    icon = {
+      enabled = " ",
+      disabled = " ",
+    },
+    color = {
+      enabled = "green", 
+      disabled = "yellow",
+    },
+  },
+  
+  -- 1. Auto-highlight LSP references
+  words = {
+    enabled = true,
+    debounce = 200,
+  },
+  
+  -- 2. Pretty git signs + line numbers 
+  statuscolumn = {
+    enabled = true,
+    left = { "mark", "sign" }, -- left side
+    right = { "fold", "git" }, -- right side  
+    folds = {
+      open = true, -- show open fold icons
+      git_hl = false, -- use git sign hl for folds
+    },
+    git = {
+      -- patterns to match git signs
+      patterns = { "GitSign", "MiniDiffSign" },
+    },
+    refresh = 50, -- refresh every 50ms
+  },
+  
+  -- 3. Modern indent guides
+  indent = {
+    enabled = true,
+    indent = {
+      enabled = true,
+      char = "│",
+    },
+    scope = {
+      enabled = true,
+      char = "│",
+      underline = true, -- underline the scope
+      only_current = false, -- only show scope of current line
+    },
+    chunk = {
+      -- chunk highlighting
+      enabled = true,
+      -- only show chunk scopes after this level
+      only_current = false,
+      priority = 200,
+      style = {
+        { fg = "#806d9c" },
+        { fg = "#c18a56", bold = true },
+      },
+      chars = {
+        corner_top = "╭",
+        corner_bottom = "╰", 
+        horizontal = "─",
+        vertical = "│",
+        arrow = ">",
+      },
+    },
+    blank = {
+      enabled = false,
+    },
+  },
+  
+  -- 4. Beautiful startup dashboard (LZE compatible)
+  dashboard = { 
+    enabled = true,
+    preset = {
+      pick = nil, -- set to `nil` to disable the pick section
+      keys = {
+        { icon = " ", key = "f", desc = "Find File", action = ":lua Snacks.picker.smart()" },
+        { icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
+        { icon = " ", key = "g", desc = "Find Text", action = ":lua Snacks.picker.grep()" },
+        { icon = " ", key = "r", desc = "Recent Files", action = ":lua Snacks.picker.recent()" },
+        { icon = " ", key = "c", desc = "Config", action = ":lua Snacks.picker.files({cwd = vim.fn.stdpath('config')})" },
+        { icon = " ", key = "s", desc = "Restore Session", action = function() require('persistence').load() end },
+        { icon = "󰒲 ", key = "L", desc = "LZE", action = ":help lze" },
+        { icon = " ", key = "q", desc = "Quit", action = ":qa" },
+      },
+      header = [[
+███╗   ██╗██╗██╗  ██╗ ██████╗ █████╗ ████████╗███████╗
+████╗  ██║██║╚██╗██╔╝██╔════╝██╔══██╗╚══██╔══╝██╔════╝
+██╔██╗ ██║██║ ╚███╔╝ ██║     ███████║   ██║   ███████╗
+██║╚██╗██║██║ ██╔██╗ ██║     ██╔══██║   ██║   ╚════██║
+██║ ╚████║██║██╔╝ ██╗╚██████╗██║  ██║   ██║   ███████║
+╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚══════╝
+      ]],
+    },
+    sections = {
+      { section = "header" },
+      { section = "keys", gap = 1, padding = 1 },
+    },
+  },
+  
+  -- 5. Smart text objects based on treesitter/indent
+  scope = {
+    enabled = true,
+    -- what to do when treesitter is not available
+    fallback = "indent", 
+    cursor = true, -- enhance cursor movement
+    treesitter = {
+      -- blocks to consider for scope detection  
+      blocks = {
+        "function_item",
+        "function_definition", 
+        "method_definition",
+        "class_definition",
+        "do_block",
+        "if_statement",
+        "for_statement",
+        "while_statement",
+        "with_statement",
+        "try_statement",
+        "match_statement",
+        "block",
+      },
+    },
+  },
 })
 
 -- Setup notification override first
@@ -99,41 +226,6 @@ vim.keymap.set({ 'n' }, '<Esc>', function() snacks.notifier.hide() end, { desc =
 
 -- Helper function for picker shortcuts
 local pickpick = function(name, args) return function() snacks.picker[name](args) end end
-
--- Override vim.ui.select to use snacks picker as default
-vim.ui.select = function(items, opts, on_choice)
-  opts = opts or {}
-  opts.prompt = opts.prompt or "Select:"
-  
-  local picker_items = {}
-  for i, item in ipairs(items) do
-    table.insert(picker_items, {
-      text = tostring(item),
-      item = item,
-      idx = i,
-    })
-  end
-  
-  require('snacks').picker({
-    items = picker_items,
-    prompt = opts.prompt,
-    format = function(item)
-      return item.text
-    end,
-  }, function(selected)
-    if selected and on_choice then
-      on_choice(selected.item, selected.idx)
-    elseif on_choice then
-      on_choice(nil, nil)
-    end
-  end)
-end
-
--- Override vim.ui.input to use snacks input
-vim.ui.input = function(opts, on_confirm)
-  opts = opts or {}
-  require('snacks').input(opts, on_confirm)
-end
 
 return {
   {
@@ -199,6 +291,21 @@ return {
       { "<C-p>", pickpick("files"), desc = "Find Files (Ctrl+P)" },
       { "<C-f>", pickpick("grep"), desc = "Live Grep (Ctrl+F)" },
       { "<C-b>", pickpick("buffers"), desc = "Switch Buffer (Ctrl+B)" },
+      
+      -- Toggle keymaps with which-key integration
+      { "<leader>ud", function() snacks.toggle.diagnostics() end, desc = "Toggle Diagnostics" },
+      { "<leader>uh", function() snacks.toggle.inlay_hints() end, desc = "Toggle Inlay Hints" },
+      { "<leader>un", function() snacks.toggle.line_number() end, desc = "Toggle Line Numbers" },
+      { "<leader>us", function() snacks.toggle.spell() end, desc = "Toggle Spell Check" },
+      { "<leader>uw", function() snacks.toggle.wrap() end, desc = "Toggle Word Wrap" },
+      { "<leader>ua", function() snacks.toggle.animate() end, desc = "Toggle Animations" },
+      { "<leader>uD", function() snacks.toggle.dim() end, desc = "Toggle Dim Inactive" },
+      { "<leader>uW", function() snacks.toggle.words() end, desc = "Toggle LSP Word Highlights" },
+      { "<leader>ui", function() snacks.toggle.indent() end, desc = "Toggle Indent Guides" },
+      
+      -- Scope navigation keymaps  
+      { "]]", function() snacks.scope.next() end, desc = "Next Scope" },
+      { "[[", function() snacks.scope.prev() end, desc = "Previous Scope" },
     },
     -- Setup handled at top of file
   }
