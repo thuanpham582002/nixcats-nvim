@@ -133,10 +133,25 @@ vim.keymap.set({ 'n', 't' }, '<C-k>', function()
 end, { desc = "↑ Move Up (Global)" })
 
 vim.keymap.set({ 'n', 't' }, '<C-l>', function() 
+  -- SPECIAL: snacks_picker is floating window, bypass smart-splits  
+  local is_snacks_picker = vim.bo.filetype:match('snacks_picker')
+  if is_snacks_picker then
+    -- Try window navigation first, then tmux if at edge
+    local current_win = vim.fn.winnr()
+    vim.cmd('wincmd l')
+    local new_win = vim.fn.winnr()
+    
+    -- If no window movement, we're at edge - move to tmux pane
+    if current_win == new_win then
+      vim.fn.system("tmux select-pane -R")
+    end
+    return
+  end
+  
+  -- Use smart-splits for normal windows (non-floating)
   local ok, smart_splits = pcall(require, 'smart-splits')
   if ok then
     smart_splits.move_cursor_right()
-    vim.notify("Navigate right", vim.log.levels.INFO)
   else
     vim.cmd('wincmd l')
   end

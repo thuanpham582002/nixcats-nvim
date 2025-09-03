@@ -251,8 +251,14 @@ return {
       { "<leader>fp", pickpick("projects"), desc = "Projects" },
       { "<leader>fr", pickpick("recent"), desc = "Recent" },
       -- git
+      { "<leader>gb", pickpick("git_branches"), desc = "Git Branches" },
+      { "<leader>gs", pickpick("git_status"), desc = "Git Status" },
+      { "<leader>gl", pickpick("git_log"), desc = "Git Log" },
       { "<leader>gL", pickpick("git_log_line"), desc = "Git Log Line" },
+      { "<leader>gF", pickpick("git_log_file"), desc = "Git Log File" },
       { "<leader>gd", pickpick("git_diff"), desc = "Git Diff (Hunks)" },
+      { "<leader>gS", pickpick("git_stash"), desc = "Git Stash" },
+      { "<leader>gG", pickpick("git_grep"), desc = "Git Grep" },
       -- Grep
       { "<leader>sb", pickpick("lines"), desc = "Buffer Lines" },
       { "<leader>sB", pickpick("grep_buffers"), desc = "Grep Open Buffers" },

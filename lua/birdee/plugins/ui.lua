@@ -144,7 +144,7 @@ return {
       vim.notify("🚀 Loading smart-splits plugin...", vim.log.levels.INFO)
       
       require('smart-splits').setup({
-        -- Enable tmux integration for seamless navigation (new API)
+        -- Re-enable tmux integration
         multiplexer_integration = 'tmux',
         
         -- Behavior when hitting edge of screen (wrap for tmux integration)
