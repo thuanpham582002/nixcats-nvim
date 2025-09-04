@@ -43,5 +43,8 @@ vim.api.nvim_create_autocmd("VimEnter", {
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
+-- Clipboard system integration
+vim.opt.clipboard = "unnamedplus" -- Auto sync y/p with system clipboard
+
 -- Load snacks keymaps after plugins
 -- require('birdee.snacks-keymaps') -- Removed - keymaps now managed in snacks.lua
