@@ -248,55 +248,29 @@ return {
         mode = "n"
       },
       
-      -- Resize windows with hjkl (alternative to arrow keys)
-      {
-        "<C-S-h>", -- Ctrl+Shift+h
-        function() require('smart-splits').resize_left() end,
-        desc = "← Resize Left (hjkl)",
-        mode = "n"
-      },
-      {
-        "<C-S-j>", -- Ctrl+Shift+j
-        function() require('smart-splits').resize_down() end,
-        desc = "↓ Resize Down (hjkl)", 
-        mode = "n"
-      },
-      {
-        "<C-S-k>", -- Ctrl+Shift+k
-        function() require('smart-splits').resize_up() end,
-        desc = "↑ Resize Up (hjkl)",
-        mode = "n"
-      },
-      {
-        "<C-S-l>", -- Ctrl+Shift+l
-        function() require('smart-splits').resize_right() end,
-        desc = "→ Resize Right (hjkl)",
-        mode = "n"
-      },
-      
-      -- Vim-style navigation with Alt (Meta) key
+      -- Resize windows with Alt (Meta) key + hjkl
       {
         "<M-h>", -- Alt+h
-        function() require('smart-splits').move_cursor_left() end,
-        desc = "← Move Left (Alt)",
+        function() require('smart-splits').resize_left() end,
+        desc = "← Resize Left (Alt)",
         mode = "n"
       },
       {
         "<M-j>", -- Alt+j
-        function() require('smart-splits').move_cursor_down() end,
-        desc = "↓ Move Down (Alt)",
+        function() require('smart-splits').resize_down() end,
+        desc = "↓ Resize Down (Alt)",
         mode = "n"
       },
       {
         "<M-k>", -- Alt+k
-        function() require('smart-splits').move_cursor_up() end,
-        desc = "↑ Move Up (Alt)",
+        function() require('smart-splits').resize_up() end,
+        desc = "↑ Resize Up (Alt)",
         mode = "n"
       },
       {
         "<M-l>", -- Alt+l
-        function() require('smart-splits').move_cursor_right() end,
-        desc = "→ Move Right (Alt)",
+        function() require('smart-splits').resize_right() end,
+        desc = "→ Resize Right (Alt)",
         mode = "n"
       },
       

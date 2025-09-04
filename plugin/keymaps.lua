@@ -97,7 +97,7 @@ vim.keymap.set('i', '<C-p>', '<C-r><C-p>+',
 vim.notify("🗺️ Setting up global <C-hjkl> navigation keymaps...", vim.log.levels.INFO)
 
 -- Global <C-hjkl> navigation with smart-splits integration
-vim.keymap.set({ 'n', 't' }, '<C-h>', function() 
+vim.keymap.set({ 'n', 'v', 'i', 'c', 't' }, '<C-h>', function() 
   -- Special handling for snacks picker - direct tmux command
   local is_snacks_picker = vim.bo.filetype:match('snacks_picker')
   if is_snacks_picker then
@@ -114,7 +114,7 @@ vim.keymap.set({ 'n', 't' }, '<C-h>', function()
   end
 end, { desc = "← Move Left (Global)" })
 
-vim.keymap.set({ 'n', 't' }, '<C-j>', function() 
+vim.keymap.set({ 'n', 'v', 'i', 'c', 't' }, '<C-j>', function() 
   local ok, smart_splits = pcall(require, 'smart-splits')
   if ok then
     smart_splits.move_cursor_down()
@@ -123,7 +123,7 @@ vim.keymap.set({ 'n', 't' }, '<C-j>', function()
   end
 end, { desc = "↓ Move Down (Global)" })
 
-vim.keymap.set({ 'n', 't' }, '<C-k>', function() 
+vim.keymap.set({ 'n', 'v', 'i', 'c', 't' }, '<C-k>', function() 
   local ok, smart_splits = pcall(require, 'smart-splits')
   if ok then
     smart_splits.move_cursor_up()
@@ -132,7 +132,7 @@ vim.keymap.set({ 'n', 't' }, '<C-k>', function()
   end
 end, { desc = "↑ Move Up (Global)" })
 
-vim.keymap.set({ 'n', 't' }, '<C-l>', function() 
+vim.keymap.set({ 'n', 'v', 'i', 'c', 't' }, '<C-l>', function() 
   -- SPECIAL: snacks_picker is floating window, bypass smart-splits  
   local is_snacks_picker = vim.bo.filetype:match('snacks_picker')
   if is_snacks_picker then
