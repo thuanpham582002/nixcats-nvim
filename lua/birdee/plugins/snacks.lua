@@ -63,6 +63,7 @@ snacks.setup({
         keys = {
           ["<c-j>"] = false,
           ["<c-k>"] = false,
+          ["<M-h>"] = false,
         },
       },
     },
