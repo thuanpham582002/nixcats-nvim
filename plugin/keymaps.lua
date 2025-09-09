@@ -94,8 +94,6 @@ vim.keymap.set('i', '<C-p>', '<C-r><C-p>+',
 -- This is the ONLY place where <C-hjkl> should be defined
 -- ============================================================================
 
-vim.notify("🗺️ Setting up global <C-hjkl> navigation keymaps...", vim.log.levels.INFO)
-
 -- Global <C-hjkl> navigation with smart-splits integration
 vim.keymap.set({ 'n', 'v', 'i', 'c', 't' }, '<C-h>', function() 
   -- Special handling for snacks picker - direct tmux command
@@ -157,4 +155,48 @@ vim.keymap.set({ 'n', 'v', 'i', 'c', 't' }, '<C-l>', function()
   end
 end, { desc = "→ Move Right (Global)" })
 
-vim.notify("✅ Global <C-hjkl> navigation keymaps loaded!", vim.log.levels.INFO)
+-- Global <M-hjkl> resize keymaps with smart-splits integration
+
+vim.keymap.set({ 'n', 'v', 'i', 'c', 't' }, '<M-h>', function()
+  local ok, smart_splits = pcall(require, 'smart-splits')
+  if ok then
+    smart_splits.resize_left()
+  else
+    vim.cmd('resize -2')
+  end
+end, { desc = "← Resize Left (Alt)" })
+
+vim.keymap.set({ 'n', 'v', 'i', 'c', 't' }, '<M-j>', function()
+  local ok, smart_splits = pcall(require, 'smart-splits')
+  if ok then
+    smart_splits.resize_down()
+  else
+    vim.cmd('resize +2')
+  end
+end, { desc = "↓ Resize Down (Alt)" })
+
+vim.keymap.set({ 'n', 'v', 'i', 'c', 't' }, '<M-k>', function()
+  local ok, smart_splits = pcall(require, 'smart-splits')
+  if ok then
+    smart_splits.resize_up()
+  else
+    vim.cmd('resize -2')
+  end
+end, { desc = "↑ Resize Up (Alt)" })
+
+vim.keymap.set({ 'n', 'v', 'i', 'c', 't' }, '<M-l>', function()
+  local ok, smart_splits = pcall(require, 'smart-splits')
+  if ok then
+    smart_splits.resize_right()
+  else
+    vim.cmd('vertical resize +2')
+  end
+end, { desc = "→ Resize Right (Alt)" })
+
+
+-- Global <M-n> escape to normal mode
+-- Exit to normal mode from insert mode
+vim.keymap.set('i', '<M-n>', '<Esc>', { desc = "Exit to Normal mode (Alt+n)" })
+
+-- Exit to normal mode from terminal mode  
+vim.keymap.set('t', '<M-n>', '<C-\\><C-n>', { desc = "Exit to Normal mode (Alt+n)" })

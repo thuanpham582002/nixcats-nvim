@@ -125,6 +125,49 @@ return {
         close_when_all_hidden = true,
         fix_win_height = vim.fn.has("nvim-0.10.0") == 1,
       })
+      
+      -- Helper function to determine if buffer should go to bottom panel
+      local function should_go_to_bottom(buf)
+        local buftype = vim.api.nvim_get_option_value("buftype", { buf = buf })
+        local filetype = vim.api.nvim_get_option_value("filetype", { buf = buf })
+        
+        -- Terminal buffers, quickfix, help, scratch buffers
+        return buftype == "terminal" 
+            or filetype == "qf" 
+            or filetype == "help"
+            or filetype == "scratch"
+            or filetype == "claudecode"
+            or string.match(vim.api.nvim_buf_get_name(buf), "term://")
+      end
+      
+      -- Auto-route buffers to appropriate panels
+      vim.api.nvim_create_autocmd("BufNew", {
+        callback = function(event)
+          local buf = event.buf
+          if should_go_to_bottom(buf) then
+            vim.defer_fn(function()
+              -- Try to move window to bottom if it's not already there
+              local win = vim.fn.bufwinid(buf)
+              if win ~= -1 then
+                local ok = pcall(require("edgy").goto_main, "bottom")
+                if not ok then
+                  -- Fallback: open in bottom zone
+                  vim.cmd("wincmd J")
+                end
+              end
+            end, 50)
+          end
+        end,
+      })
+
+      -- Startup notification
+      vim.api.nvim_create_autocmd("VimEnter", {
+        callback = function()
+          vim.defer_fn(function()
+            vim.notify("🏗️ Smart 4-Zone IDE Layout activated", vim.log.levels.INFO)
+          end, 500)
+        end,
+      })
     end,
     event = "DeferredUIEnter",
     keys = {
@@ -245,32 +288,6 @@ return {
         "<C-Right>",
         function() require('smart-splits').resize_right() end,
         desc = "→ Resize Right",
-        mode = "n"
-      },
-      
-      -- Resize windows with Alt (Meta) key + hjkl
-      {
-        "<M-h>", -- Alt+h
-        function() require('smart-splits').resize_left() end,
-        desc = "← Resize Left (Alt)",
-        mode = "n"
-      },
-      {
-        "<M-j>", -- Alt+j
-        function() require('smart-splits').resize_down() end,
-        desc = "↓ Resize Down (Alt)",
-        mode = "n"
-      },
-      {
-        "<M-k>", -- Alt+k
-        function() require('smart-splits').resize_up() end,
-        desc = "↑ Resize Up (Alt)",
-        mode = "n"
-      },
-      {
-        "<M-l>", -- Alt+l
-        function() require('smart-splits').resize_right() end,
-        desc = "→ Resize Right (Alt)",
         mode = "n"
       },
       
