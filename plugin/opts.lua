@@ -39,8 +39,9 @@ vim.opt.inccommand = 'split'
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 3
 
--- Make line numbers default
+-- Make line numbers default with minimal spacing + LSP signs
 vim.wo.number = true
+vim.opt.statuscolumn = "%s%{v:relnum?v:relnum:v:lnum}"  -- Signs + numbers with minimal spacing
 
 -- Enable mouse mode
 vim.o.mouse = 'a'

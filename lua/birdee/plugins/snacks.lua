@@ -88,7 +88,7 @@ snacks.setup({
           preview = false,   -- No preview for tree view
           layout = {
             backdrop = 60,
-            width = 0.6,     -- 60% width for tree view
+            width = 0.8,     -- 60% width for tree view
             height = 0.8,    -- 80% height
             position = "float", -- IMPORTANT: Must be "float" for popup
             border = "rounded",
