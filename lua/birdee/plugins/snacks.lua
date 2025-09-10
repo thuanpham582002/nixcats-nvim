@@ -106,6 +106,26 @@ snacks.setup({
             },
           },
         },
+        actions = {
+          edit_and_close = function(picker, item)
+            if item and item.file and item.type == "file" then
+              -- Open file and close explorer
+              vim.cmd("edit " .. vim.fn.fnameescape(item.file))
+              picker:close()
+            else
+              -- For directories, use default expand action
+              picker:action("confirm")
+            end
+          end,
+        },
+        win = {
+          list = {
+            keys = {
+              ["<cr>"] = "edit_and_close", -- Enter to open file and close
+              ["l"] = "edit_and_close",    -- 'l' to open file and close (or expand folder)
+            },
+          },
+        },
       },
     },
     win = {
