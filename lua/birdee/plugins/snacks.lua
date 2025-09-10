@@ -58,6 +58,56 @@ snacks.setup({
   -- Picker with disabled C-j/C-k keys for global navigation
   picker = {
     enabled = true,
+    layouts = {
+      popup = {
+        layout = {
+          backdrop = 60,
+          width = 0.8,
+          height = 0.7,
+          border = "rounded",
+          box = "horizontal",
+          {
+            box = "vertical",
+            { win = "input", height = 1, border = "rounded", title = "{title} {live} {flags}", title_pos = "center" },
+            { win = "list", title = " Results ", title_pos = "center", border = "rounded" },
+          },
+          {
+            win = "preview",
+            title = "{preview:Preview}",
+            width = 0.4,
+            border = "rounded",
+            title_pos = "center",
+          },
+        },
+      },
+    },
+    layout = "popup", -- Use the custom popup layout
+    sources = {
+      explorer = {
+        layout = {
+          preview = false,   -- No preview for tree view
+          layout = {
+            backdrop = 60,
+            width = 0.6,     -- 60% width for tree view
+            height = 0.8,    -- 80% height
+            position = "float", -- IMPORTANT: Must be "float" for popup
+            border = "rounded",
+            box = "vertical",
+            {
+              win = "input",
+              height = 1,
+              border = "rounded",
+              title = "📁 File Explorer",
+              title_pos = "center",
+            },
+            {
+              win = "list",
+              border = "rounded",
+            },
+          },
+        },
+      },
+    },
     win = {
       list = {
         keys = {
