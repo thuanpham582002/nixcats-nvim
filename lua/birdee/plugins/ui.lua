@@ -8,6 +8,9 @@ return {
     for_cat = "other",
     on_require = { "noice" },
     after = function()
+      -- Disable command line at bottom to make space for noice
+      vim.opt.cmdheight = 0
+
       require("noice").setup({
         -- LSP configuration
         lsp = {
@@ -44,23 +47,6 @@ return {
         cmdline = {
           enabled = true, -- Enable cmdline replacement
           view = "cmdline_popup", -- Use floating popup dialog
-          position = {
-            row = "50%", -- Center vertically
-            col = "50%", -- Center horizontally
-          },
-          size = {
-            width = "60%", -- Dialog width
-            height = "auto", -- Auto height based on content
-            min_width = 40,
-            max_width = 80,
-          },
-          border = {
-            style = "rounded", -- Rounded border
-            padding = { 0, 1 },
-          },
-          win_options = {
-            winhighlight = "NormalFloat:NoiceCmdlinePopup,FloatBorder:NoiceCmdlinePopupBorder",
-          },
         },
 
         -- Presets for easier configuration
