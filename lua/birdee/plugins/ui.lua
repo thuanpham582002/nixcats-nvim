@@ -17,7 +17,7 @@ return {
             ["cmp.entry.get_documentation"] = true,
           },
         },
-        
+
         -- Message routing and filtering
         routes = {
           {
@@ -39,10 +39,33 @@ return {
             opts = { skip = true },
           },
         },
-        
+
+        -- Command line configuration - REPLACE BOTTOM CMDLINE WITH FLOATING DIALOG
+        cmdline = {
+          enabled = true, -- Enable cmdline replacement
+          view = "cmdline_popup", -- Use floating popup dialog
+          position = {
+            row = "50%", -- Center vertically
+            col = "50%", -- Center horizontally
+          },
+          size = {
+            width = "60%", -- Dialog width
+            height = "auto", -- Auto height based on content
+            min_width = 40,
+            max_width = 80,
+          },
+          border = {
+            style = "rounded", -- Rounded border
+            padding = { 0, 1 },
+          },
+          win_options = {
+            winhighlight = "NormalFloat:NoiceCmdlinePopup,FloatBorder:NoiceCmdlinePopupBorder",
+          },
+        },
+
         -- Presets for easier configuration
         presets = {
-          bottom_search = true,
+          bottom_search = false, -- Disable bottom search since we use floating
           command_palette = true,
           long_message_to_split = true,
           inc_rename = false,
