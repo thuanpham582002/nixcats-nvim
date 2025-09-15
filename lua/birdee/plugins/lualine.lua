@@ -106,22 +106,8 @@ return {
           lualine_y = { 'grapple', },
           lualine_z = { 'tabs' }
         },
-        winbar = {
-          lualine_a = {},
-          lualine_b = {},
-          lualine_c = {},
-          lualine_x = {},
-          lualine_y = {},
-          lualine_z = {}
-        },
-        inactive_winbar = {
-          lualine_a = {},
-          lualine_b = {},
-          lualine_c = {},
-          lualine_x = {},
-          lualine_y = {},
-          lualine_z = {}
-        },
+        winbar = false,  -- Disabled to prevent conflict with lspsaga winbar
+        inactive_winbar = false,  -- Disabled to prevent conflict with lspsaga winbar
         extensions = {}
       })
     end,
