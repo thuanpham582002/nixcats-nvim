@@ -19,8 +19,8 @@ return {
     ---@type opencode.Config
     require('opencode').setup {
       auto_register_cmp_sources = { "opencode", "buffer" },
-      auto_reload = false,  -- Automatically reload buffers edited by opencode
-      auto_focus = false,   -- Focus the opencode window after prompting 
+      auto_reload = true,  -- Enable auto reload
+      auto_focus = true,   -- Focus opencode window after prompting 
       command = "opencode", -- Command to launch opencode
       context = {           -- Context to inject in prompts
         ["@file"] = require("opencode.context").file,
@@ -37,5 +37,8 @@ return {
       },
       -- See https://github.com/folke/snacks.nvim/blob/main/docs/terminal.md for more terminal options
     }
+    
+    -- Debug message
+    vim.notify("✅ opencode setup completed", vim.log.levels.INFO)
   end,
 }
