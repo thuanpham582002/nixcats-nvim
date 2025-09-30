@@ -117,6 +117,29 @@ snacks.setup({
               picker:action("confirm")
             end
           end,
+          explorer_copy = function(picker, item)
+            if not item then
+              return
+            end
+            local snacks = require("snacks")
+            snacks.input({
+              prompt = "Copy to",
+              completion = "file",
+            }, function(value)
+              if not value or value:find("^%s$") then
+                return
+              end
+              local dir = vim.fs.dirname(item.file)
+              local to = vim.fs.normalize(dir .. "/" .. value)
+              if vim.uv.fs_stat(to) then
+                snacks.notify.warn("File already exists:\n- `" .. to .. "`")
+                return
+              end
+              require("snacks.picker.util").copy_path(item.file, to)
+              require("snacks.explorer.tree").refresh(vim.fs.dirname(to))
+              require("snacks.explorer.actions").update(picker, { target = to })
+            end)
+          end,
         },
         win = {
           list = {
