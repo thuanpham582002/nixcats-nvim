@@ -45,7 +45,7 @@ return {
           },
           ignore_focus = {},
           always_divide_middle = true,
-          globalstatus = false,
+          globalstatus = true,
           refresh = {
             statusline = 1000,
             tabline = 1000,
@@ -106,8 +106,8 @@ return {
           lualine_y = { 'grapple', },
           lualine_z = { 'tabs' }
         },
-        winbar = false,  -- Disabled to prevent conflict with lspsaga winbar
-        inactive_winbar = false,  -- Disabled to prevent conflict with lspsaga winbar
+        winbar = {},  -- Disabled to prevent conflict with lspsaga winbar
+        inactive_winbar = {},  -- Disabled to prevent conflict with lspsaga winbar
         extensions = {}
       })
     end,
