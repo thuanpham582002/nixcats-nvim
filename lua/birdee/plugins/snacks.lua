@@ -340,8 +340,7 @@ vim.notify = function(msg, level, o)
   return snacks.notifier.notify(msg, level, o)
 end
 
--- Success notification
-vim.notify("✅ Snacks configuration loaded", vim.log.levels.INFO)
+-- Success notification (removed for cleaner startup)
 vim.keymap.set({ 'n' }, '<Esc>', function() snacks.notifier.hide() end, { desc = 'dismiss notify popup' })
 
 -- Helper function for picker shortcuts
