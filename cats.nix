@@ -77,7 +77,20 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       curl
     ];
     markdown = [
-      marksman
+      (pkgs.stdenvNoCC.mkDerivation {
+        pname = "marksman";
+        version = "2024-12-18";
+        src = pkgs.fetchurl {
+          url = "https://github.com/artempyanykh/marksman/releases/download/2024-12-18/marksman-macos";
+          hash = "sha256-fhiAOWYjGjPuEH0NJvabQfLw3BMyxS3ZcpwuKft3voM=";
+        };
+        phases = [ "installPhase" ];
+        installPhase = ''
+          mkdir -p $out/bin
+          cp $src $out/bin/marksman
+          chmod +x $out/bin/marksman
+        '';
+      })
       python311Packages.pylatexenc
       harper
     ];
@@ -317,7 +330,7 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
             owner = "coder";
             repo = "claudecode.nvim";
             rev = "main";
-            hash = "sha256-b4jCKIqowkVuWhI9jxthluZISBOnIc8eOIgkw5++HRY=";
+            hash = "sha256-RnMcLYjffkK4ImJ1eKrVzNRUQKD9uo0o84Tf+/LxFbM=";
           };
           meta = {
             description = "Claude Code integration for Neovim";
