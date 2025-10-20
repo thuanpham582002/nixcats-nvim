@@ -306,50 +306,50 @@ return {
     keys = {
       -- LSP finder
       {
-        "gf",
+        "<leader>lf",
         "<cmd>Lspsaga lsp_finder<CR>",
         desc = "🔍 LSP Finder"
       },
-      
+
       -- Code action
       {
-        "<leader>ca",
+        "<leader>la",
         "<cmd>Lspsaga code_action<CR>",
         desc = "💡 Code Action"
       },
-      
+
       -- Rename
       {
-        "gr",
+        "<leader>lr",
         "<cmd>Lspsaga rename<CR>",
         desc = "✏️  Rename"
       },
       {
-        "gr",
+        "<leader>lR",
         "<cmd>Lspsaga rename ++project<CR>",
         desc = "✏️  Rename in Project"
       },
-      
-      -- Peek definition
+
+      -- Definition
       {
-        "gd",
+        "<leader>ld",
         "<cmd>Lspsaga peek_definition<CR>",
         desc = "👁️  Peek Definition"
       },
       {
-        "gD",
+        "<leader>lD",
         "<cmd>Lspsaga goto_definition<CR>",
         desc = "➡️  Go to Definition"
       },
-      
-      -- Peek type definition
+
+      -- Type definition
       {
-        "gt",
+        "<leader>lt",
         "<cmd>Lspsaga peek_type_definition<CR>",
         desc = "👁️  Peek Type Definition"
       },
       {
-        "gT",
+        "<leader>lT",
         "<cmd>Lspsaga goto_type_definition<CR>",
         desc = "➡️  Go to Type Definition"
       },

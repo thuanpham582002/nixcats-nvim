@@ -353,7 +353,7 @@ return {
     -- Keys for lazy loading
     keys = {
       {'<c-\\>', function() snacks.terminal() end, mode = {'n'}, desc = 'open snacks terminal' },
-      {"<leader>E", function() snacks.explorer() end, mode = {"n"}, desc = 'File Explorer (Snacks)' },
+      {"<leader>1", function() snacks.explorer() end, mode = {"n"}, desc = 'File Explorer (Snacks)' },
       {"<leader>_", function() snacks.lazygit.open() end, mode = {"n"}, desc = 'LazyGit' },
       {"<leader>gc", function() snacks.lazygit.log() end, mode = {"n"}, desc = 'Lazy[G]it [C]ommit log' },
       {"<leader>gl", function() snacks.gitbrowse.open() end, mode = {"n"}, desc = '[G]oto git [L]ink' },
@@ -368,7 +368,15 @@ return {
       { "<leader>ff", pickpick("files"), desc = "Find Files" },
       { "<leader>fg", pickpick("git_files"), desc = "Find Git Files" },
       { "<leader>fp", pickpick("projects"), desc = "Projects" },
-      { "<leader>fr", pickpick("recent"), desc = "Recent" },
+      { "<leader>e", function()
+        require('snacks').picker.recent()
+        vim.defer_fn(function()
+          vim.cmd("stopinsert")
+        end, 50)
+      end,
+      mode = {"n"},
+      desc = "Recent Files"
+    },
       -- git
       { "<leader>gb", pickpick("git_branches"), desc = "Git Branches" },
       { "<leader>gs", pickpick("git_status"), desc = "Git Status" },
