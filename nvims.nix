@@ -45,6 +45,7 @@ inputs: let
     AI.windsurf = false;
     AI.opencode = true;
     AI.claudecode = true;
+    AI.minuet = true;
     vimagePreview = true;
     lspDebugMode = false;
     other = true;
