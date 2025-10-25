@@ -330,7 +330,7 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
             owner = "coder";
             repo = "claudecode.nvim";
             rev = "main";
-            hash = "sha256-NpJmNvqc7Zsjx6T22taI3RALVhPPphk+cW7KU4uta+8=";
+            hash = "sha256-XYmf1RQ2bVK6spINZW4rg6OQQ5CWWcR0Tw4QX8ZDjgs=";
           };
           meta = {
             description = "Claude Code integration for Neovim";
