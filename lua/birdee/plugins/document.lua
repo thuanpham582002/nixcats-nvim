@@ -212,8 +212,7 @@ return {
     },
   },
 
-  -- Obsidian.nvim - Note management system (Temporarily disabled for testing)
-  --[[
+  -- Obsidian.nvim - Note management system
   {
     "obsidian.nvim",
     for_cat = "obsidian",
@@ -465,5 +464,5 @@ return {
         end,
       })
     end,
-  }, ]]
+  },
 }
