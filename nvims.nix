@@ -57,6 +57,7 @@ inputs: let
     bash = true;
     neonixdev = true;
     markdown = true;
+    obsidian = true;
     java = true;
     web = true;
     go = true;
@@ -135,6 +136,7 @@ in {
       other = true;
       debug = true;
       markdown = true;
+      obsidian = true;
       customPlugins = true;
       general = true;
       otter = true;

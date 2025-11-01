@@ -212,10 +212,10 @@ return {
     },
   },
 
-  -- Obsidian.nvim - Note management system (TEMPORARILY DISABLED - Build issues)
-  --[[ {
-    "obsidian.nvim",
-    for_cat = "markdown",
+  -- Obsidian.nvim - Note management system
+  {
+    "obsidian-nvim",
+    for_cat = "obsidian",
     ft = "markdown",
     cmd = {
       "ObsidianOpen",
@@ -464,5 +464,5 @@ return {
         end,
       })
     end,
-  }, ]]
+  },
 }
