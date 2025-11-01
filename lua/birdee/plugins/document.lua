@@ -212,7 +212,8 @@ return {
     },
   },
 
-  -- Obsidian.nvim - Note management system
+  -- Obsidian.nvim - Note management system (Temporarily disabled for testing)
+  --[[
   {
     "obsidian.nvim",  -- Use original name even with custom build
     for_cat = "obsidian",
@@ -464,5 +465,5 @@ return {
         end,
       })
     end,
-  },
+  }, ]]
 }
