@@ -216,7 +216,7 @@ return {
   {
     "obsidian.nvim",
     for_cat = "obsidian",
-    ft = "markdown",
+    -- Remove all loading triggers - always load
     cmd = {
       "ObsidianOpen",
       "ObsidianNew", 
