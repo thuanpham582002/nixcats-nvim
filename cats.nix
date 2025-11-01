@@ -260,6 +260,23 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       pkgs.neovimPlugins.shelua
       # (pkgs.neovimUtils.grammarToPlugin (pkgs.tree-sitter-grammars.tree-sitter-nu.overrideAttrs (p: { installQueries = true; })))
     ];
+    obsidian = [
+      (pkgs.vimUtils.buildVimPlugin {
+        pname = "obsidian.nvim";
+        version = "2025-01-01";
+        src = pkgs.fetchFromGitHub {
+          owner = "obsidian-nvim";
+          repo = "obsidian.nvim";
+          rev = "1a1a475846a4cfa3cfedde1c59141d99b6212951";
+          hash = "sha256-b337e6220d57039d9eae9ec0eb0d104fcbf9946abe611861462d4a1bb9636cac";
+        };
+        propagatedBuildInputs = with pkgs.vimPlugins; [ plenary-nvim ];
+        meta = {
+          description = "Obsidian.md integration for Neovim";
+          homepage = "https://github.com/obsidian-nvim/obsidian.nvim";
+        };
+      })
+    ];
     lua = [
       luvit-meta
     ];
@@ -339,23 +356,6 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
         })
       ];
     };
-    obsidian = [
-      (pkgs.vimUtils.buildVimPlugin {
-        pname = "obsidian.nvim";
-        version = "2025-01-01";
-        src = pkgs.fetchFromGitHub {
-          owner = "obsidian-nvim";
-          repo = "obsidian.nvim";
-          rev = "1a1a475846a4cfa3cfedde1c59141d99b6212951";
-          hash = "sha256-b337e6220d57039d9eae9ec0eb0d104fcbf9946abe611861462d4a1bb9636cac";
-        };
-        propagatedBuildInputs = with pkgs.vimPlugins; [ plenary-nvim ];
-        meta = {
-          description = "Obsidian.md integration for Neovim";
-          homepage = "https://github.com/obsidian-nvim/obsidian.nvim";
-        };
-      })
-    ];
     debug = [
       nvim-dap
       nvim-dap-ui
