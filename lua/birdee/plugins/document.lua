@@ -267,20 +267,8 @@ return {
       require("obsidian").setup({
         workspaces = {
           {
-            name = "personal",
-            path = vim.fn.expand("~/Documents/Obsidian/Personal"),
-          },
-          {
-            name = "work", 
-            path = vim.fn.expand("~/Documents/Obsidian/Work"),
-          },
-          {
-            name = "notes",
-            path = vim.fn.expand("~/Documents/Obsidian/Notes"),
-          },
-          {
             name = "vault",
-            path = vim.fn.expand("~/vault"), -- Generic vault location
+            path = vim.fn.expand("~/vault"), -- Use existing vault
           },
         },
 
