@@ -214,7 +214,7 @@ return {
 
   -- Obsidian.nvim - Note management system
   {
-    "obsidian-nvim",
+    "obsidian.nvim",  -- Use original name even with custom build
     for_cat = "obsidian",
     ft = "markdown",
     cmd = {
