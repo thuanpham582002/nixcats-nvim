@@ -1,161 +1,159 @@
 # Custom Plugin Build Guide - NixCats-nvim
 
-## ❌ COMMON MISTAKES TO AVOID
+## 🚨 **CRITICAL BUILD FAILURE ROOT CAUSE**
 
-### 1. **NEVER put custom builds in `optionalPlugins`**
+**Original Issue**: `nix build '.#birdeevim'` failed with infinite evaluation/hanging when adding custom obsidian.nvim build.
+
+## ❌ **WHAT CAUSED THE BUILD FAILURE**
+
+### 1. **Custom build complexity in `optionalPlugins` caused infinite evaluation**
 ```nix
-# ❌ WRONG - Causes infinite evaluation
+# ❌ CAUSED BUILD FAILURE
 optionalPlugins = {
-  myplugin = [
-    (pkgs.vimUtils.buildVimPlugin { ... })  # Custom build here
-  ];
-};
-```
-
-**Problem**: Custom builds in optionalPlugins cause nixCats infinite evaluation loops because lazy loading conflicts with custom dependency resolution.
-
-### 2. **NEVER use complex custom builds with metadata**
-```nix
-# ❌ WRONG - Too complex
-(pkgs.vimUtils.buildVimPlugin {
-  pname = "my-plugin";
-  version = "latest";
-  src = pkgs.fetchFromGitHub { ... };
-  propagatedBuildInputs = [ ... ];  # Bad
-  meta = { ... };  # Bad
-})
-```
-
-**Problem**: Extra dependencies and metadata create circular dependencies in nixCats evaluation.
-
-### 3. **NEVER mismatch plugin names**
-```lua
--- ❌ WRONG - Name mismatch
-{
-  "obsidian-nvim",  -- Custom build name
-  for_cat = "obsidian",
-}
-```
-
-**Problem**: Custom build creates plugin with different name than referenced in config.
-
-### 4. **NEVER use multiple conflicting loading triggers**
-```lua
--- ❌ WRONG - Conflicting triggers
-{
-  "my-plugin",
-  for_cat = "mycat",
-  ft = "markdown",  # Filetype trigger
-  cmd = { "MyCommand" },  # Command trigger
-  event = "VeryLazy",  # Event trigger
-}
-```
-
-**Problem**: Multiple loading strategies confuse nixCats LZE system.
-
-## ✅ CORRECT PATTERNS
-
-### 1. **ALWAYS use `startupPlugins` for custom builds**
-```nix
-# ✅ CORRECT - Custom builds in startupPlugins
-startupPlugins = {
-  myplugin = [
+  obsidian = [
     (pkgs.vimUtils.buildVimPlugin {
-      name = "my-plugin";
-      src = pkgs.fetchFromGitHub { ... };
+      pname = "obsidian.nvim";
+      version = "2025-01-01";
+      src = pkgs.fetchFromGitHub {
+        owner = "obsidian-nvim";
+        repo = "obsidian.nvim";
+        rev = "1a1a475846a4cfa3cfedde1c59141d99b6212951";
+        hash = "sha256-b337e6220d57039d9eae9ec0eb0d104fcbf9946abe611861462d4a1bb9636cac";
+      };
+      propagatedBuildInputs = with pkgs.vimPlugins; [ plenary-nvim ];  # ❌ COMPLEXITY
+      meta = {  # ❌ COMPLEXITY
+        description = "Obsidian.md integration for Neovim";
+        homepage = "https://github.com/obsidian-nvim/obsidian.nvim";
+      };
     })
   ];
-};
+}
 ```
 
-### 2. **ALWAYS keep custom builds minimal**
+**Problem**: Complex custom builds with `propagatedBuildInputs` and `meta` in `optionalPlugins` caused nixCats infinite evaluation loops.
+
+### 2. **Symptoms of the build failure**
+```bash
+$ nix build '.#birdeevim'
+# No output, just hangs forever
+# Timeout after minutes
+# No error message, just infinite evaluation
+```
+
+## ✅ **WHAT FIXED THE BUILD FAILURE**
+
+### 1. **Simplified custom build**
 ```nix
-# ✅ CORRECT - Minimal build
+# ✅ WORKING - Minimal build
 pkgs.vimPlugins.obsidian-nvim or (pkgs.vimUtils.buildVimPlugin {
   name = "obsidian-nvim";
   src = pkgs.fetchFromGitHub {
     owner = "obsidian-nvim";
     repo = "obsidian.nvim";
     rev = "refs/tags/v3.14.3";
-    hash = "sha256-...";
+    hash = "sha256-82e352cca563d91a070e851ec6fdb0062c22811d708e751cbf6fe63ea9bfe4cb";
   };
+  # No propagatedBuildInputs
+  # No meta
 })
 ```
 
-### 3. **ALWAYS use fallback to nixpkgs if available**
+### 2. **Used release tag instead of commit**
 ```nix
-# ✅ CORRECT - Fallback pattern
+# ❌ PROBLEMATIC - Commit hash
+rev = "1a1a475846a4cfa3cfedde1c59141d99b6212951";
+
+# ✅ WORKING - Release tag
+rev = "refs/tags/v3.14.3";
+```
+
+### 3. **Added fallback pattern**
+```nix
+# ✅ SAFE - Fallback to nixpkgs if available
 pkgs.vimPlugins.obsidian-nvim or (custom_build)
 ```
 
-### 4. **ALWAYS match plugin names correctly**
-```lua
--- ✅ CORRECT - Name matches repository
-{
-  "obsidian.nvim",  # Repository name
-  for_cat = "obsidian",
-}
-```
+## 🔧 **DEBUG BUILD FAILURE**
 
-### 5. **ALWAYS use single loading strategy**
-```lua
--- ✅ CORRECT - Simple loading
-{
-  "obsidian.nvim",
-  for_cat = "obsidian",
-  -- No conflicting triggers
-}
-```
+### When build hangs indefinitely:
 
-## 🔧 DEBUG CHECKLIST
-
-### When custom build fails:
-
-1. **Check build isolation**:
+1. **Test custom build in isolation**:
 ```bash
 nix eval --impure --expr 'let pkgs = import <nixpkgs> {}; in (pkgs.vimUtils.buildVimPlugin { ... }).name'
 ```
 
-2. **Move from optional → startup**:
+2. **Simplify custom build**:
 ```nix
-# If in optionalPlugins, move to startupPlugins
+# Remove propagatedBuildInputs
+# Remove meta
+# Use release tags instead of commits
 ```
 
-3. **Simplify build**:
+3. **Test minimal build**:
 ```nix
-# Remove propagatedBuildInputs, meta, complex features
+pkgs.vimUtils.buildVimPlugin {
+  name = "test";
+  src = pkgs.fetchFromGitHub { ... };
+}
 ```
 
-4. **Check name matching**:
-```lua
-# Ensure config name matches build name
+4. **Move to startupPlugins if still fails**:
+```nix
+# Last resort - move from optionalPlugins to startupPlugins
+startupPlugins = {
+  obsidian = [ (custom_build) ];
+};
 ```
 
-5. **Test with minimal loading**:
-```lua
-# Remove ft, cmd, event triggers
+## 🎯 **BUILD FAILURE PATTERNS TO AVOID**
+
+### ❌ **NEVER do this in optionalPlugins**:
+```nix
+optionalPlugins = {
+  myplugin = [
+    (pkgs.vimUtils.buildVimPlugin {
+      # Complex configuration
+      propagatedBuildInputs = [ ... ];  # ❌ INFINITE EVALUATION
+      meta = { ... };  # ❌ INFINITE EVALUATION
+      pname = "complex-name";  # ❌ CAN CAUSE ISSUES
+      version = "latest";  # ❌ NOT DETERMINISTIC
+    })
+  ];
+};
 ```
 
-## 🎯 RULES OF THUMB
+### ✅ **ALWAYS do this**:
+```nix
+optionalPlugins = {
+  myplugin = [
+    pkgs.vimPlugins.myplugin or (pkgs.vimUtils.buildVimPlugin {
+      name = "myplugin";  # ✅ SIMPLE
+      src = pkgs.fetchFromGitHub {
+        owner = "owner";
+        repo = "repo";
+        rev = "refs/tags/v1.0.0";  # ✅ DETERMINISTIC
+        hash = "sha256-...";  # ✅ CORRECT HASH
+      };
+    })
+  ];
+};
+```
 
-1. **Custom builds = startupPlugins**
-2. **Standard plugins = optionalPlugins**
-3. **Keep builds minimal**
-4. **Single loading strategy**
-5. **Match names exactly**
-6. **Always test isolation first**
+## 📋 **BUILD SUCCESS WORKFLOW**
 
-## 📋 WORKFLOW
+1. **Test custom build isolation first**
+2. **Use release tags, not commits**
+3. **Keep builds minimal (no inputs, no meta)**
+4. **Use fallback pattern**
+5. **Add to optionalPlugins**
+6. **If still fails, try startupPlugins**
 
-1. **Test custom build in isolation**
-2. **Add to startupPlugins (never optional)**
-3. **Use minimal config**
-4. **Match names exactly**
-5. **Test nixCats build**
-6. **Enable category in nvims.nix**
-7. **Test commands work**
+## 🚨 **KEY LESSON**
+
+**Custom builds in optionalPlugins can cause infinite evaluation if too complex. Keep them minimal!**
+
+**The build failure was NOT about workspace configuration - that was a separate issue after build succeeded.**
 
 ---
 
-**Remember: Custom builds + optionalPlugins = INFINITE EVALUATION**
-**Always use startupPlugins for custom builds!**
+**Remember: Build fail = infinite evaluation from complex custom builds in optionalPlugins. Keep it simple!**
