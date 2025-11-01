@@ -215,7 +215,7 @@ return {
   -- Obsidian.nvim - Note management system (Temporarily disabled for testing)
   --[[
   {
-    "obsidian.nvim",  -- Use original name even with custom build
+    "obsidian.nvim",
     for_cat = "obsidian",
     ft = "markdown",
     cmd = {
