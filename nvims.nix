@@ -57,7 +57,7 @@ inputs: let
     bash = true;
     neonixdev = true;
     markdown = true;
-    obsidian = true;
+    # obsidian = true;  # Disable obsidian category completely
     java = true;
     web = true;
     go = true;
