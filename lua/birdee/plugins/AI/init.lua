@@ -69,4 +69,5 @@ return {
   { import = MP:relpath "opencode", enabled = nixCats("AI.opencode") or false, },
   { import = MP:relpath "codecompanion", enabled = nixCats("AI.companion") or false, },
   { import = MP:relpath "copilot", enabled = nixCats("AI.copilot") or false, },
+  { import = MP:relpath "claudecode", enabled = nixCats("AI.claudecode") or false, },
 }
