@@ -241,34 +241,34 @@ return {
       "ObsidianNewFromTemplate",
     },
     keys = {
-      { "<leader>oo", "<cmd>ObsidianQuickSwitch<cr>", desc = "🔍 Open/Switch Note", ft = "markdown" },
-      { "<leader>on", "<cmd>ObsidianNew<cr>", desc = "📝 New Note", ft = "markdown" },
-      { "<leader>oN", "<cmd>ObsidianNewFromTemplate<cr>", desc = "📋 New Note from Template", ft = "markdown" },
-      { "<leader>os", "<cmd>ObsidianSearch<cr>", desc = "🔎 Search Notes", ft = "markdown" },
-      { "<leader>oS", "<cmd>ObsidianLinks<cr>", desc = "📎 Show All Links", ft = "markdown" },
-      { "<leader>ot", "<cmd>ObsidianToday<cr>", desc = "📅 Today's Note", ft = "markdown" },
-      { "<leader>oy", "<cmd>ObsidianYesterday<cr>", desc = "⏮️ Yesterday's Note", ft = "markdown" },
-      { "<leader>oT", "<cmd>ObsidianTomorrow<cr>", desc = "⏭️ Tomorrow's Note", ft = "markdown" },
-      { "<leader>od", "<cmd>ObsidianDailies<cr>", desc = "📆 Daily Notes", ft = "markdown" },
-      { "<leader>ol", "<cmd>ObsidianLink<cr>", desc = "🔗 Insert Link", mode = {"n", "v"}, ft = "markdown" },
-      { "<leader>oL", "<cmd>ObsidianLinkNew<cr>", desc = "📝 Link to New Note", mode = {"n", "v"}, ft = "markdown" },
-      { "<leader>ob", "<cmd>ObsidianBacklinks<cr>", desc = "🔗 Show Backlinks", ft = "markdown" },
-      { "<leader>og", "<cmd>ObsidianTags<cr>", desc = "🏷️ Browse Tags", ft = "markdown" },
-      { "<leader>oT", "<cmd>ObsidianTemplate<cr>", desc = "📄 Insert Template", ft = "markdown" },
-      { "<leader>or", "<cmd>ObsidianRename<cr>", desc = "✏️ Rename Note", ft = "markdown" },
-      { "<leader>ox", "<cmd>ObsidianToggleCheckbox<cr>", desc = "☑️ Toggle Checkbox", ft = "markdown" },
-      { "<leader>oe", "<cmd>ObsidianExtractNote<cr>", desc = "📤 Extract to New Note", mode = "v", ft = "markdown" },
-      { "<leader>op", "<cmd>ObsidianPasteImg<cr>", desc = "🖼️ Paste Image", ft = "markdown" },
-      { "<leader>ow", "<cmd>ObsidianWorkspace<cr>", desc = "🏢 Switch Workspace", ft = "markdown" },
-      { "gf", "<cmd>ObsidianFollowLink<cr>", desc = "➡️ Follow Link", ft = "markdown" },
-      { "<bs>", "<cmd>ObsidianBacklinks<cr>", desc = "⬅️ Show Backlinks", ft = "markdown" },
+      { "<leader>oo", "<cmd>ObsidianQuickSwitch<cr>", desc = "🔍 Open/Switch Note" },
+      { "<leader>on", "<cmd>ObsidianNew<cr>", desc = "📝 New Note" },
+      { "<leader>oN", "<cmd>ObsidianNewFromTemplate<cr>", desc = "📋 New Note from Template" },
+      { "<leader>os", "<cmd>ObsidianSearch<cr>", desc = "🔎 Search Notes" },
+      { "<leader>oS", "<cmd>ObsidianLinks<cr>", desc = "📎 Show All Links" },
+      { "<leader>ot", "<cmd>ObsidianToday<cr>", desc = "📅 Today's Note" },
+      { "<leader>oy", "<cmd>ObsidianYesterday<cr>", desc = "⏮️ Yesterday's Note" },
+      { "<leader>oT", "<cmd>ObsidianTomorrow<cr>", desc = "⏭️ Tomorrow's Note" },
+      { "<leader>od", "<cmd>ObsidianDailies<cr>", desc = "📆 Daily Notes" },
+      { "<leader>ol", "<cmd>ObsidianLink<cr>", desc = "🔗 Insert Link", mode = {"n", "v"} },
+      { "<leader>oL", "<cmd>ObsidianLinkNew<cr>", desc = "📝 Link to New Note", mode = {"n", "v"} },
+      { "<leader>ob", "<cmd>ObsidianBacklinks<cr>", desc = "🔗 Show Backlinks" },
+      { "<leader>og", "<cmd>ObsidianTags<cr>", desc = "🏷️ Browse Tags" },
+      { "<leader>oT", "<cmd>ObsidianTemplate<cr>", desc = "📄 Insert Template" },
+      { "<leader>or", "<cmd>ObsidianRename<cr>", desc = "✏️ Rename Note" },
+      { "<leader>ox", "<cmd>ObsidianToggleCheckbox<cr>", desc = "☑️ Toggle Checkbox" },
+      { "<leader>oe", "<cmd>ObsidianExtractNote<cr>", desc = "📤 Extract to New Note", mode = "v" },
+      { "<leader>op", "<cmd>ObsidianPasteImg<cr>", desc = "🖼️ Paste Image" },
+      { "<leader>ow", "<cmd>ObsidianWorkspace<cr>", desc = "🏢 Switch Workspace" },
+      { "gf", "<cmd>ObsidianFollowLink<cr>", desc = "➡️ Follow Link" },
+      { "<bs>", "<cmd>ObsidianBacklinks<cr>", desc = "⬅️ Show Backlinks" },
     },
     after = function()
       require("obsidian").setup({
         workspaces = {
           {
-            name = "vault",
-            path = vim.fn.expand("~/vault"), -- Use existing vault
+            name = "Persional",
+            path = vim.fn.expand("~/Documents/Persional"), -- User's PARA vault
           },
         },
 
@@ -291,17 +291,17 @@ return {
           },
         },
 
-        -- Daily notes configuration
+        -- Daily notes configuration (matching user's obsidian config)
         daily_notes = {
-          folder = "dailies",
-          date_format = "%Y-%m-%d",
+          folder = "04-DAILY",
+          date_format = "%Y-%m/%Y-%m-%d", -- Matching your current format
           alias_format = "%B %-d, %Y",
-          template = "daily-template.md",
+          template = "05-META/Templates/Daily Note Template", -- Full path to template
         },
 
-        -- Templates configuration  
+        -- Templates configuration (matching user's vault)
         templates = {
-          subdir = "templates",
+          subdir = "05-META/Templates",
           date_format = "%Y-%m-%d",
           time_format = "%H:%M",
           substitutions = {
