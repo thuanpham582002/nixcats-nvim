@@ -46,6 +46,7 @@ inputs: let
     AI.opencode = true;
     AI.claudecode = true;
     AI.minuet = true;
+    AI.copilot = true;
     vimagePreview = true;
     lspDebugMode = false;
     other = true;

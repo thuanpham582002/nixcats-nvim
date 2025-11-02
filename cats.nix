@@ -349,6 +349,9 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
           };
         })
       ];
+      copilot = [
+        pkgs.vimPlugins.copilot-vim
+      ];
     };
         debug = [
       nvim-dap
