@@ -350,7 +350,7 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
         })
       ];
       copilot = [
-        pkgs.vimPlugins.copilot-vim
+        pkgs.vimPlugins.copilot-lua
       ];
     };
         debug = [

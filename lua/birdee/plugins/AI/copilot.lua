@@ -1,50 +1,99 @@
 local MP = ...
 
 return {
-  -- GitHub Copilot.vim - AI pair programmer
+  -- GitHub Copilot.lua - AI pair programmer (Lua version)
   {
-    "copilot.vim",
+    "copilot.lua",
     for_cat = "AI.copilot",
     event = "InsertEnter",
     after = function()
-      -- Copilot configuration
-      vim.g.copilot_no_tab_map = true
-      vim.g.copilot_assume_mapped = true
-      vim.g.copilot_tab_fallback = ""
+      require('copilot').setup({
+        panel = {
+          enabled = true,
+          auto_refresh = false,
+          keymap = {
+            jump_prev = "[[",
+            jump_next = "]]",
+            accept = "<CR>",
+            refresh = "gr",
+            open = "<M-CR>"
+          },
+        },
+        suggestion = {
+          enabled = true,
+          auto_trigger = false,
+          hide_during_completion = true,
+          debounce = 75,
+          keymap = {
+            accept = "<M-l>",        -- Ergonomic accept key
+            accept_word = "<M-j>",   -- Accept single word
+            accept_line = false,      -- Don't accept full lines by default
+            next = "<M-]>",          -- Next suggestion
+            prev = "<M-[>",          -- Previous suggestion
+            dismiss = "<M-k>",       -- Dismiss suggestion
+          },
+        },
+        filetypes = {
+          yaml = false,
+          markdown = false,
+          help = false,
+          gitcommit = false,
+          gitrebase = false,
+          hgcommit = false,
+          svn = false,
+          cvs = false,
+          ["."] = false,
+        },
+        copilot_node_command = 'node', -- Node.js v24.10.0 available
+      })
 
-      -- Setup keybindings for copilot (using Alt+ keys to avoid navigation conflicts)
-      vim.keymap.set('i', '<M-j>', 'copilot#Accept("\\<CR>")', {
-        expr = true,
-        replace_keycodes = false,
-        desc = "🤖 Copilot Accept Suggestion"
+      -- Hide copilot suggestions when blink.cmp menu is open
+      vim.api.nvim_create_autocmd("User", {
+        pattern = "BlinkCmpMenuOpen",
+        callback = function()
+          vim.b.copilot_suggestion_hidden = true
+        end,
       })
-      vim.keymap.set('i', '<M-l>', 'copilot#AcceptWord("\\<CR>")', {
-        expr = true,
-        replace_keycodes = false,
-        desc = "🤖 Copilot Accept Word"
+
+      vim.api.nvim_create_autocmd("User", {
+        pattern = "BlinkCmpMenuClose",
+        callback = function()
+          vim.b.copilot_suggestion_hidden = false
+        end,
       })
-      vim.keymap.set('i', '<M-k>', 'copilot#Dismiss("\\<CR>")', {
-        expr = true,
-        replace_keycodes = false,
-        desc = "🤖 Copilot Dismiss Suggestion"
-      })
-      vim.keymap.set('i', '<M-n>', 'copilot#Next("\\<CR>")', {
-        expr = true,
-        replace_keycodes = false,
-        desc = "🤖 Copilot Next Suggestion"
-      })
-      vim.keymap.set('i', '<M-p>', 'copilot#Previous("\\<CR>")', {
-        expr = true,
-        replace_keycodes = false,
-        desc = "🤖 Copilot Previous Suggestion"
-      })
+
+      -- Leader commands for copilot control
+      vim.keymap.set('n', '<leader>cc', function()
+        require('copilot.suggestion').toggle_auto_trigger()
+      end, { desc = "🤖 Toggle Copilot" })
+
+      vim.keymap.set('n', '<leader>ce', function()
+        vim.cmd('Copilot enable')
+      end, { desc = "🤖 Enable Copilot" })
+
+      vim.keymap.set('n', '<leader>cd', function()
+        vim.cmd('Copilot disable')
+      end, { desc = "🤖 Disable Copilot" })
+
+      vim.keymap.set('n', '<leader>cs', '<cmd>Copilot status<cr>',
+        { desc = "🤖 Copilot Status" })
+
+      vim.keymap.set('n', '<leader>cp', function()
+        require('copilot.panel').toggle()
+      end, { desc = "🤖 Open Copilot Panel" })
     end,
     keys = {
-      { "<leader>cc", "<cmd>Copilot toggle<cr>", desc = "🤖 Toggle Copilot" },
-      { "<leader>ce", "<cmd>Copilot enable<cr>", desc = "🤖 Enable Copilot" },
-      { "<leader>cd", "<cmd>Copilot disable<cr>", desc = "🤖 Disable Copilot" },
-      { "<leader>cs", "<cmd>Copilot status<cr>", desc = "🤖 Copilot Status" },
-      { "<leader>cp", "<cmd>Copilot panel<cr>", desc = "🤖 Open Copilot Panel" },
+      { "<leader>cc", desc = "🤖 Toggle Copilot" },
+      { "<leader>ce", desc = "🤖 Enable Copilot" },
+      { "<leader>cd", desc = "🤖 Disable Copilot" },
+      { "<leader>cs", desc = "🤖 Copilot Status" },
+      { "<leader>cp", desc = "🤖 Open Copilot Panel" },
+      -- Insert mode keybindings
+      { "<M-l>", desc = "🤖 Accept Copilot Suggestion", mode = "i" },
+      { "<M-j>", desc = "🤖 Accept Copilot Word", mode = "i" },
+      { "<M-k>", desc = "🤖 Dismiss Copilot Suggestion", mode = "i" },
+      { "<M-]>", desc = "🤖 Next Copilot Suggestion", mode = "i" },
+      { "<M-[>", desc = "🤖 Previous Copilot Suggestion", mode = "i" },
     },
   },
 }
