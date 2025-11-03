@@ -12,28 +12,28 @@ return {
       vim.g.copilot_assume_mapped = true
       vim.g.copilot_tab_fallback = ""
 
-      -- Setup keybindings for copilot
-      vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
+      -- Setup keybindings for copilot (using Alt+ keys to avoid navigation conflicts)
+      vim.keymap.set('i', '<M-j>', 'copilot#Accept("\\<CR>")', {
         expr = true,
         replace_keycodes = false,
         desc = "🤖 Copilot Accept Suggestion"
       })
-      vim.keymap.set('i', '<C-L>', 'copilot#AcceptWord("\\<CR>")', {
+      vim.keymap.set('i', '<M-l>', 'copilot#AcceptWord("\\<CR>")', {
         expr = true,
         replace_keycodes = false,
         desc = "🤖 Copilot Accept Word"
       })
-      vim.keymap.set('i', '<C-K>', 'copilot#Dismiss("\\<CR>")', {
+      vim.keymap.set('i', '<M-k>', 'copilot#Dismiss("\\<CR>")', {
         expr = true,
         replace_keycodes = false,
         desc = "🤖 Copilot Dismiss Suggestion"
       })
-      vim.keymap.set('i', '<C-]>', 'copilot#Next("\\<CR>")', {
+      vim.keymap.set('i', '<M-n>', 'copilot#Next("\\<CR>")', {
         expr = true,
         replace_keycodes = false,
         desc = "🤖 Copilot Next Suggestion"
       })
-      vim.keymap.set('i', '<C-[>', 'copilot#Previous("\\<CR>")', {
+      vim.keymap.set('i', '<M-p>', 'copilot#Previous("\\<CR>")', {
         expr = true,
         replace_keycodes = false,
         desc = "🤖 Copilot Previous Suggestion"
