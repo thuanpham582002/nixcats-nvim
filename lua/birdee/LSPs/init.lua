@@ -169,7 +169,7 @@ return {
     "harper_ls",
     for_cat = "markdown",
     lsp = {
-      filetypes = { "markdown", "norg" },
+      filetypes = { "norg" },
       settings = {
         ["harper-ls"] = {},
       },
