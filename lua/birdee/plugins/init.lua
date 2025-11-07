@@ -11,6 +11,8 @@ if colorschemer == 'onedark' then
     style = 'darker', -- dark, darker, cool, deep, warm, warmer, light
   }
   require('onedark').load()
+  -- Set custom WinSeparator color for onedark
+  vim.api.nvim_set_hl(0, "WinSeparator", { fg = "#6272a4" })
 elseif colorschemer == 'tokyonight' or colorschemer == 'tokyonight-day' then
   require('tokyonight').setup {
     -- Available styles: storm, moon, night, day
@@ -44,7 +46,10 @@ elseif colorschemer == 'tokyonight' or colorschemer == 'tokyonight-day' then
     --- function will be called with a Highlights and ColorScheme table
     ---@param highlights Highlights
     ---@param colors ColorScheme
-    on_highlights = function(highlights, colors) end,
+    on_highlights = function(highlights, colors)
+      -- Set custom WinSeparator color
+      highlights.WinSeparator = { fg = '#6272a4' }
+    end,
   }
   require('tokyonight').load()
 elseif colorschemer == 'catppuccin' then
@@ -80,7 +85,9 @@ elseif colorschemer == 'catppuccin' then
       operators = {},
     },
     color_overrides = {},
-    custom_highlights = {},
+    custom_highlights = {
+      WinSeparator = { fg = '#6272a4' },
+    },
     integrations = {
       cmp = true,
       gitsigns = true,
