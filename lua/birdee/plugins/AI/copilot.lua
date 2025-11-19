@@ -21,13 +21,13 @@ return {
         },
         suggestion = {
           enabled = true,
-          auto_trigger = false,
-          hide_during_completion = true,
+          auto_trigger = true,       -- Enable auto-trigger for suggestions
+          hide_during_completion = false, -- Don't hide when blink.cmp is open
           debounce = 75,
           keymap = {
             accept = "<M-l>",        -- Ergonomic accept key
             accept_word = "<M-j>",   -- Accept single word
-            accept_line = false,      -- Don't accept full lines by default
+            accept_line = "<M-i>",   -- Accept full line with Alt+i
             next = "<M-]>",          -- Next suggestion
             prev = "<M-[>",          -- Previous suggestion
             dismiss = "<M-k>",       -- Dismiss suggestion
@@ -47,20 +47,8 @@ return {
         copilot_node_command = 'node', -- Node.js v24.10.0 available
       })
 
-      -- Hide copilot suggestions when blink.cmp menu is open
-      vim.api.nvim_create_autocmd("User", {
-        pattern = "BlinkCmpMenuOpen",
-        callback = function()
-          vim.b.copilot_suggestion_hidden = true
-        end,
-      })
-
-      vim.api.nvim_create_autocmd("User", {
-        pattern = "BlinkCmpMenuClose",
-        callback = function()
-          vim.b.copilot_suggestion_hidden = false
-        end,
-      })
+      -- Don't hide copilot suggestions when blink.cmp menu is open
+      -- Remove auto hiding to allow both systems to work together
 
       -- Leader commands for copilot control
       vim.keymap.set('n', '<leader>cc', function()
