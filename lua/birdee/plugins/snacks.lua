@@ -32,14 +32,14 @@ snacks.setup({
   -- Explorer configuration
   explorer = {
     enabled = true,
-    show_hidden = false,
+    show_hidden = true,
     follow_symlinks = true,
     icons = { enabled = true },
     replace_netrw = true,
     keys = {
       close = "q",
       edit = "<cr>",
-      split = "s", 
+      split = "s",
       vsplit = "v",
       tab = "t",
       parent = "h",
@@ -49,15 +49,15 @@ snacks.setup({
       refresh = "R",
       help = "?",
     },
-    filters = {
-      dotfiles = false,
-      gitignored = false,
-    },
   },
   
   -- Picker with disabled C-j/C-k keys for global navigation
   picker = {
     enabled = true,
+    sources = {
+      explorer = { hidden = true, ignored = true },
+      files = { hidden = true, ignored = true },
+    },
     layouts = {
       popup = {
         layout = {
@@ -352,8 +352,8 @@ return {
     for_cat = "general",
     -- Keys for lazy loading
     keys = {
-      {'<c-\\>', function() snacks.terminal() end, mode = {'n'}, desc = 'open snacks terminal' },
-      {"<leader>1", function() snacks.explorer() end, mode = {"n"}, desc = 'File Explorer (Snacks)' },
+      {'<c-\\>', function() snacks.terminal(nil, { cwd = vim.fn.getcwd() }) end, mode = {'n'}, desc = 'open snacks terminal' },
+      {"<leader>1", function() require('snacks').picker.explorer({ hidden = true, ignored = true, dotfiles = true }) end, mode = {"n"}, desc = 'File Explorer (Snacks)' },
       {"<leader>_", function() snacks.lazygit.open() end, mode = {"n"}, desc = 'LazyGit' },
       {"<leader>gc", function() snacks.lazygit.log() end, mode = {"n"}, desc = 'Lazy[G]it [C]ommit log' },
       {"<leader>gl", function() snacks.gitbrowse.open() end, mode = {"n"}, desc = '[G]oto git [L]ink' },
