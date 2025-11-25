@@ -6,7 +6,7 @@ snacks.setup({
   bufdelete = { enabled = true },
   dim = { enabled = true },
   quickfile = { enabled = true },
-  bigfile = { enabled = true },
+  bigfile = { enabled = false },
   input = { enabled = true },
   scratch = { enabled = true },
   layout = { enabled = true },
@@ -352,7 +352,13 @@ return {
     for_cat = "general",
     -- Keys for lazy loading
     keys = {
-      {'<c-\\>', function() snacks.terminal(nil, { cwd = vim.fn.getcwd() }) end, mode = {'n'}, desc = 'open snacks terminal' },
+      {'<c-\\>', function()
+        local current_dir = vim.fn.expand('%:p:h')
+        if current_dir == '' then
+          current_dir = vim.fn.getcwd()
+        end
+        return snacks.terminal(nil, { cwd = current_dir })
+      end, mode = {'n'}, desc = 'open snacks terminal' },
       {"<leader>1", function() require('snacks').picker.explorer({ hidden = true, ignored = true, dotfiles = true }) end, mode = {"n"}, desc = 'File Explorer (Snacks)' },
       {"<leader>_", function() snacks.lazygit.open() end, mode = {"n"}, desc = 'LazyGit' },
       {"<leader>gc", function() snacks.lazygit.log() end, mode = {"n"}, desc = 'Lazy[G]it [C]ommit log' },
