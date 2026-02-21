@@ -306,6 +306,20 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
     ];
     go = [
       nvim-dap-go
+      (pkgs.vimUtils.buildVimPlugin {
+        pname = "vim-go";
+        version = "2024-01-01";
+        src = pkgs.fetchFromGitHub {
+          owner = "fatih";
+          repo = "vim-go";
+          rev = "refs/heads/master";
+          hash = "sha256-vn2v9tKfSmxSB1HnOTtWM/xHioHkL5fFVgmabiZ5CgI=";
+        };
+        meta = {
+          description = "Go development plugin for Vim";
+          homepage = "https://github.com/fatih/vim-go";
+        };
+      })
     ];
     fennel = [
       conjure
@@ -341,7 +355,7 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
             owner = "coder";
             repo = "claudecode.nvim";
             rev = "main";
-            hash = "sha256-XYmf1RQ2bVK6spINZW4rg6OQQ5CWWcR0Tw4QX8ZDjgs=";
+            hash = "sha256-PmSYIE7j9C2ckJc9wDIm4KCozXP0z1U9TOdItnDyoDQ=";
           };
           meta = {
             description = "Claude Code integration for Neovim";

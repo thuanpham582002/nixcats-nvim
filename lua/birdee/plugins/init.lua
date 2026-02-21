@@ -120,6 +120,7 @@ return {
   { import = MP:relpath "editing", },
   { import = MP:relpath "visual", },
   { import = MP:relpath "document", },
+  { import = MP:relpath "go", },
   
   -- Additional utility plugins not categorized yet
   {

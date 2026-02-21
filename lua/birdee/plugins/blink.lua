@@ -179,6 +179,12 @@ return {
           },
         },
       })
+
+      -- Toggle completion for current buffer
+      vim.keymap.set('n', '<leader>tc', function()
+        vim.b.completion = not (vim.b.completion == nil and true or vim.b.completion)
+        vim.notify("Completion: " .. (vim.b.completion and "ON" or "OFF"))
+      end, { desc = "Toggle completion" })
     end,
   },
 }
