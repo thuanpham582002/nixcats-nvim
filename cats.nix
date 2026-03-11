@@ -1,6 +1,8 @@
 inputs: let
   inherit (inputs.nixCats) utils;
-in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
+in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: let
+  sources = pkgs.callPackage ./misc_nix/nvfetcher/generated.nix {};
+in {
 
   extraCats = {
     kotlin = [
@@ -91,7 +93,7 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
           chmod +x $out/bin/marksman
         '';
       })
-      python311Packages.pylatexenc
+      python312Packages.pylatexenc
       harper
     ];
     fennel = [
@@ -194,7 +196,7 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
     bash = [
       nodePackages.bash-language-server
     ];
-    python = with python311Packages; [
+    python = with python312Packages; [
       # jedi-language-server
       (python-lsp-server.overrideAttrs {
         doCheck = false;
@@ -262,13 +264,7 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
     ];
     obsidian = [
       pkgs.vimPlugins.obsidian-nvim or (pkgs.vimUtils.buildVimPlugin {
-        name = "obsidian-nvim";
-        src = pkgs.fetchFromGitHub {
-          owner = "obsidian-nvim";
-          repo = "obsidian.nvim";
-          rev = "refs/tags/v3.14.3";
-          hash = "sha256-82e352cca563d91a070e851ec6fdb0062c22811d708e751cbf6fe63ea9bfe4cb";
-        };
+        inherit (sources.obsidian-nvim) pname version src;
       })
     ];
     lua = [
@@ -307,23 +303,23 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
     go = [
       nvim-dap-go
       (pkgs.vimUtils.buildVimPlugin {
-        pname = "vim-go";
-        version = "2024-01-01";
-        src = pkgs.fetchFromGitHub {
-          owner = "fatih";
-          repo = "vim-go";
-          rev = "refs/heads/master";
-          hash = "sha256-vn2v9tKfSmxSB1HnOTtWM/xHioHkL5fFVgmabiZ5CgI=";
-        };
-        meta = {
-          description = "Go development plugin for Vim";
-          homepage = "https://github.com/fatih/vim-go";
-        };
+        inherit (sources.vim-go) pname version src;
       })
     ];
     fennel = [
-      conjure
-      cmp-conjure
+      ((pkgs.vimUtils.buildVimPlugin {
+        inherit (sources.conjure) pname version src;
+      }).overrideAttrs (_: { nativeCheckInputs = []; dontFixup = true; }))
+      ((pkgs.vimUtils.buildVimPlugin {
+        pname = "cmp-conjure";
+        version = "2025-03-10";
+        src = pkgs.fetchFromGitHub {
+          owner = "PaterJason";
+          repo = "cmp-conjure";
+          rev = "8c9a88efedc0e5bf3165baa6af8a407afe29daf6";
+          hash = "sha256-uTiXG8p0Cqc4o45ckscRSSv0qGqbfwuryqWBZHEh8Mc=";
+        };
+      }).overrideAttrs (_: { nativeCheckInputs = []; dontFixup = true; }))
     ];
     java = [
       nvim-jdtls
@@ -349,18 +345,7 @@ in { pkgs, settings, categories, name, extra, mkPlugin, ... }@packageDef: {
       ];
       claudecode = [
         (pkgs.vimUtils.buildVimPlugin {
-          pname = "claudecode.nvim";
-          version = "2024-12-19";
-          src = pkgs.fetchFromGitHub {
-            owner = "coder";
-            repo = "claudecode.nvim";
-            rev = "main";
-            hash = "sha256-PmSYIE7j9C2ckJc9wDIm4KCozXP0z1U9TOdItnDyoDQ=";
-          };
-          meta = {
-            description = "Claude Code integration for Neovim";
-            homepage = "https://github.com/coder/claudecode.nvim";
-          };
+          inherit (sources.claudecode-nvim) pname version src;
         })
       ];
       copilot = [

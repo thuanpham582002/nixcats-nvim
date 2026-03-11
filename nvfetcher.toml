@@ -1,0 +1,18 @@
+[claudecode-nvim]
+src.github = "coder/claudecode.nvim"
+src.branch = "main"
+fetch.github = "coder/claudecode.nvim"
+
+[vim-go]
+src.github = "fatih/vim-go"
+src.branch = "master"
+fetch.github = "fatih/vim-go"
+
+[obsidian-nvim]
+src.github = "obsidian-nvim/obsidian.nvim"
+fetch.github = "obsidian-nvim/obsidian.nvim"
+
+[conjure]
+src.github = "Olical/conjure"
+fetch.github = "Olical/conjure"
+

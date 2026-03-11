@@ -1,0 +1,86 @@
+{
+    "claudecode-nvim": {
+        "cargoLock": null,
+        "date": null,
+        "extract": null,
+        "name": "claudecode-nvim",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "owner": "coder",
+            "repo": "claudecode.nvim",
+            "rev": "v0.3.0",
+            "sha256": "sha256-sOBY2y/buInf+SxLwz6uYlUouDULwebY/nmDlbFbGa8=",
+            "sparseCheckout": [],
+            "type": "github"
+        },
+        "version": "v0.3.0"
+    },
+    "conjure": {
+        "cargoLock": null,
+        "date": null,
+        "extract": null,
+        "name": "conjure",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "owner": "Olical",
+            "repo": "conjure",
+            "rev": "v4.58.0",
+            "sha256": "sha256-ykJOEZXFrvCaDMdjITSTWXE5SZsZ6VU5KbYogGlpyTQ=",
+            "sparseCheckout": [],
+            "type": "github"
+        },
+        "version": "v4.58.0"
+    },
+    "obsidian-nvim": {
+        "cargoLock": null,
+        "date": null,
+        "extract": null,
+        "name": "obsidian-nvim",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "owner": "obsidian-nvim",
+            "repo": "obsidian.nvim",
+            "rev": "v3.15.11",
+            "sha256": "sha256-MdM42KwPmzpXIIyGhLU1xnophmVuD+/PoMPH5+7vMYc=",
+            "sparseCheckout": [],
+            "type": "github"
+        },
+        "version": "v3.15.11"
+    },
+    "vim-go": {
+        "cargoLock": null,
+        "date": null,
+        "extract": null,
+        "name": "vim-go",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "owner": "fatih",
+            "repo": "vim-go",
+            "rev": "v1.29",
+            "sha256": "sha256-goN/0mOExk3rPm6Z5cpnCOMM47K6lK4zBqwin1lnjgk=",
+            "sparseCheckout": [],
+            "type": "github"
+        },
+        "version": "v1.29"
+    }
+}
