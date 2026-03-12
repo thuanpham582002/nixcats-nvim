@@ -365,7 +365,49 @@ nix run '.#birdeevim' -- -c ":lua if pcall(require, 'noice') then print('✅ Plu
 ### Troubleshooting Common Issues
 
 **Plugin not found**: Check nixpkgs name matches exactly
-**LZE loading errors**: Use correct events (`DeferredUIEnter`, not `VeryLazy`)  
+**LZE loading errors**: Use correct events (`DeferredUIEnter`, not `VeryLazy`)
 **Dependencies missing**: Add to `startupPlugins` in cats.nix
 **Category not enabled**: Verify category enabled in nvims.nix package
 **Headless testing fails**: Use `on_require` instead of events for testing
+
+---
+
+## Nixpkgs Update Fixes (known issues after `nix flake update`)
+
+### Hash mismatch on custom plugins
+When using `rev = "main"` or `rev = "refs/heads/master"`, hash breaks on every upstream push.
+**Fix**: Use `nvfetcher` to pin versions. Run:
+```bash
+nix run 'nixpkgs#nvfetcher' -- --config nvfetcher.toml --build-dir misc_nix/nvfetcher
+git add misc_nix/nvfetcher/generated.nix misc_nix/nvfetcher/generated.json
+```
+Then in `cats.nix` use `sources = pkgs.callPackage ./misc_nix/nvfetcher/generated.nix {}` and `inherit (sources.plugin-name) pname version src`.
+
+### sphinx-9.1.0 not supported for python3.11
+After nixpkgs update, `python-lsp-server` pulls in `black-25.1.0` → `sphinx-9.1.0` which requires Python 3.12+.
+**Fix**: Change `python311Packages` → `python312Packages` in `cats.nix`.
+
+### conjure / cmp-conjure build fails on macOS
+nixpkgs' `conjure` and `cmp-conjure` fail with `neovimRequireCheckHook` errors and segfault in `fixupPhase` on macOS.
+**Root cause**: `neovimRequireCheckHook` is in `nativeCheckInputs` (not `nativeInstallCheckInputs`), and `dontFixup` + `nativeCheckInputs = []` must both be set AND drv hash must change.
+**Fix**: Build from source via `buildVimPlugin` + override:
+```nix
+((pkgs.vimUtils.buildVimPlugin {
+  inherit (sources.conjure) pname version src;
+}).overrideAttrs (_: { nativeCheckInputs = []; dontFixup = true; }))
+```
+Also add `conjure` to `nvfetcher.toml`. For `cmp-conjure`, use inline `fetchFromGitHub` since it has no releases for nvfetcher.
+
+### Debugging nixpkgs overlay not applying
+To verify an overlay is changing a package's drv hash:
+```bash
+nix eval --impure --expr '
+  let flake = builtins.getFlake "/path/to/flake";
+      pkgs = import flake.inputs.nixpkgs { system = "aarch64-darwin"; overlays = import ./misc_nix/overlays flake.inputs; };
+  in pkgs.vimPlugins.conjure.drvPath
+'
+```
+- `doInstallCheck = false` does NOT change drv hash for vimPlugins
+- `nativeInstallCheckInputs = []` does NOT change drv hash (hook is in `nativeCheckInputs`)
+- `nativeCheckInputs = []` DOES change drv hash ✅
+- Overlays in `extra` list (appended after `sanitizedPluginOverlay`) apply correctly
