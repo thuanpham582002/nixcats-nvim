@@ -155,7 +155,7 @@ in {
       HTML = [
         vscode-langservers-extracted
       ];
-      JS = with nodePackages; [
+      JS = [
         typescript-language-server
         eslint
         prettier
@@ -194,7 +194,7 @@ in {
       ueberzugpp
     ];
     bash = [
-      nodePackages.bash-language-server
+      bash-language-server
     ];
     python = with python312Packages; [
       # jedi-language-server

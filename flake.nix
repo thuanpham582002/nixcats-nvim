@@ -83,8 +83,7 @@
       flake = false;
     };
     "plugins-snacks.nvim" = {
-      # temporary
-      url = "github:BirdeeHub/snacks.nvim";
+      url = "github:folke/snacks.nvim";
       flake = false;
     };
     "plugins-opencode-nvim" = {
