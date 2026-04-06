@@ -191,7 +191,8 @@ return {
   {
     "smart-splits.nvim",
     for_cat = "other",
-    -- Force load immediately for tmux integration (no lazy loading)
+    -- Load early for tmux integration (before keybindings are used)
+    event = "DeferredUIEnter",
     after = function()
       vim.notify("🚀 Loading smart-splits plugin...", vim.log.levels.INFO)
       
