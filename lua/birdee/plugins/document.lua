@@ -436,11 +436,6 @@ return {
 
         -- Open strategy
         open_notes_in = "current",
-
-        -- Follow URL configuration  
-        follow_url_func = function(url)
-          vim.fn.jobstart({"open", url})
-        end,
       })
       
       -- Auto-conceal settings for markdown files
