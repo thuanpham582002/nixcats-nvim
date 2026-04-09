@@ -432,7 +432,9 @@ return {
 
         -- Sorting
         sort_by = "modified",
-        sort_reversed = true,
+        search = {
+          sort_reversed = true,
+        },
 
         -- Open strategy
         open_notes_in = "current",
