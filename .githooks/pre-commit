@@ -1,0 +1,19 @@
+#!/bin/sh
+# Block commits containing .backup files
+
+if git rev-parse --verify HEAD >/dev/null 2>&1; then
+    against=HEAD
+else
+    against=$(git hash-object -t tree /dev/null)
+fi
+
+backup_files=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.backup(\.backup)*$' || true)
+
+if [ -n "$backup_files" ]; then
+    echo "ERROR: Attempting to commit backup files:" >&2
+    echo "$backup_files" | sed 's/^/  - /' >&2
+    echo "" >&2
+    echo "Run: find . -name '*.backup*' -delete" >&2
+    echo "Then unstage them: git reset HEAD <file>" >&2
+    exit 1
+fi
