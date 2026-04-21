@@ -601,15 +601,15 @@
     "plugins-opencode-nvim": {
       "flake": false,
       "locked": {
-        "lastModified": 1775152187,
-        "narHash": "sha256-b1hGZFm7HoUm/bTRy66/9+qZQ5+LgnQcWk28Hp2hkL8=",
-        "owner": "NickvanDyke",
+        "lastModified": 1776607513,
+        "narHash": "sha256-EO4n1tFxY2iHj5RhB+M8YSHbNkeAVfM+E11OYI9p4vU=",
+        "owner": "sudo-tee",
         "repo": "opencode.nvim",
-        "rev": "fa0a495fa2c229115404cb3c1970578f9c6d2f76",
+        "rev": "8edc19ac64e3075d4d68e49ef6846dec562ed316",
         "type": "github"
       },
       "original": {
-        "owner": "NickvanDyke",
+        "owner": "sudo-tee",
         "repo": "opencode.nvim",
         "type": "github"
       }
