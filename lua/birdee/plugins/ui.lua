@@ -266,7 +266,12 @@ return {
     keys = {
       -- Basic navigation removed - handled by snacks config to avoid conflicts
       -- { "<C-h>", "<C-j>", "<C-k>", "<C-l>" } moved to snacks.lua for unified management
-      
+
+      -- Tmux-style split creation
+      { "<leader>-", "<cmd>split<CR>",  desc = "➖ Horizontal Split", mode = "n" },
+      { "<leader>\\", "<cmd>vsplit<CR>", desc = "➗ Vertical Split",   mode = "n" },
+      { "<leader>|", "<cmd>vsplit<CR>", desc = "➗ Vertical Split",   mode = "n" },
+
       -- Resize Mode (Enter/Exit)
       {
         "<C-w>r",
