@@ -10,6 +10,9 @@ return {
       vim.g.neominimap = {
         auto_enable = true,
         layout = "float",
+        winopt = function(opt, _)
+          opt.signcolumn = "no"
+        end,
         exclude_filetypes = {
           "help", "bigfile", "neo-tree", "NvimTree",
           "snacks_explorer", "noice", "edgy", "qf",
