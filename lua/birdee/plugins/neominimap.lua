@@ -14,6 +14,7 @@ return {
           vim.api.nvim_set_option_value("number", false, { win = winid })
           vim.api.nvim_set_option_value("relativenumber", false, { win = winid })
           vim.api.nvim_set_option_value("signcolumn", "no", { win = winid })
+          vim.api.nvim_set_option_value("statuscolumn", "", { win = winid })
         end,
         exclude_filetypes = {
           "help", "bigfile", "neo-tree", "NvimTree",
@@ -32,6 +33,7 @@ return {
             vim.opt_local.number = false
             vim.opt_local.relativenumber = false
             vim.opt_local.signcolumn = "no"
+            vim.opt_local.statuscolumn = ""
           end
         end,
       })
