@@ -16,3 +16,7 @@ fetch.github = "obsidian-nvim/obsidian.nvim"
 src.github = "Olical/conjure"
 fetch.github = "Olical/conjure"
 
+[neominimap-nvim]
+src.github = "Isrothy/neominimap.nvim"
+fetch.github = "Isrothy/neominimap.nvim"
+

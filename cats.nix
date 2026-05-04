@@ -358,6 +358,9 @@ in {
       nvim-dap-virtual-text
     ];
     other = [
+      (pkgs.vimUtils.buildVimPlugin {
+        inherit (sources.neominimap-nvim) pname version src;
+      })
       img-clip-nvim
       nvim-highlight-colors
       which-key-nvim

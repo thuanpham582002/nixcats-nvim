@@ -50,4 +50,15 @@
       sha256 = "sha256-goN/0mOExk3rPm6Z5cpnCOMM47K6lK4zBqwin1lnjgk=";
     };
   };
+  neominimap-nvim = {
+    pname = "neominimap-nvim";
+    version = "v3.16.0";
+    src = fetchFromGitHub {
+      owner = "Isrothy";
+      repo = "neominimap.nvim";
+      rev = "v3.16.0";
+      fetchSubmodules = false;
+      sha256 = "sha256-EcV/mdleyopQsJ/t/Whl6Yf/2ORb9rnhHuc2Ue1E1Bw=";
+    };
+  };
 }

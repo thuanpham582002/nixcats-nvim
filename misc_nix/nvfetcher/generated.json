@@ -62,6 +62,27 @@
         },
         "version": "v3.15.11"
     },
+    "neominimap-nvim": {
+        "cargoLock": null,
+        "date": null,
+        "extract": null,
+        "name": "neominimap-nvim",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "owner": "Isrothy",
+            "repo": "neominimap.nvim",
+            "rev": "v3.16.0",
+            "sha256": "sha256-EcV/mdleyopQsJ/t/Whl6Yf/2ORb9rnhHuc2Ue1E1Bw=",
+            "sparseCheckout": [],
+            "type": "github"
+        },
+        "version": "v3.16.0"
+    },
     "vim-go": {
         "cargoLock": null,
         "date": null,

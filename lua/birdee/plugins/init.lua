@@ -119,6 +119,7 @@ return {
   { import = MP:relpath "lsp", },
   { import = MP:relpath "editing", },
   { import = MP:relpath "visual", },
+  { import = MP:relpath "neominimap", },
   { import = MP:relpath "document", },
   { import = MP:relpath "go", },
   
