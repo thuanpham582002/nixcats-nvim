@@ -25,6 +25,7 @@ return {
         win = {
           position = "right",
           width = math.floor(vim.o.columns * 0.35),
+          enter = false,
           on_win = function(win)
             vim.schedule(function()
               vim.api.nvim_set_option_value("statuscolumn", "", { win = win.win })
