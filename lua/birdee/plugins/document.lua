@@ -268,17 +268,13 @@ return {
         workspaces = {
           {
             name = "Persional",
-            path = vim.fn.expand("~/Documents/Persional"), -- User's PARA vault
+            path = vim.fn.expand("~/Documents/Persional"),
           },
         },
 
-        -- Completion configuration for blink.cmp
-        completion = {
-          nvim_cmp = false, -- Disable nvim-cmp since we use blink.cmp
-          min_chars = 1,
-        },
+        wiki_link_func = "use_alias_only",
+        preferred_link_style = "markdown",
 
-        -- Picker configuration - use snacks.pick
         picker = {
           name = "snacks.pick",
           note_mappings = {
@@ -352,10 +348,9 @@ return {
         -- Wiki links configuration
         wiki_link_func = "use_alias_only",
 
-        -- Markdown link configuration
-        markdown_link_func = function(opts)
-          return string.format("[%s](%s)", opts.label, opts.path)
-        end,
+        link = {
+          style = "markdown",
+        },
 
         -- Note frontmatter configuration
         note_frontmatter_func = function(note)
@@ -417,27 +412,7 @@ return {
         -- Image handling
         attachments = {
           img_folder = "assets/imgs",
-          img_text_func = function(client, path)
-            path = client:vault_relative_path(path) or path
-            return string.format("![%s](%s)", path.name, path)
-          end,
         },
-
-        -- Search configuration
-        finder = "snacks.nvim",
-        finder_mappings = {
-          new = "<C-n>",
-          insert_link = "<C-l>",
-        },
-
-        -- Sorting
-        sort_by = "modified",
-        search = {
-          sort_reversed = true,
-        },
-
-        -- Open strategy
-        open_notes_in = "current",
       })
       
       -- Auto-conceal settings for markdown files

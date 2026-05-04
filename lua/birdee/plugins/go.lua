@@ -14,9 +14,7 @@ return {
       vim.g.go_guru_mapping_enabled = 0
       vim.g.go_references_mapping_enabled = 0
 
-      -- Setup commands
-      require("go.lsp").setup()
-
+      -- vim-go handles its own LSP integration via gopls
       -- Optional: Add extra vim-go configuration here
       vim.g.go_fmt_command = "goimports"
       vim.g.go_term_enabled = 1

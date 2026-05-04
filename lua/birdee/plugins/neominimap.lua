@@ -27,6 +27,10 @@ return {
       }
     end,
     after = function()
+      vim.api.nvim_set_hl(0, "NeominimapCursorLine", {
+        bg = "#4a5263",
+      })
+
       local map = vim.keymap.set
       map("n", "<leader>nm", "<cmd>Neominimap Toggle<cr>", { desc = "Toggle minimap" })
       map("n", "<leader>no", "<cmd>Neominimap Enable<cr>", { desc = "Enable minimap" })
