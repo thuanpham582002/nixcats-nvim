@@ -22,9 +22,14 @@ return {
     after = function()
       vim.g.opencode_opts = {}
 
-      -- Blank statuscolumn on opencode ask windows
+      -- Blank statuscolumn in opencode ask and terminal windows
       vim.api.nvim_create_autocmd("FileType", {
         pattern = "opencode_ask",
+        callback = function()
+          vim.opt_local.statuscolumn = ""
+        end,
+      })
+      vim.api.nvim_create_autocmd("TermOpen", {
         callback = function()
           vim.opt_local.statuscolumn = ""
         end,
