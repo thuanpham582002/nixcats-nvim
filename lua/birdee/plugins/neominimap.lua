@@ -10,10 +10,10 @@ return {
       vim.g.neominimap = {
         auto_enable = true,
         layout = "float",
-        winopt = function(opt, _)
-          opt.number = false
-          opt.relativenumber = false
-          opt.signcolumn = "no"
+        winopt = function(opt, winid)
+          vim.api.nvim_set_option_value("number", false, { win = winid })
+          vim.api.nvim_set_option_value("relativenumber", false, { win = winid })
+          vim.api.nvim_set_option_value("signcolumn", "no", { win = winid })
         end,
         exclude_filetypes = {
           "help", "bigfile", "neo-tree", "NvimTree",
@@ -26,13 +26,13 @@ return {
       }
     end,
     after = function()
-      -- Force-disable line numbers and signcolumn on minimap buffers
-      vim.api.nvim_create_autocmd("FileType", {
-        pattern = "neominimap",
+      vim.api.nvim_create_autocmd("BufWinEnter", {
         callback = function()
-          vim.opt_local.number = false
-          vim.opt_local.relativenumber = false
-          vim.opt_local.signcolumn = "no"
+          if vim.bo.filetype == "neominimap" then
+            vim.opt_local.number = false
+            vim.opt_local.relativenumber = false
+            vim.opt_local.signcolumn = "no"
+          end
         end,
       })
 
