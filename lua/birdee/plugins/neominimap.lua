@@ -27,17 +27,6 @@ return {
       }
     end,
     after = function()
-      vim.api.nvim_create_autocmd("BufWinEnter", {
-        callback = function()
-          if vim.bo.filetype == "neominimap" then
-            vim.opt_local.number = false
-            vim.opt_local.relativenumber = false
-            vim.opt_local.signcolumn = "no"
-            vim.opt_local.statuscolumn = ""
-          end
-        end,
-      })
-
       local map = vim.keymap.set
       map("n", "<leader>nm", "<cmd>Neominimap Toggle<cr>", { desc = "Toggle minimap" })
       map("n", "<leader>no", "<cmd>Neominimap Enable<cr>", { desc = "Enable minimap" })
