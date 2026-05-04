@@ -11,6 +11,8 @@ return {
         auto_enable = true,
         layout = "float",
         winopt = function(opt, _)
+          opt.number = false
+          opt.relativenumber = false
           opt.signcolumn = "no"
         end,
         exclude_filetypes = {
