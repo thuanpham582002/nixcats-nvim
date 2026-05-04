@@ -31,7 +31,9 @@ return {
       })
       vim.api.nvim_create_autocmd("TermOpen", {
         callback = function()
-          vim.opt_local.statuscolumn = ""
+          vim.schedule(function()
+            vim.opt_local.statuscolumn = ""
+          end)
         end,
       })
     end,
