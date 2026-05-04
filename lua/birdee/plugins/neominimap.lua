@@ -26,6 +26,16 @@ return {
       }
     end,
     after = function()
+      -- Force-disable line numbers and signcolumn on minimap buffers
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "neominimap",
+        callback = function()
+          vim.opt_local.number = false
+          vim.opt_local.relativenumber = false
+          vim.opt_local.signcolumn = "no"
+        end,
+      })
+
       local map = vim.keymap.set
       map("n", "<leader>nm", "<cmd>Neominimap Toggle<cr>", { desc = "Toggle minimap" })
       map("n", "<leader>no", "<cmd>Neominimap Enable<cr>", { desc = "Enable minimap" })
