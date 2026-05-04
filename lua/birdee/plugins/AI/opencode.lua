@@ -20,20 +20,38 @@ return {
       { '<leader>Op', function() require('opencode').prompt('optimize') end, desc = 'Optimize code' },
     },
     after = function()
-      vim.g.opencode_opts = {}
+      local oc_cmd = "opencode --port"
+      local oc_opts = {
+        win = {
+          position = "right",
+          width = math.floor(vim.o.columns * 0.35),
+          on_win = function(win)
+            vim.schedule(function()
+              vim.api.nvim_set_option_value("statuscolumn", "", { win = win.win })
+            end)
+          end,
+        },
+      }
 
-      -- Blank statuscolumn in opencode ask and terminal windows
+      vim.g.opencode_opts = {
+        server = {
+          start = function()
+            require("snacks").terminal.open(oc_cmd, oc_opts)
+          end,
+          stop = function()
+            require("snacks").terminal.get(oc_cmd):close()
+          end,
+          toggle = function()
+            require("snacks").terminal.toggle(oc_cmd, oc_opts)
+          end,
+        },
+      }
+
+      -- Blank statuscolumn in opencode ask windows
       vim.api.nvim_create_autocmd("FileType", {
         pattern = "opencode_ask",
         callback = function()
           vim.opt_local.statuscolumn = ""
-        end,
-      })
-      vim.api.nvim_create_autocmd("TermOpen", {
-        callback = function()
-          vim.schedule(function()
-            vim.opt_local.statuscolumn = ""
-          end)
         end,
       })
     end,
